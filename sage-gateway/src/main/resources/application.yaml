@@ -1,0 +1,19 @@
+server:
+  port: 8081
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+
+spring:
+  application:
+    name: sage-gateway
+  threads:
+    virtual:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics,prometheus"

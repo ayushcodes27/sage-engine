@@ -1,0 +1,20 @@
+# --- Java (Gateway) ---
+**/target/
+**/*.class
+**/.mvn/wrapper/maven-wrapper.properties
+**/mvnw
+**/mvnw.cmd
+
+# --- Python (ML Engine - Future) ---
+**/__pycache__/
+**/*.py[cod]
+**/venv/
+**/.env
+**/.pytest_cache/
+
+# --- IDEs & OS ---
+**/.idea/
+**/.vscode/
+**/.DS_Store
+**/*.log
+**/logs/
