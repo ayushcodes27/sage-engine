@@ -12,8 +12,18 @@ spring:
     virtual:
       enabled: true
 
+  data:
+    redis:
+      host: localhost # Or your Redis Cloud URL
+      port: 6379
+      # timeouts are critical for fail-fast behavior
+      timeout: 100ms
+      connect-timeout: 200ms
+
 management:
   endpoints:
     web:
       exposure:
         include: "health,metrics,prometheus"
+
+
