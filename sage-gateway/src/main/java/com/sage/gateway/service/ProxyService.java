@@ -1,5 +1,8 @@
 package com.sage.gateway.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.http.HttpStatus;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,8 @@ public class ProxyService {
      * 3. Sends the body (if any).
      * 4. Waits for the response (Virtual Thread friendly blocking).
      */
+
+    @CircuitBreaker(name = "gatewayService", fallbackMethod = "forwardRequestFallback")
     public ResponseEntity<String> forwardRequest(String targetUrl, HttpMethod method, HttpServletRequest request, String body){
         var requestSpec = webClient.method(method).uri(targetUrl);
 
@@ -48,5 +53,17 @@ public class ProxyService {
         return requestSpec.retrieve()
                 .toEntity(String.class)
                 .block();
+    }
+    public ResponseEntity<String> forwardRequestFallback(String targetUrl, HttpMethod method, HttpServletRequest request, String body, Throwable throwable) {
+        System.out.println("🚨 CIRCUIT BREAKER TRIPPED! Target: " + targetUrl);
+        System.out.println("🔥 Reason: " + throwable.getMessage());
+
+        // Instead of crashing, SAGE politely informs the user that the downstream API is broken.
+        String fallbackJson = "{\"error\": \"SAGE Gateway: Service Temporarily Unavailable.\", \"status\": 503}";
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .header("Content-Type", "application/json")
+                .body(fallbackJson);
     }
 }

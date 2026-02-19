@@ -38,4 +38,13 @@ management:
       exposure:
         include: "health,metrics,prometheus"
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      gatewayService:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10              # Look at the last 10 requests
+        failureRateThreshold: 50           # If 50% (5 out of 10) fail, trip the breaker!
+        waitDurationInOpenState: 15s       # Keep it OPEN (blocking) for 15 seconds
+        permittedNumberOfCallsInHalfOpenState: 3 # Let 3 test requests through to check if the API recovered
 
