@@ -20,6 +20,18 @@ spring:
       timeout: 100ms
       connect-timeout: 200ms
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
+      properties:
+        acks: 1
+        linger.ms: 10
+        batch.size: 16384
+
 management:
   endpoints:
     web:
