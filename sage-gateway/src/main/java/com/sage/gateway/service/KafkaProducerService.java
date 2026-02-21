@@ -15,8 +15,9 @@ public class KafkaProducerService {
     private static final Logger log = LoggerFactory.getLogger(KafkaProducerService.class);
     private static final String TOPIC = "gateway-telemetry";
 
-    // Changing this to <String, Object> perfectly matches Spring's AutoConfiguration.
-    // The JsonSerializer we defined in application.yml will automatically parse our RequestEvent payload into JSON.
+    // Updated the generic type to <String, Object> to align with Spring Boot's Kafka auto-configuration
+    // and avoid custom serializer wiring. The JsonSerializer configured via application.yml
+    // handles automatic conversion of RequestEvent instances into JSON at publish time.
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public KafkaProducerService(KafkaTemplate<String, Object> kafkaTemplate) {

@@ -17,8 +17,6 @@ public class GatewayController {
     private final ProxyService proxyService;
     private final TrafficLogger trafficLogger;
 
-    // We default to "httpbin.org" for testing.
-    // In production, this would be your internal microservice URL.
     @Value("${backend.url:https://httpbin.org/anything}")
     private String backendUrl;
 
@@ -26,7 +24,10 @@ public class GatewayController {
         this.proxyService = proxyService;
         this.trafficLogger = trafficLogger;
     }
-
+    @GetMapping("/echo")
+    public ResponseEntity<String> echo() {
+        return ResponseEntity.ok("{\"status\":\"ok\",\"message\":\"SAGE echo\"}");
+    }
     /**
      * The Universal Handler.
      * @RequestMapping("/**") captures every single request sent to this server.
@@ -42,12 +43,12 @@ public class GatewayController {
         int statusCode = 500;
 
         try {
-            // 1. Construct the Target URL
-            // If user requests "/api/users", we forward to "https://httpbin.org/anything/api/users"
+            // Build the target URL for the downstream service.
+            // Example: "/api/users" → "https://httpbin.org/anything/api/users"
             String target = backendUrl + path;
 
-            // 2. Forward the Request (The "Blocking" Call)
-            // Thanks to Virtual Threads, this "block" is cheap!
+            // Forward the request to the downstream service.
+            // The blocking call remains lightweight when executed on virtual threads.
             ResponseEntity<String> response = proxyService.forwardRequest(
                     target,
                     HttpMethod.valueOf(request.getMethod()),
@@ -65,9 +66,8 @@ public class GatewayController {
             return ResponseEntity.internalServerError().body("Gateway Error: " + e.getMessage());
 
         } finally {
-            // 3. The "Fire-and-Forget" Log
-            // Even if the request failed, we MUST log it for ML training.
-            // This runs in the background (Async).
+            // Asynchronously publish the request log.
+            // Logging is required even on failure to support downstream ML analysis.
             long duration = System.currentTimeMillis() - startTime;
             trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
         }

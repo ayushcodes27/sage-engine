@@ -21,7 +21,7 @@ import java.util.UUID;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class TelemetryFilter extends OncePerRequestFilter {
 
-    // Switched to the synchronous template for the Tomcat Servlet stack
+    // Using synchronous KafkaTemplate to match the Tomcat Servlet (blocking) execution model.
     private final StringRedisTemplate redisTemplate;
     private final KafkaProducerService kafkaProducer;
 
@@ -64,8 +64,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } finally {
-            // The 'finally' block acts just like '.doFinally()' in WebFlux.
-            // It runs after the response is sent, calculating total round-trip time.
+            // The finally block mirrors WebFlux's doFinally() behavior,
+            // executing after response completion to compute total round-trip time.
             long latencyMs = System.currentTimeMillis() - startTime;
             int statusCode = response.getStatus();
             String path = request.getRequestURI();

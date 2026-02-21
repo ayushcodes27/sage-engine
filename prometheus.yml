@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s # How often to check for metrics
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'sage-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      # Use host.docker.internal to let the container talk to your Windows localhost:8081
+      - targets: ['host.docker.internal:8081']

@@ -21,11 +21,11 @@ public class ProxyService {
         this.webClient = webClient;
     }
     /*
-     * The core proxy logic.
-     * 1. Prepares the outbound request.
-     * 2. Copies all headers from the incoming request (Context Propagation).
-     * 3. Sends the body (if any).
-     * 4. Waits for the response (Virtual Thread friendly blocking).
+     * Core proxy execution flow:
+     * - Builds the outbound request.
+     * - Propagates headers from the incoming request.
+     * - Forwards the request body (if present).
+     * - Blocks for the downstream response (virtual-thread friendly).
      */
 
     @CircuitBreaker(name = "gatewayService", fallbackMethod = "forwardRequestFallback")
@@ -36,9 +36,8 @@ public class ProxyService {
         while(headerNames.hasMoreElements()){
             String header = headerNames.nextElement();
 
-            // We SKIP the 'host' header.
-            // Why? Because we are sending this to a different host (the backend),
-            // and we don't want to confuse it with the Gateway's host address.
+            // Exclude the 'Host' header since the request is forwarded to a different backend.
+            // Forwarding the original host could cause incorrect routing or host validation issues.
             if (!header.equalsIgnoreCase("host")) {
                 requestSpec.header(header, request.getHeader(header));
             }
@@ -47,9 +46,8 @@ public class ProxyService {
         if (body != null && !body.isEmpty()) {
             requestSpec.bodyValue(body);
         }
-        // .retrieve() sends the request.
-        // .toEntity(String.class) converts the response to a standard ResponseEntity.
-        // .block() waits for the result. (Safe because we are on a Virtual Thread!)
+        // Sends the request, maps the response to ResponseEntity<String>,
+        // and blocks for completion (safe on virtual threads).
         return requestSpec.retrieve()
                 .toEntity(String.class)
                 .block();
@@ -58,7 +56,8 @@ public class ProxyService {
         System.out.println("🚨 CIRCUIT BREAKER TRIPPED! Target: " + targetUrl);
         System.out.println("🔥 Reason: " + throwable.getMessage());
 
-        // Instead of crashing, SAGE politely informs the user that the downstream API is broken.
+        // Gracefully handles downstream failures by returning a controlled response
+        // instead of propagating the exception to the client.
         String fallbackJson = "{\"error\": \"SAGE Gateway: Service Temporarily Unavailable.\", \"status\": 503}";
 
         return ResponseEntity

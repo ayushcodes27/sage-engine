@@ -28,28 +28,29 @@ public class RateLimiterService {
     }
 
     /**
-     * The Main Entry Point.
-     * Returns TRUE if allowed, FALSE if blocked.
+     * Primary decision method.
+     * Returns true if the request is permitted, false if it is blocked.
      */
     public boolean isAllowed(String tenantId, String userId) {
         long now = Instant.now().getEpochSecond(); // Current time in seconds
 
-        // 1. Construct Keys (Hierarchy)
-        // usage: sage:ratelimit:{tier}:{id}
+        // Build the hierarchical Redis key in the format:
+        // sage:ratelimit:{tier}:{id}
         String globalKey = "sage:ratelimit:global";
         String tenantKey = "sage:ratelimit:tenant:" + tenantId;
         String userKey = "sage:ratelimit:user:" + userId;
 
         List<String> keys = Arrays.asList(userKey, tenantKey, globalKey);
 
-        // 2. Resolve Limits (Simulated Config Lookup)
-        // In real life, these come from DB/Cache based on tenantId/userId plan
+        // Resolve rate limits (simulated configuration lookup).
+        // In production, limits would be fetched from a DB or cache
+        // based on the tenant/user subscription plan.
         int[] userLimits = getUserLimits(userId);
         int[] tenantLimits = getTenantLimits(tenantId);
 
-        // 3. Prepare Arguments for Lua
-        // Order matches Lua script ARGV[]:
-        // UserLimit, UserBurst, TenantLimit, TenantBurst, GlobalLimit, GlobalBurst, Now, Cost
+        // Prepare arguments for the Lua script in the exact ARGV[] order:
+        // userLimit, userBurst, tenantLimit, tenantBurst,
+        // globalLimit, globalBurst, currentTime, requestCost
         Object[] args = {
                 String.valueOf(userLimits[0]), // ARGV[1]: User Limit
                 String.valueOf(userLimits[1]), // ARGV[2]: User Burst
@@ -74,11 +75,12 @@ public class RateLimiterService {
         }
     }
 
-    // --- Helper Methods (Configuration Placeholders) ---
+    // Helper methods used as configuration placeholders
+    // (to be replaced with actual configuration or lookup logic).
 
     private int[] getUserLimits(String userId) {
-        // Return {Rate, Burst}
-        // VIP User gets more
+        // Returns {rate, burst} values.
+        // Higher limits are assigned for VIP users.
         if ("vip_user".equals(userId)) return new int[] { 500, 1000 };
         return new int[] { 1, 5 }; // Default User
     }

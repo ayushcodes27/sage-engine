@@ -37,11 +37,11 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.LINGER_MS_CONFIG, 10);
         configProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
 
-        // KEY SERIALIZER: Standard String serializer is fine via config
+        // KEY SERIALIZER:The key uses the standard StringSerializer configured in application properties.
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
-        // VALUE SERIALIZER:
-        // We REMOVE the config entry and instantiate it manually below to disable headers.
+        // Value serializer is instantiated manually (instead of via config)
+        // so we can customize it and disable header inclusion.
         JsonSerializer<Object> jsonSerializer = new JsonSerializer<>();
         jsonSerializer.setAddTypeInfo(false);
 
