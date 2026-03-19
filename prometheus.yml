@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 5s # How often to check for metrics
+  scrape_interval: 20s # How often to check for metrics
 
 scrape_configs:
   - job_name: 'prometheus'

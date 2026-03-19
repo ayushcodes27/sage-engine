@@ -1,5 +1,7 @@
 package com.sage.gateway.controller;
 
+import com.sage.gateway.routing.RouteRegistry;
+import com.sage.gateway.routing.RouteResolver;
 import com.sage.gateway.service.ProxyService;
 import com.sage.gateway.service.TrafficLogger;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,12 +19,18 @@ public class GatewayController {
     private final ProxyService proxyService;
     private final TrafficLogger trafficLogger;
 
+    private final RouteRegistry routeRegistry;
+    private final RouteResolver routeResolver;
+
+
     @Value("${backend.url:https://httpbin.org/anything}")
     private String backendUrl;
 
-    public GatewayController(ProxyService proxyService, TrafficLogger trafficLogger) {
+    public GatewayController(ProxyService proxyService, TrafficLogger trafficLogger, RouteResolver routeResolver, RouteRegistry routeRegistry) {
         this.proxyService = proxyService;
         this.trafficLogger = trafficLogger;
+        this.routeResolver = routeResolver;
+        this.routeRegistry = routeRegistry;
     }
     @GetMapping("/echo")
     public ResponseEntity<String> echo() {
@@ -43,12 +51,20 @@ public class GatewayController {
         int statusCode = 500;
 
         try {
-            // Build the target URL for the downstream service.
-            // Example: "/api/users" → "https://httpbin.org/anything/api/users"
-            String target = backendUrl + path;
+            com.sage.gateway.routing.RouteDefinition matchedRoute = routeResolver.resolve(
+                    routeRegistry.getRoot(),
+                    path,
+                    request
+            );
 
-            // Forward the request to the downstream service.
-            // The blocking call remains lightweight when executed on virtual threads.
+            if(matchedRoute == null){
+                statusCode = 404;
+                return ResponseEntity.status(404).body("Gateway Error: Route Not Found");
+            }
+
+            String target = matchedRoute.backendUrl() + path;
+
+            // Forward the request to the DOWNSTREAM service
             ResponseEntity<String> response = proxyService.forwardRequest(
                     target,
                     HttpMethod.valueOf(request.getMethod()),
