@@ -1,5 +1,6 @@
 package com.sage.gateway.controller;
 
+import com.sage.gateway.filter.GatewayFilter;
 import com.sage.gateway.routing.RouteRegistry;
 import com.sage.gateway.routing.RouteResolver;
 import com.sage.gateway.service.ProxyService;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class GatewayController {
@@ -22,15 +26,16 @@ public class GatewayController {
     private final RouteRegistry routeRegistry;
     private final RouteResolver routeResolver;
 
-
-    @Value("${backend.url:https://httpbin.org/anything}")
+    private final List<GatewayFilter> availableFilters;
+    
     private String backendUrl;
 
-    public GatewayController(ProxyService proxyService, TrafficLogger trafficLogger, RouteResolver routeResolver, RouteRegistry routeRegistry) {
+    public GatewayController(ProxyService proxyService, TrafficLogger trafficLogger, RouteResolver routeResolver, RouteRegistry routeRegistry, List<GatewayFilter> availableFilters) {
         this.proxyService = proxyService;
         this.trafficLogger = trafficLogger;
         this.routeResolver = routeResolver;
         this.routeRegistry = routeRegistry;
+        this.availableFilters = availableFilters;
     }
     @GetMapping("/echo")
     public ResponseEntity<String> echo() {
@@ -62,6 +67,24 @@ public class GatewayController {
                 return ResponseEntity.status(404).body("Gateway Error: Route Not Found");
             }
 
+            Map<String, Map<String, String>> routeFilters = matchedRoute.filters();
+            if (routeFilters != null) {
+                for (GatewayFilter filter : availableFilters) {
+
+                    if (routeFilters.containsKey(filter.getName())) {
+
+                        Map<String, String> filterConfig = routeFilters.get(filter.getName());
+
+                        Optional<ResponseEntity<String>> filterResult = filter.filter(request, filterConfig);
+
+                        if (filterResult.isPresent()) {
+                            // FAIL: Stop the loop and return the exact HTTP status code/body the filter generated
+                            statusCode = filterResult.get().getStatusCode().value();
+                            return filterResult.get();
+                        }
+                    }
+                }
+            }
             String target = matchedRoute.backendUrl() + path;
 
             // Forward the request to the DOWNSTREAM service
