@@ -85,7 +85,8 @@ public class GatewayController {
                     }
                 }
             }
-            String target = matchedRoute.backendUrl() + path;
+            String backendPath = path.replaceFirst("^/api", "");
+            String target = matchedRoute.backendUrl() + backendPath;
 
             // Forward the request to the DOWNSTREAM service
             ResponseEntity<String> response = proxyService.forwardRequest(
@@ -107,8 +108,10 @@ public class GatewayController {
         } finally {
             // Asynchronously publish the request log.
             // Logging is required even on failure to support downstream ML analysis.
-            long duration = System.currentTimeMillis() - startTime;
-            trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
+
+            //Temporarily Commented Out for testing ->
+            //long duration = System.currentTimeMillis() - startTime;
+            //trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
         }
     }
 }

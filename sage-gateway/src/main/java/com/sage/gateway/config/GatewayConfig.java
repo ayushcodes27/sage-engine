@@ -1,9 +1,17 @@
 package com.sage.gateway.config;
 
+import com.sage.gateway.routing.RouteDefinition;
+import com.sage.gateway.routing.RouteRegistry;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import reactor.netty.http.client.HttpClient;
+import io.netty.resolver.DefaultAddressResolverGroup;
+
+import java.util.Map;
+import java.util.List;
 
 @Configuration
 public class GatewayConfig {
@@ -26,6 +34,36 @@ public class GatewayConfig {
          * We use this single instance throughout the app to reuse internal
          * resources (Connection Pool) rather than creating new clients per request.
          */
-        return builder.build();
+        HttpClient httpClient = HttpClient.create()
+                .resolver(DefaultAddressResolverGroup.INSTANCE);
+
+        return builder
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
+
+    @Bean
+    public RouteRegistry routeRegistry() {
+
+        //basic route
+        RouteDefinition publicUserRoute = new RouteDefinition(
+                "/api/users/{id}",
+                "https://jsonplaceholder.typicode.com",
+                null // No filters
+        );
+
+        // secure route
+        Map<String, Map<String, String>> secureFilters = Map.of(
+                "RateLimit", Map.of("replenishRate", "10", "burstCapacity", "20")
+        );
+
+        RouteDefinition secureRoute = new RouteDefinition(
+                "/api/secure/data",
+                "https://httpbin.org/anything",
+                secureFilters
+        );
+
+        // Load them into the registry
+        return new RouteRegistry(List.of(publicUserRoute, secureRoute));
     }
 }

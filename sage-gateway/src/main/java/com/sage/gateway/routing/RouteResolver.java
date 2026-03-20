@@ -1,9 +1,12 @@
 package com.sage.gateway.routing;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class RouteResolver {
 
     public RouteDefinition resolve(RouteNode root, String requestUri, HttpServletRequest request) {
