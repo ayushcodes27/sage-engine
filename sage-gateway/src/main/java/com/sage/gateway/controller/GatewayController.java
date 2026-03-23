@@ -57,7 +57,6 @@ public class GatewayController {
 
         try {
             com.sage.gateway.routing.RouteDefinition matchedRoute = routeResolver.resolve(
-                    routeRegistry.getRoot(),
                     path,
                     request
             );
@@ -70,7 +69,7 @@ public class GatewayController {
             Map<String, Map<String, String>> routeFilters = matchedRoute.filters();
             if (routeFilters != null) {
                 for (GatewayFilter filter : availableFilters) {
-
+                    System.out.println("🔧 PIPELINE TRIGGERED: Attempting to run filter -> ");
                     if (routeFilters.containsKey(filter.getName())) {
 
                         Map<String, String> filterConfig = routeFilters.get(filter.getName());

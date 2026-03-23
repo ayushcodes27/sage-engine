@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RouteNode {
-    String segment;
-    Map<String, RouteNode> exactChildren = new HashMap<>();
+    public String segment;
+    public Map<String, RouteNode> exactChildren = new HashMap<>();
 
-    RouteNode variableChild;
-    String variableName;
+    public RouteNode variableChild;
+    public String variableName;
 
-    RouteDefinition route;
+    public RouteDefinition route;
 
     public RouteNode(String segment) {
         this.segment = segment;

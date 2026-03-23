@@ -54,7 +54,7 @@ public class GatewayConfig {
 
         // secure route
         Map<String, Map<String, String>> secureFilters = Map.of(
-                "RateLimit", Map.of("replenishRate", "10", "burstCapacity", "20")
+                "RateLimit", Map.of("replenishRate", "1", "burstCapacity", "2")
         );
 
         RouteDefinition secureRoute = new RouteDefinition(

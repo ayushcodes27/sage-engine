@@ -5,13 +5,22 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class RouteResolver {
 
-    public RouteDefinition resolve(RouteNode root, String requestUri, HttpServletRequest request) {
+    private final AtomicReference<RouteNode> rootReference = new AtomicReference<>(new RouteNode(""));
+
+    public void updateTree(RouteNode newRoot) {
+        rootReference.set(newRoot);
+    }
+
+    public RouteDefinition resolve(String requestUri, HttpServletRequest request) {
+        RouteNode currentNode = rootReference.get();
+
         String[] rawSegments = requestUri.split("/");
-        RouteNode currentNode = root;
+
 
         for (String segment : rawSegments) {
             if (segment == null || segment.isEmpty()) continue;

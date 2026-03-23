@@ -26,6 +26,7 @@ public class RateLimitFilter implements GatewayFilter {
 
     @Override
     public Optional<ResponseEntity<String>> filter(HttpServletRequest request, Map<String, String> config) {
+        System.out.println("🛑 RATE LIMITER ACTIVATED: Checking tokens for " + request.getRequestURI());
 
         String tenantId = request.getHeader("X-Tenant-ID");
         String userId = request.getHeader("X-User-ID");
