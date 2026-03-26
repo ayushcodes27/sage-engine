@@ -3,7 +3,11 @@ import logging
 import signal
 import sys
 import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from confluent_kafka import Consumer, KafkaError, KafkaException
+from features.temporal_variance import TemporalVarianceCalculator
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from features.endpoint_diversity import EndpointDiversityCalculator
@@ -91,7 +95,10 @@ class GatewayEventConsumer:
 # Quick Test Block
 if __name__ == "__main__":
     consumer = GatewayEventConsumer()
-    calculator = EndpointDiversityCalculator()
+
+    # Initialize both of our feature calculators
+    diversity_calculator = EndpointDiversityCalculator()
+    variance_calculator = TemporalVarianceCalculator()
 
     signal.signal(signal.SIGINT, consumer.stop)
     signal.signal(signal.SIGTERM, consumer.stop)
@@ -100,9 +107,15 @@ if __name__ == "__main__":
         user = event.get('userId', 'unknown_user')
         path = event.get('request', {}).get('path', '')
 
-        if path:
-            # We pass the data to our new mathematical engine!
-            calculator.calculate(user, path)
+        # the timestamp is at the root level [cite: 85]
+        timestamp = event.get('timestamp', '')
+
+        if path and timestamp:
+            # Calculate Endpoint Diversity
+            diversity_calculator.calculate(user, path)
+
+            # Calculate Temporal Variance (Rhythm)
+            variance_calculator.calculate(user, timestamp)
 
     logger.info("Starting ML Feature Pipeline. Waiting for gateway events...")
     consumer.consume_events(process_event)
