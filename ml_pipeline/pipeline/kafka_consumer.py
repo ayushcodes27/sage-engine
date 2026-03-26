@@ -3,9 +3,12 @@ import logging
 import signal
 import sys
 import os
+import uuid
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from features.session_depth import SessionDepthCalculator
+from features.request_velocity import RequestVelocityCalculator
 from confluent_kafka import Consumer, KafkaError, KafkaException
 from features.temporal_variance import TemporalVarianceCalculator
 
@@ -96,26 +99,36 @@ class GatewayEventConsumer:
 if __name__ == "__main__":
     consumer = GatewayEventConsumer()
 
-    # Initialize both of our feature calculators
+    # Initialize the complete Feature Engineering Suite
     diversity_calculator = EndpointDiversityCalculator()
     variance_calculator = TemporalVarianceCalculator()
+    depth_calculator = SessionDepthCalculator()
+    velocity_calculator = RequestVelocityCalculator()
 
     signal.signal(signal.SIGINT, consumer.stop)
     signal.signal(signal.SIGTERM, consumer.stop)
 
     def process_event(event):
+        # Extract variables from your Java Gateway telemetry JSON
         user = event.get('userId', 'unknown_user')
-        path = event.get('request', {}).get('path', '')
+        session = event.get('sessionId', user) # Fallback to user if session isn't set
 
-        # the timestamp is at the root level [cite: 85]
+        req_id = event.get('requestId')
+        if not req_id:
+            # If the Gateway didn't provide an ID, generate a random one instantly
+            req_id = str(uuid.uuid4())
+
+        path = event.get('request', {}).get('path', '')
         timestamp = event.get('timestamp', '')
 
         if path and timestamp:
-            # Calculate Endpoint Diversity
+            print("-" * 40) # Add a visual divider in the terminal for readability
+
+            # Fire all four mathematical cylinders!
             diversity_calculator.calculate(user, path)
-
-            # Calculate Temporal Variance (Rhythm)
             variance_calculator.calculate(user, timestamp)
+            depth_calculator.calculate(session)
+            velocity_calculator.calculate(user, timestamp, req_id)
 
-    logger.info("Starting ML Feature Pipeline. Waiting for gateway events...")
+    logger.info("Starting SAGE ML Feature Pipeline. All 4 engines online...")
     consumer.consume_events(process_event)
