@@ -8,10 +8,17 @@
 # --- Python (ML Engine - Future) ---
 **/__pycache__/
 **/*.py[cod]
+*$py.class
 **/venv/
 **/.venv/
 **/.env
 **/.pytest_cache/
+
+# --- ML Models & Large Data (CRITICAL) ---
+**/*.pkl
+**/*.joblib
+**/*.csv
+**/*.h5
 
 # --- IDEs & OS ---
 **/.idea/
