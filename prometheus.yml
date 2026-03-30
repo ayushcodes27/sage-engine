@@ -11,3 +11,9 @@ scrape_configs:
     static_configs:
       # Use host.docker.internal to let the container talk to your Windows localhost:8081
       - targets: ['host.docker.internal:8081']
+
+  - job_name: 'sage-ml-inference'
+    metrics_path: '/metrics'
+    scrape_interval: 5s # Scrape every 5 seconds for real-time tracking
+    static_configs:
+      - targets: [ 'host.docker.internal:8000' ]
