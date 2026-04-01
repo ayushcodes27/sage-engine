@@ -55,6 +55,14 @@ public class TelemetryFilter extends OncePerRequestFilter {
         String eventId = UUID.randomUUID().toString();
         String ipAddress = request.getRemoteAddr() != null ? request.getRemoteAddr() : "anonymous";
 
+        if (redisTelemetryService.isIpBanned(ipAddress)) {
+            logger.warn("🚨 FAST-PATH BLOCK: IP " + ipAddress + " is on the 5-minute ban list.");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Traffic blocked by SAGE Engine Fast-Path\"}");
+            return; // HALT IMMEDIATELY!
+        }
+
         // 1. Extract payload size (Defaults to 0 for GET requests without bodies)
         double payloadSize = request.getContentLength() > 0 ? request.getContentLength() : 0.0;
 
@@ -99,6 +107,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
         // 6. ENFORCE THE DECISION
         if (isBot) {
             logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Prob: " + botProbability);
+            redisTelemetryService.banIp(ipAddress);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Traffic blocked by SAGE Engine Anomaly Detection\"}");

@@ -108,4 +108,13 @@ public class RedisTelemetryService {
         }
         return Math.sqrt(sumSquaredDiffs / values.size());
     }
+    public boolean isIpBanned(String ip) {
+        // Instantly checks if the IP is on the temporary ban list
+        return Boolean.TRUE.equals(redisTemplate.hasKey("sage:ban:" + ip));
+    }
+
+    public void banIp(String ip) {
+        // Bans the IP for 5 minutes (300 seconds)
+        redisTemplate.opsForValue().set("sage:ban:" + ip, "true", java.time.Duration.ofMinutes(5));
+    }
 }
