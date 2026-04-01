@@ -3,8 +3,9 @@ import joblib
 import os
 import time
 import numpy as np
+import pandas as pd
 from contextlib import asynccontextmanager
-from .assembler import FeatureAssembler
+from assembler import FeatureAssembler
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from pydantic import BaseModel, Field
 
@@ -66,7 +67,7 @@ def predict_anomaly(data: GatewayTelemetry):
     try:
         # Extract features in the EXACT order the Random Forest expects
         input_vector = [getattr(data, feature_name) for feature_name in FEATURE_MAP]
-        X_input = np.array(input_vector).reshape(1, -1)
+        X_input = pd.DataFrame([input_vector], columns=FEATURE_MAP)
 
         # Inference
         probabilities = MODEL.predict_proba(X_input)[0]

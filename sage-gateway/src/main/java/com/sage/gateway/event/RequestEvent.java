@@ -12,5 +12,5 @@ public record RequestEvent(
 ) {
     public record RequestDetails(String method, String path, String category, String ip) {}
     public record ResponseDetails(int status, long latencyMs) {}
-    public record MLMetadata(long timeSinceLastMs, int sessionCount) {}
+    public record MLMetadata(double botProbability, int isBotFlag) {}
 }
