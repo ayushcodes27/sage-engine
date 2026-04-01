@@ -26,3 +26,6 @@
 **/.DS_Store
 **/*.log
 **/logs/
+
+
+node_modules/

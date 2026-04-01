@@ -57,6 +57,37 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
         if (redisTelemetryService.isIpBanned(ipAddress)) {
             logger.warn("🚨 FAST-PATH BLOCK: IP " + ipAddress + " is on the 5-minute ban list.");
+
+            try {
+                // 1. Create dummy request details
+                RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), request.getRequestURI(), "api", ipAddress);
+
+                // 2. Create dummy response details (It's a 403 Forbidden)
+                RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(HttpServletResponse.SC_FORBIDDEN, System.currentTimeMillis() - startTime);
+
+                // 3. Create synthetic ML Metadata (CRITICAL for the Dashboard)
+                // 1.0 probability, 1 (true) for isBot
+                RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1);
+
+                // 4. Build and publish the event
+                RequestEvent event = new RequestEvent(
+                        eventId,
+                        Instant.now().toEpochMilli(),
+                        "tenant_placeholder",
+                        ipAddress,
+                        ipAddress + "_session",
+                        requestDetails,
+                        responseDetails,
+                        mlMetadata
+                );
+
+                kafkaProducer.publishEvent(event);
+
+            } catch (Exception e) {
+                logger.error("Failed to publish fast-path block to Kafka", e);
+            }
+
+            // 5. Drop the connection
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Traffic blocked by SAGE Engine Fast-Path\"}");
