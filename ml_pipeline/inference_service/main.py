@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException, Response
 import joblib
 import os
 import time
-import numpy as np
 import pandas as pd
 from contextlib import asynccontextmanager
 from assembler import FeatureAssembler
@@ -18,6 +17,12 @@ INFERENCE_LATENCY = Histogram('sage_inference_latency_seconds', 'Time spent proc
 MODEL = None
 FEATURE_MAP = None
 assembler = FeatureAssembler(host='localhost', port=6379)
+DEFAULT_FEATURE_MAP = [
+    "SAGE_Session_Depth",
+    "SAGE_Temporal_Variance",
+    "SAGE_Request_Velocity",
+    "SAGE_Behavioral_Diversity",
+]
 
 #Schemas
 class GatewayTelemetry(BaseModel):
@@ -38,15 +43,35 @@ class InferenceResult(BaseModel):
 async def lifespan(app: FastAPI):
     global MODEL, FEATURE_MAP
     base_path = os.path.dirname(__file__)
-    model_path = os.path.join(base_path, "models", "sage_rf_model_v1.joblib")
-    features_path = os.path.join(base_path, "models", "sage_rf_features.joblib")
+    model_dir = os.path.join(base_path, "models")
+    configured_model_path = os.getenv("SAGE_MODEL_PATH")
+    candidate_paths = []
 
-    if os.path.exists(model_path) and os.path.exists(features_path):
+    if configured_model_path:
+        candidate_paths.append(configured_model_path)
+
+    if os.path.isdir(model_dir):
+        candidate_paths.extend(
+            os.path.join(model_dir, filename)
+            for filename in sorted(os.listdir(model_dir))
+            if filename.endswith(".joblib") and "feature" not in filename.lower()
+        )
+
+    model_path = next((path for path in candidate_paths if os.path.exists(path)), None)
+
+    if model_path:
         MODEL = joblib.load(model_path)
-        FEATURE_MAP = joblib.load(features_path)
-        print(f"[+] SAGE Engine ML Service Ready. Tracking features: {FEATURE_MAP}")
+        FEATURE_MAP = DEFAULT_FEATURE_MAP
+        print(f"[+] SAGE Engine ML Service Ready. Model loaded from {model_path}")
+        print(f"[+] SAGE Engine ML Service Feature Order: {FEATURE_MAP}")
     else:
-        print(f"WARNING: Model artifacts not found at {model_path}. Inference will fail.")
+        MODEL = None
+        FEATURE_MAP = None
+        print(
+            "WARNING: No .joblib model artifact found. "
+            "Set SAGE_MODEL_PATH or place a .joblib file in inference_service/models/. "
+            "Inference will return 503 until the model is available."
+        )
     yield
 
 app = FastAPI(lifespan=lifespan, title="SAGE ML Inference")
@@ -136,7 +161,11 @@ async def get_metrics():
 
 @app.get("/health")
 def health_check():
-    return {"status": "operational", "model": "RandomForest_v1"}
+    return {
+        "status": "operational" if MODEL is not None else "degraded",
+        "model_loaded": MODEL is not None,
+        "feature_map": FEATURE_MAP,
+    }
 
 if __name__ == "__main__":
     import uvicorn

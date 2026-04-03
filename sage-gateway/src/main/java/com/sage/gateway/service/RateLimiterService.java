@@ -1,5 +1,6 @@
 package com.sage.gateway.service;
 
+import com.sage.gateway.config.RateLimitProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,59 +19,44 @@ public class RateLimiterService {
 
     private final StringRedisTemplate redisTemplate;
     private final RedisScript<Long> rateLimitScript;
+    private final RateLimitProperties rateLimitProperties;
 
-    // Hardcoded System Limits for SAGE (The Global Tier)
-    private static final int GLOBAL_LIMIT = 100_000;
-    private static final int GLOBAL_BURST = 100_000;
 
-    public RateLimiterService(StringRedisTemplate redisTemplate, RedisScript<Long> rateLimitScript) {
+    public RateLimiterService(StringRedisTemplate redisTemplate, RedisScript<Long> rateLimitScript, RateLimitProperties rateLimitProperties) {
         this.redisTemplate = redisTemplate;
         this.rateLimitScript = rateLimitScript;
+        this.rateLimitProperties = rateLimitProperties;
     }
 
-    /**
-     * Primary decision method.
-     * Returns true if the request is permitted, false if it is blocked.
-     */
-    public boolean isAllowed(String tenantId, String userId) {
-        long now = Instant.now().getEpochSecond(); // Current time in seconds
 
-        // Build the hierarchical Redis key in the format:
-        // sage:ratelimit:{tier}:{id}
-        String globalKey = "sage:ratelimit:global";
-        String tenantKey = "sage:ratelimit:tenant:" + tenantId;
-        String userKey = "sage:ratelimit:user:" + userId;
+    public boolean isAllowed(String ipAddress, String routeId) {
 
-        List<String> keys = Arrays.asList(userKey, tenantKey, globalKey);
+        // Resolve rate limits based on the Route being accessed
+        RateLimitProperties.Policy policy = rateLimitProperties.getRoutes()
+                .getOrDefault(routeId, rateLimitProperties.getDefaultPolicy());
 
-        // Resolve rate limits (simulated configuration lookup).
-        // In production, limits would be fetched from a DB or cache
-        // based on the tenant/user subscription plan.
-        int[] userLimits = getUserLimits(userId);
-        int[] tenantLimits = getTenantLimits(tenantId);
+        // Build a single, highly isolated Redis key
+        // Format: sage:ratelimit:ip:{ip}:route:{route}
+        // Ex : sage:ratelimit:ip:192.168.1.5:route:auth-route
+        String routeKey = "sage:ratelimit:ip:" + ipAddress + ":route:" + routeId;
 
-        // Prepare arguments for the Lua script in the exact ARGV[] order:
-        // userLimit, userBurst, tenantLimit, tenantBurst,
-        // globalLimit, globalBurst, currentTime, requestCost
+        List<String> keys = Collections.singletonList(routeKey);
+
+        long now = Instant.now().getEpochSecond();
         Object[] args = {
-                String.valueOf(userLimits[0]), // ARGV[1]: User Limit
-                String.valueOf(userLimits[1]), // ARGV[2]: User Burst
-                String.valueOf(tenantLimits[0]), // ARGV[3]: Tenant Limit
-                String.valueOf(tenantLimits[1]), // ARGV[4]: Tenant Burst
-                String.valueOf(GLOBAL_LIMIT),    // ARGV[5]: Global Limit
-                String.valueOf(GLOBAL_BURST),    // ARGV[6]: Global Burst
-                String.valueOf(now),             // ARGV[7]: Timestamp
-                "1"                              // ARGV[8]: Cost (1 token)
+                String.valueOf(policy.getReplenishRate()), // ARGV[1]: Route Limit
+                String.valueOf(policy.getBurstCapacity()), // ARGV[2]: Route Burst
+                String.valueOf(now),                       // ARGV[3]: Timestamp
+                "1"                                        // ARGV[4]: Cost (1 token)
         };
 
-        // 4. Execute Script
-        // The .execute call handles the SHA1 hashing and serialization automatically
+        //  Execute Script
         try {
             Long result = redisTemplate.execute(rateLimitScript, keys, args);
             return result != null && result == 1L;
         } catch (Exception e) {
-            // FAIL OPEN STRATEGY: If Redis is down, we log error but ALLOW traffic
-            // so we don't cause a total outage due to a rate-limiter failure.
+            // FAIL OPEN STRATEGY:
+            // If Redis crashes, we let traffic through to the ML pipeline.
             logger.error("Redis Rate Limiter failed: {}", e.getMessage());
             return true;
         }

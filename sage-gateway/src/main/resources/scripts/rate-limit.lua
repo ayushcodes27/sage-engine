@@ -1,62 +1,50 @@
--- KEYS[]: The Redis keys for the 3 tiers
--- KEYS[1]: User Key (e.g., sage:ratelimit:user:123)
--- KEYS[2]: Partner Key (e.g., sage:ratelimit:partner:ABC)
--- KEYS[3]: Global Key (e.g., sage:ratelimit:global)
 
--- ARGV[]: Arguments we pass in from Java
--- ARGV[1]: User Limit (Tokens per second)
--- ARGV[2]: User Burst (Bucket Size)
--- ARGV[3]: Partner Limit
--- ARGV[4]: Partner Burst
--- ARGV[5]: Global Limit
--- ARGV[6]: Global Burst
--- ARGV[7]: Current Timestamp (Epoch seconds)
--- ARGV[8]: Tokens to consume (usually 1)
+-- SAGE Engine: Route-Aware Token Bucket Rate Limiter
 
-local allowed = 1
 
--- Helper function to check a single bucket
-local function check_bucket(key, limit_arg, burst_arg, now_arg, cost_arg)
-    -- 1. EXPLICIT CONVERSION (Fixes the crash)
-    local limit = tonumber(limit_arg)
-    local burst = tonumber(burst_arg)
-    local now = tonumber(now_arg)
-    local cost = tonumber(cost_arg)
+local route_key = KEYS[1]
+local replenish_rate = tonumber(ARGV[1])
+local burst_capacity = tonumber(ARGV[2])
+local now = tonumber(ARGV[3])
+local requested_tokens = tonumber(ARGV[4])
 
-    -- If conversion failed (nil), play it safe and allow (or handle error)
-    if not limit or not burst or not now then return 1 end
-
-    local last_refill = tonumber(redis.call('HGET', key, 'last_refill') or 0)
-    -- If key doesn't exist, we start with full burst
-    local tokens = tonumber(redis.call('HGET', key, 'tokens') or burst)
-
-    -- 2. Calculate Refill
-    if last_refill > 0 then
-        local delta = math.max(0, now - last_refill)
-        local refill = delta * limit
-        tokens = math.min(burst, tokens + refill)
-    end
-
-    -- 3. Check if enough tokens exist
-    if tokens >= cost then
-        tokens = tokens - cost
-        redis.call('HSET', key, 'last_refill', now, 'tokens', tokens)
-        redis.call('EXPIRE', key, 60)
-        return 1
-    else
-        return 0
-    end
+-- Safe TTL Calculation
+local ttl = 60
+if replenish_rate > 0 then
+    local fill_time = math.ceil(burst_capacity / replenish_rate)
+    ttl = math.max(fill_time * 2, 60)
 end
 
--- CHECK ALL 3 TIERS
--- If ANY tier returns 0 (blocked), the whole request is blocked.
-local global_res = check_bucket(KEYS[3], ARGV[5], ARGV[6], ARGV[7], ARGV[8])
-if global_res == 0 then return 0 end
+-- Fetch State
+local bucket = redis.call("HMGET", route_key, "tokens", "last_refill")
+local current_tokens = tonumber(bucket[1])
+local last_refill = tonumber(bucket[2])
 
-local tenant_res = check_bucket(KEYS[2], ARGV[3], ARGV[4], ARGV[7], ARGV[8])
-if tenant_res == 0 then return 0 end
+if current_tokens == nil then
+    current_tokens = burst_capacity
+    last_refill = now
+end
 
-local user_res = check_bucket(KEYS[1], ARGV[1], ARGV[2], ARGV[7], ARGV[8])
-if user_res == 0 then return 0 end
+-- Calculate Token Delta
+local delta_seconds = math.max(0, now - last_refill)
+local tokens_to_add = delta_seconds * replenish_rate
 
-return 1
+current_tokens = math.min(burst_capacity, current_tokens + tokens_to_add)
+
+-- Evaluate Request
+local is_allowed = 0
+if current_tokens >= requested_tokens then
+    current_tokens = current_tokens - requested_tokens
+    is_allowed = 1
+end
+
+-- Always advance the clock if time has passed, ensuring fractional tokens accumulate safely
+if delta_seconds > 0 then
+    last_refill = now
+end
+
+-- Save State
+redis.call("HMSET", route_key, "tokens", current_tokens, "last_refill", last_refill)
+redis.call("EXPIRE", route_key, ttl)
+
+return is_allowed

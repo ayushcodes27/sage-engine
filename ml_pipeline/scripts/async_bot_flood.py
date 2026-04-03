@@ -3,7 +3,7 @@ import aiohttp
 import time
 
 GATEWAY_URL = "http://localhost:8081/api/test-route"
-TOTAL_REQUESTS = 200
+TOTAL_REQUESTS = 20
 
 async def fire_request(session, req_id):
     try:

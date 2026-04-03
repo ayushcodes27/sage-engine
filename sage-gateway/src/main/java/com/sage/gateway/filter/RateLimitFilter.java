@@ -28,22 +28,22 @@ public class RateLimitFilter implements GatewayFilter {
     public Optional<ResponseEntity<String>> filter(HttpServletRequest request, Map<String, String> config) {
         System.out.println("🛑 RATE LIMITER ACTIVATED: Checking tokens for " + request.getRequestURI());
 
-        String tenantId = request.getHeader("X-Tenant-ID");
-        String userId = request.getHeader("X-User-ID");
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            ipAddress = request.getRemoteAddr();
+        }
+        String routeId = config.getOrDefault("routeId", "default-route");
+        // Execute Redis Lua Script
+        boolean isAllowed = rateLimiterService.isAllowed(ipAddress, routeId);
 
-        // The IP Address Fallback
-        if (tenantId == null) tenantId = "default_tenant";
-        if (userId == null) userId = request.getRemoteAddr();
-
-        // Execute Phase 1 Redis Lua Script
-        boolean isAllowed = rateLimiterService.isAllowed(tenantId, userId);
+        System.out.println("RateLimit config = " + config);
+        System.out.println("Resolved routeId = " + routeId);
 
         if (!isAllowed) {
-            // FAIL
+            // Return the 429 response wrapped in an Optional
             return Optional.of(
                     ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                            .header("Retry-After", "1")
-                            .body("{\"error\": \"Rate limit exceeded\"}")
+                            .body("{\"error\": \"Too Many Requests\"}")
             );
         }
 

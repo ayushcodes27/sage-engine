@@ -21,14 +21,14 @@ class RouteResolverTest {
         // Branch A: Static Route -> /api/users
         RouteNode apiNode = new RouteNode("api");
         RouteNode usersNode = new RouteNode("users");
-        usersNode.route = new RouteDefinition("/api/users", "https://backend-static", null);
+        usersNode.route = new RouteDefinition("test-route-id","/api/users", "https://backend-static", null);
         apiNode.exactChildren.put("users", usersNode);
         root.exactChildren.put("api", apiNode);
 
         // Branch B: Dynamic Route -> /api/users/{id}
         RouteNode idNode = new RouteNode("{id}");
         idNode.variableName = "id";
-        idNode.route = new RouteDefinition("/api/users/{id}", "https://backend-dynamic", null);
+        idNode.route = new RouteDefinition("test-route-id","/api/test/{var}", "https://backend-dynamic", null);
         usersNode.variableChild = idNode;
 
         //  Load the test tree into the resolver

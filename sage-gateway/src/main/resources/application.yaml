@@ -39,6 +39,19 @@ spring:
 sage:
   rate-limit:
     enabled: true
+    default-policy:
+      replenish-rate: 100
+      burst-capacity: 200
+    routes:
+      secure-data-route:
+        replenish-rate: 1
+        burst-capacity: 2
+      auth-route:
+        replenish-rate: 2
+        burst-capacity: 5
+      transaction-route:
+        replenish-rate: 10
+        burst-capacity: 20
 
 management:
   endpoints:

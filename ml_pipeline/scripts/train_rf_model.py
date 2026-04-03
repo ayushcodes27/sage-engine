@@ -14,12 +14,12 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(SCRIPT_DIR)
 
 DATA_FILE = os.path.join(BASE_DIR, "data", "sage_training_data.csv")
-MODEL_DIR = os.path.join(BASE_DIR, "inference_service")
+INFERENCE_DIR = os.path.join(BASE_DIR, "inference_service")
+MODEL_DIR = os.path.join(INFERENCE_DIR, "models")
 
-# Notice we rename the output file to random_forest.pkl
-MODEL_FILE = os.path.join(MODEL_DIR, "random_forest_v1.pkl")
-SCALER_FILE = os.path.join(MODEL_DIR, "scaler.pkl")
-REPORT_FILE = os.path.join(MODEL_DIR, "evaluation_report.json")
+MODEL_FILE = os.path.join(MODEL_DIR, "sage_rf_model_v1.joblib")
+FEATURES_FILE = os.path.join(MODEL_DIR, "sage_rf_features.joblib")
+REPORT_FILE = os.path.join(INFERENCE_DIR, "evaluation_report.json")
 
 FEATURES = ['endpoint_diversity', 'temporal_variance', 'session_depth', 'request_velocity']
 
@@ -69,7 +69,15 @@ def train_sage_model():
     # SAVe
     os.makedirs(MODEL_DIR, exist_ok=True)
     joblib.dump(model, MODEL_FILE)
-    joblib.dump(scaler, SCALER_FILE)
+    joblib.dump(
+        [
+            "SAGE_Session_Depth",
+            "SAGE_Temporal_Variance",
+            "SAGE_Request_Velocity",
+            "SAGE_Behavioral_Diversity",
+        ],
+        FEATURES_FILE,
+    )
 
     report_data = {
         "algorithm": "RandomForestClassifier",

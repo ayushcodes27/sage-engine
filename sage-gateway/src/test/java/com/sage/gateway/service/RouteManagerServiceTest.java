@@ -17,7 +17,7 @@ class RouteManagerServiceTest {
         RouteResolver mockResolver = mock(RouteResolver.class);
         RouteManagerService service = new RouteManagerService(mockResolver);
 
-        RouteDefinition newRoute = new RouteDefinition("/fast-track/{id}", "https://httpbin.org", null);
+        RouteDefinition newRoute = new RouteDefinition("test-route-id","/fast-track/{id}", "https://httpbin.org", null);
 
         //  Act: Add the route
         service.addRoute(newRoute);

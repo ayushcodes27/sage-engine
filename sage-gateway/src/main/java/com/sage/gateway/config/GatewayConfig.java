@@ -47,22 +47,27 @@ public class GatewayConfig {
 
         //basic route
         RouteDefinition publicUserRoute = new RouteDefinition(
-                "/api/users/{id}",
+                "public-user-route",
+                "/api/public/{segment}",
                 "https://jsonplaceholder.typicode.com",
                 null // No filters
         );
 
         // secure route
         Map<String, Map<String, String>> secureFilters = Map.of(
-                "RateLimit", Map.of("replenishRate", "1", "burstCapacity", "2")
+                "RateLimit", Map.of(
+                        "routeId", "secure-data-route", // Explicitly inject the route ID here
+                        "replenishRate", "1",           // Optional now, since YAML handles limits,
+                        "burstCapacity", "2"            // but safe to leave if filter still falls back to them
+                )
         );
 
         RouteDefinition secureRoute = new RouteDefinition(
-                "/api/secure/data",
-                "https://httpbin.org/anything",
+                "secure-data-route", // The actual ID
+                "/api/secure/{endpoint}",
+                "http://localhost:8081",
                 secureFilters
         );
-
         // Load them into the registry
         return new RouteRegistry(List.of(publicUserRoute, secureRoute));
     }

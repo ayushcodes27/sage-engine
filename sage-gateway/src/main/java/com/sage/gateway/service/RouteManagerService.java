@@ -3,16 +3,19 @@ package com.sage.gateway.service;
 import com.sage.gateway.routing.RouteDefinition;
 import com.sage.gateway.routing.RouteNode;
 import com.sage.gateway.routing.RouteResolver;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 @Service
 public class RouteManagerService {
     private final RouteResolver routeResolver;
-
+    private static final Logger logger = LoggerFactory.getLogger(RouteManagerService.class);
     private final List<RouteDefinition> activeRoutes = new ArrayList<>();
 
     public RouteManagerService(RouteResolver routeResolver) {
@@ -63,4 +66,6 @@ public class RouteManagerService {
         }
         currentNode.route = route;
     }
+
+
 }
