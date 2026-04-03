@@ -1,6 +1,7 @@
 package com.sage.gateway.service;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,8 @@ import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Enumeration;
+import java.util.Set;
+
 
 @Service
 public class ProxyService {
@@ -28,28 +31,41 @@ public class ProxyService {
      * - Blocks for the downstream response (virtual-thread friendly).
      */
 
+    private static final Set<String> RFC_HOP_BY_HOP = Set.of(
+            "connection", "keep-alive", "proxy-authenticate",
+            "proxy-authorization", "te", "trailers", "transfer-encoding", "upgrade"
+    );
+
     @CircuitBreaker(name = "gatewayService", fallbackMethod = "forwardRequestFallback")
     public ResponseEntity<String> forwardRequest(String targetUrl, HttpMethod method, HttpServletRequest request, String body){
         var requestSpec = webClient.method(method).uri(targetUrl);
 
         Enumeration<String> headerNames = request.getHeaderNames();
-        while(headerNames.hasMoreElements()){
-            String header = headerNames.nextElement();
-
-            // Exclude the 'Host' header since the request is forwarded to a different backend.
-            // Forwarding the original host could cause incorrect routing or host validation issues.
-            if (!header.equalsIgnoreCase("host")) {
-                requestSpec.header(header, request.getHeader(header));
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            if (!RFC_HOP_BY_HOP.contains(name.toLowerCase()) && !name.equalsIgnoreCase("host")) {
+                Enumeration<String> values = request.getHeaders(name);
+                while (values.hasMoreElements()) {
+                    requestSpec.header(name, values.nextElement());
+                }
             }
         }
-
-        if (body != null && !body.isEmpty()) {
-            requestSpec.bodyValue(body);
-        }
         // Sends the request, maps the response to ResponseEntity<String>,
-        // and blocks for completion (safe on virtual threads).
-        return requestSpec.retrieve()
-                .toEntity(String.class)
+        // and blocks for completion.
+        return requestSpec.bodyValue(body != null ? body : "")
+                .exchangeToMono(response -> response.toEntity(String.class))
+                .map(entity -> {
+                    HttpHeaders cleanHeaders = new HttpHeaders();
+                    entity.getHeaders().forEach((name, values) -> {
+                        // FIX 1: Pragmatic stripping of encoding/length because body is now decoded
+                        if (!RFC_HOP_BY_HOP.contains(name.toLowerCase()) &&
+                                !name.equalsIgnoreCase("content-encoding") &&
+                                !name.equalsIgnoreCase("content-length")) {
+                            cleanHeaders.addAll(name, values);
+                        }
+                    });
+                    return new ResponseEntity<>(entity.getBody(), cleanHeaders, entity.getStatusCode());
+                })
                 .block();
     }
     public ResponseEntity<String> forwardRequestFallback(String targetUrl, HttpMethod method, HttpServletRequest request, String body, Throwable throwable) {
@@ -65,4 +81,5 @@ public class ProxyService {
                 .header("Content-Type", "application/json")
                 .body(fallbackJson);
     }
+
 }

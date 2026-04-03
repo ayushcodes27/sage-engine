@@ -64,8 +64,8 @@ public class GatewayConfig {
 
         RouteDefinition secureRoute = new RouteDefinition(
                 "secure-data-route", // The actual ID
-                "/api/secure/{endpoint}",
-                "http://localhost:8081",
+                "/api/get",
+                "https://postman-echo.com",
                 secureFilters
         );
         // Load them into the registry
