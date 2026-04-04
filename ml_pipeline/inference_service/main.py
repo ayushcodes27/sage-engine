@@ -2,29 +2,30 @@ from fastapi import FastAPI, HTTPException, Response
 import joblib
 import os
 import time
+import numpy as np
 import pandas as pd
 from contextlib import asynccontextmanager
 from assembler import FeatureAssembler
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from pydantic import BaseModel, Field
 
-#Observability: Prometheus Metrics
+# Observability: Prometheus Metrics
 REQUESTS_TOTAL = Counter('sage_inference_requests_total', 'Total prediction requests received')
-BOTS_DETECTED_TOTAL = Counter('sage_inference_bots_detected_total', 'Total requests classified as bots')
+THREATS_DETECTED_TOTAL = Counter('sage_inference_threats_detected_total', 'Total requests classified as malicious')
 INFERENCE_LATENCY = Histogram('sage_inference_latency_seconds', 'Time spent processing the ML prediction')
 
 # Global State
 MODEL = None
-FEATURE_MAP = None
-assembler = FeatureAssembler(host='localhost', port=6379)
-DEFAULT_FEATURE_MAP = [
+LABEL_ENCODER = None
+FEATURE_MAP = [
     "SAGE_Session_Depth",
     "SAGE_Temporal_Variance",
     "SAGE_Request_Velocity",
     "SAGE_Behavioral_Diversity",
 ]
+assembler = FeatureAssembler(host='localhost', port=6379)
 
-#Schemas
+# Schemas
 class GatewayTelemetry(BaseModel):
     session_id: str
     SAGE_Session_Depth: float = Field(..., description="Total Fwd + Bwd Packets")
@@ -36,55 +37,44 @@ class InferenceResult(BaseModel):
     session_id: str
     is_bot: bool
     bot_probability: float
+    threat_class: str       #  "Benign", "Bot", "Flood", or "Infiltration"
+    confidence: float       # Confidence score of the specific threat class
     processing_time_ms: float
 
-#Lifespan & Initialization
+# Lifespan & Initialization
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global MODEL, FEATURE_MAP
+    global MODEL, LABEL_ENCODER
     base_path = os.path.dirname(__file__)
     model_dir = os.path.join(base_path, "models")
-    configured_model_path = os.getenv("SAGE_MODEL_PATH")
-    candidate_paths = []
 
-    if configured_model_path:
-        candidate_paths.append(configured_model_path)
+    # We now look specifically for the Master artifacts
+    model_path = os.path.join(model_dir, "sage_master_rf.pkl")
+    encoder_path = os.path.join(model_dir, "sage_label_encoder.pkl")
 
-    if os.path.isdir(model_dir):
-        candidate_paths.extend(
-            os.path.join(model_dir, filename)
-            for filename in sorted(os.listdir(model_dir))
-            if filename.endswith(".joblib") and "feature" not in filename.lower()
-        )
-
-    model_path = next((path for path in candidate_paths if os.path.exists(path)), None)
-
-    if model_path:
+    if os.path.exists(model_path) and os.path.exists(encoder_path):
         MODEL = joblib.load(model_path)
-        FEATURE_MAP = DEFAULT_FEATURE_MAP
-        print(f"[+] SAGE Engine ML Service Ready. Model loaded from {model_path}")
-        print(f"[+] SAGE Engine ML Service Feature Order: {FEATURE_MAP}")
+        LABEL_ENCODER = joblib.load(encoder_path)
+        print(f"[+] SAGE Engine ML Service Ready.")
+        print(f"[+] Master Brain Loaded: {model_path}")
+        print(f"[+] Classes Detected: {LABEL_ENCODER.classes_}")
     else:
-        MODEL = None
-        FEATURE_MAP = None
         print(
-            "WARNING: No .joblib model artifact found. "
-            "Set SAGE_MODEL_PATH or place a .joblib file in inference_service/models/. "
-            "Inference will return 503 until the model is available."
+            "WARNING: Missing sage_master_rf.pkl or sage_label_encoder.pkl in models/ directory. "
+            "Inference will return 503 until models are available."
         )
     yield
 
-app = FastAPI(lifespan=lifespan, title="SAGE ML Inference")
+app = FastAPI(lifespan=lifespan, title="SAGE ML Inference (Multiclass)")
 
-#Endpoints--
-
+# Endpoints
 @app.post("/predict", response_model=InferenceResult)
 def predict_anomaly(data: GatewayTelemetry):
     """
     Receives real-time telemetry from the Java Gateway.
     """
-    if MODEL is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
+    if MODEL is None or LABEL_ENCODER is None:
+        raise HTTPException(status_code=503, detail="Model or Encoder not loaded")
 
     start_time = time.perf_counter()
     REQUESTS_TOTAL.inc()
@@ -94,13 +84,19 @@ def predict_anomaly(data: GatewayTelemetry):
         input_vector = [getattr(data, feature_name) for feature_name in FEATURE_MAP]
         X_input = pd.DataFrame([input_vector], columns=FEATURE_MAP)
 
-        # Inference
+        # Multiclass Inference
         probabilities = MODEL.predict_proba(X_input)[0]
-        bot_probability = float(probabilities[1])
-        is_bot = bool(bot_probability > 0.5)
+        predicted_idx = int(np.argmax(probabilities))
+        confidence = float(probabilities[predicted_idx])
 
-        if is_bot:
-            BOTS_DETECTED_TOTAL.inc()
+        # Decode the integer prediction back to a string ("Benign", "Bot", etc.)
+        threat_class = str(LABEL_ENCODER.inverse_transform([predicted_idx])[0])
+
+        # SAGE Enforcement Logic: Anything not 'Benign' triggers the Java Ban
+        is_malicious = threat_class != "Benign"
+
+        if is_malicious:
+            THREATS_DETECTED_TOTAL.inc()
 
         # Latency Tracking
         processing_time_sec = time.perf_counter() - start_time
@@ -108,52 +104,53 @@ def predict_anomaly(data: GatewayTelemetry):
 
         return InferenceResult(
             session_id=data.session_id,
-            is_bot=is_bot,
-            bot_probability=round(bot_probability, 4),
+            is_bot=is_malicious,
+            bot_probability=confidence,
+            threat_class=threat_class,
+            confidence=round(confidence, 4),
             processing_time_ms=round(processing_time_sec * 1000, 3)
         )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/predict/{user_id}")
 async def predict_bot(user_id: str):
     """
     Pulls historical state from Redis via FeatureAssembler to make a prediction.
     """
-    if MODEL is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
+    if MODEL is None or LABEL_ENCODER is None:
+        raise HTTPException(status_code=503, detail="Model or Encoder not loaded")
 
     start_time = time.perf_counter()
     REQUESTS_TOTAL.inc()
 
     try:
-        # Fetch the pre-assembled vector from Redis
-        # NOTE: Ensure assembler.assemble() returns a 2D numpy array shaped (1, 4)
-        # that matches the [Depth, Variance, Velocity, Diversity] order!
         vector = assembler.assemble(user_id)
 
-        # Inference using Random Forest logic
         probabilities = MODEL.predict_proba(vector)[0]
-        bot_probability = float(probabilities[1])
-        is_bot = bool(bot_probability > 0.5)
+        predicted_idx = int(np.argmax(probabilities))
+        confidence = float(probabilities[predicted_idx])
 
-        if is_bot:
-            BOTS_DETECTED_TOTAL.inc()
+        threat_class = str(LABEL_ENCODER.inverse_transform([predicted_idx])[0])
+        is_malicious = threat_class != "Benign"
+
+        if is_malicious:
+            THREATS_DETECTED_TOTAL.inc()
 
         process_time_sec = time.perf_counter() - start_time
         INFERENCE_LATENCY.observe(process_time_sec)
 
         return {
             "user_id": user_id,
-            "is_bot": is_bot,
-            "bot_probability": round(bot_probability, 4),
+            "is_bot": is_malicious,
+            "bot_probability": confidence,
+            "threat_class": threat_class,
+            "confidence": round(confidence, 4),
             "processing_time_ms": round(process_time_sec * 1000, 3)
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.get("/metrics")
 async def get_metrics():
@@ -164,6 +161,7 @@ def health_check():
     return {
         "status": "operational" if MODEL is not None else "degraded",
         "model_loaded": MODEL is not None,
+        "classes": LABEL_ENCODER.classes_.tolist() if LABEL_ENCODER else [],
         "feature_map": FEATURE_MAP,
     }
 
