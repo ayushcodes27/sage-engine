@@ -1,27 +1,23 @@
 {
   "name": "sage-dashboard",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Kafka-to-WebSocket bridge for the SAGE dashboard UI",
+  "main": "bridge.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bridge.js",
+    "dev": "node bridge.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "kafka",
+    "socket.io",
+    "telemetry"
+  ],
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "kafkajs": "^2.2.4",
     "kafkajs-snappy": "^1.1.0",
-    "lucide-react": "^1.7.0",
-    "recharts": "^3.8.1",
-    "socket.io": "^4.8.3",
-    "socket.io-client": "^4.8.3"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.2"
+    "socket.io": "^4.8.3"
   }
 }

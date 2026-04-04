@@ -1,17 +1,22 @@
-# ml_pipeline/scripts/train_rf_model.py
 import pandas as pd
 import joblib
 import json
 import os
+from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, roc_auc_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 
-# Configuration
+def resolve_base_dir():
+    current = Path(__file__).resolve().parent
+    for candidate in [current, *current.parents]:
+        if candidate.name == "ml_pipeline" and (candidate / "requirements.txt").exists():
+            return str(candidate)
+    raise RuntimeError("Could not resolve ml_pipeline base directory.")
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.dirname(SCRIPT_DIR)
+
+BASE_DIR = resolve_base_dir()
 
 DATA_FILE = os.path.join(BASE_DIR, "data", "sage_training_data.csv")
 INFERENCE_DIR = os.path.join(BASE_DIR, "inference_service")

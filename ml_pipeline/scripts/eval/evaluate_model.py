@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,8 +14,15 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.dirname(SCRIPT_DIR)
+def resolve_base_dir():
+    current = Path(__file__).resolve().parent
+    for candidate in [current, *current.parents]:
+        if candidate.name == "ml_pipeline" and (candidate / "requirements.txt").exists():
+            return str(candidate)
+    raise RuntimeError("Could not resolve ml_pipeline base directory.")
+
+
+BASE_DIR = resolve_base_dir()
 DEFAULT_DATASET = os.path.join(BASE_DIR, "data", "Bot.csv")
 DEFAULT_OUTPUT_DIR = os.path.join(BASE_DIR, "evaluation")
 

@@ -3,16 +3,19 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import os
+from pathlib import Path
 
 
-# Configuration & Regex
+def resolve_base_dir():
+    current = Path(__file__).resolve().parent
+    for candidate in [current, *current.parents]:
+        if candidate.name == "ml_pipeline" and (candidate / "requirements.txt").exists():
+            return str(candidate)
+    raise RuntimeError("Could not resolve ml_pipeline base directory.")
 
-# Get the directory where this script lives (scripts/)
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-# Go up one level to ml_pipeline/
-BASE_DIR = os.path.dirname(SCRIPT_DIR)
 
-# Force the script to look inside ml_pipeline/data/
+BASE_DIR = resolve_base_dir()
+
 LOG_FILES = [
     {"path": os.path.join(BASE_DIR, "data", "human_logs.txt"), "label": 0},
     {"path": os.path.join(BASE_DIR, "data", "bot_logs.txt"), "label": 1}

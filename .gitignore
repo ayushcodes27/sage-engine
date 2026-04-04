@@ -1,31 +1,33 @@
-# --- Java (Gateway) ---
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+*.log
+logs/
+
+# Node dependencies and build output
+node_modules/
+dist/
+build/
+
+# Java build output
 **/target/
 **/*.class
-**/.mvn/wrapper/maven-wrapper.properties
-**/mvnw
-**/mvnw.cmd
 
-# --- Python (ML Engine - Future) ---
+# Python virtual environments and caches
+**/.venv/
+**/venv/
 **/__pycache__/
 **/*.py[cod]
 *$py.class
-**/venv/
-**/.venv/
-**/.env
 **/.pytest_cache/
+.env
 
-# --- ML Models & Large Data (CRITICAL) ---
-**/*.pkl
-**/*.joblib
-**/*.csv
-**/*.h5
+# Local datasets and model artifacts
+/data/
+/ml_pipeline/data/
+/ml_pipeline/inference_service/models/
 
-# --- IDEs & OS ---
-**/.idea/
-**/.vscode/
-**/.DS_Store
-**/*.log
-**/logs/
-
-
-node_modules/
+# Generated evaluation artifacts
+/ml_pipeline/evaluation/
+/ml_pipeline/inference_service/evaluation_report.json
