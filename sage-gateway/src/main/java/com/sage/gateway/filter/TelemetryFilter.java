@@ -58,7 +58,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
         long startTime = System.currentTimeMillis();
         String eventId = UUID.randomUUID().toString();
-        String ipAddress = request.getRemoteAddr() != null ? request.getRemoteAddr() : "anonymous";
+        String ipAddress = resolveClientIp(request);
 
         // 1. FAST-PATH BLOCK
         if (redisTelemetryService.isIpBanned(ipAddress)) {
@@ -96,6 +96,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
         double payloadSize = request.getContentLength() > 0 ? request.getContentLength() : 0.0;
         boolean isBot = false;
         double botProbability = 0.0;
+        String threatClass = "Benign";
 
         try {
             Map<String, Double> features = redisTelemetryService.processAndGetTelemetry(ipAddress, payloadSize);
@@ -119,8 +120,12 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
                 if (mlResponse.statusCode() == 200) {
                     JsonNode responseNode = objectMapper.readTree(mlResponse.body());
-                    isBot = responseNode.get("is_bot").asBoolean();
-                    botProbability = responseNode.get("bot_probability").asDouble();
+                    boolean predictedMalicious = responseNode.path("is_bot").asBoolean(false);
+                    botProbability = responseNode.path("bot_probability").asDouble(0.0);
+                    threatClass = responseNode.path("threat_class").asText("Benign");
+
+                    // Keep blocking strict to reduce false positives during mixed simulations.
+                    isBot = predictedMalicious && botProbability >= 0.85;
                 } else {
                     logger.warn("ML Service returned non-200 status. Failing open.");
                 }
@@ -134,7 +139,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
         // 3. ENFORCE DECISION
         if (isBot) {
-            logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Prob: " + botProbability);
+            logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Class: " + threatClass + " | Prob: " + botProbability);
             redisTelemetryService.banIp(ipAddress);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
@@ -168,5 +173,22 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
             kafkaProducer.publishEvent(event);
         }
+    }
+
+    private String resolveClientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            String firstHop = forwarded.split(",")[0].trim();
+            if (!firstHop.isEmpty()) {
+                return firstHop;
+            }
+        }
+
+        String realIp = request.getHeader("X-Real-IP");
+        if (realIp != null && !realIp.isBlank()) {
+            return realIp.trim();
+        }
+
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "anonymous";
     }
 }
