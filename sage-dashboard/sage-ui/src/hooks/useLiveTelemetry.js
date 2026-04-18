@@ -14,7 +14,15 @@ function getActionFromStatus(statusCode) {
 function mapThreatType(event) {
   const status = event?.response?.status;
   const probability = Number(event?.mlMetadata?.botProbability || 0);
+  const mlThreatClass = event?.mlMetadata?.threatClass;
   const path = event?.request?.path || "";
+
+  if (mlThreatClass && mlThreatClass !== "Benign") {
+    if (mlThreatClass === "Flood") return "Flood Detection";
+    if (mlThreatClass === "Infiltration") return "Infiltration Detection";
+    if (mlThreatClass === "Bot") return "Bot Detection";
+    return `${mlThreatClass} Detection`;
+  }
 
   if (status === 429) return "Rate Limit Triggered";
   if (status === 403 && path.includes("prometheus")) return "Probe Blocking";

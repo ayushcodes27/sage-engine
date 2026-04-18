@@ -41,6 +41,9 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
     private static final String PYTHON_ML_URL = "http://localhost:8000/predict";
     private static final Logger logger = LoggerFactory.getLogger(TelemetryFilter.class);
+    private static final double SESSION_DEPTH_THRESHOLD = 6.0;
+    private static final double BLOCK_PROBABILITY_THRESHOLD = 0.85;
+    private static final long ECHO_FLOOD_RPS_THRESHOLD = 30;
 
     public TelemetryFilter(RedisTelemetryService redisTelemetryService, KafkaProducerService kafkaProducer, ObjectMapper objectMapper) {
         this.redisTelemetryService = redisTelemetryService;
@@ -67,7 +70,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
             try {
                 RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), request.getRequestURI(), "api", ipAddress);
                 RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(HttpServletResponse.SC_FORBIDDEN, System.currentTimeMillis() - startTime);
-                RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1);
+                RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "FastPathBlock");
 
                 RequestEvent event = new RequestEvent(
                         eventId,
@@ -94,6 +97,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
         // 2. FEATURE EXTRACTION & ML INFERENCE
         double payloadSize = request.getContentLength() > 0 ? request.getContentLength() : 0.0;
+        String path = request.getRequestURI();
         boolean isBot = false;
         double botProbability = 0.0;
         String threatClass = "Benign";
@@ -102,8 +106,19 @@ public class TelemetryFilter extends OncePerRequestFilter {
             Map<String, Double> features = redisTelemetryService.processAndGetTelemetry(ipAddress, payloadSize);
             double sessionDepth = features.getOrDefault("SAGE_Session_Depth", 0.0);
 
+            // Global echo flood signal catches distributed spray patterns that evade per-IP depth growth.
+            boolean globalEchoFlood = "/echo".equals(path)
+                    && redisTelemetryService.isGlobalPathFlooding(path, ECHO_FLOOD_RPS_THRESHOLD)
+                    && isSuspiciousFloodAgent(request);
+
+            if (globalEchoFlood) {
+                threatClass = "Flood";
+                botProbability = 0.98;
+                isBot = true;
+            }
+
             // GRACE PERIOD
-            if (sessionDepth > 5) {
+            if (!isBot && sessionDepth > SESSION_DEPTH_THRESHOLD) {
                 Map<String, Object> mlPayload = new HashMap<>(features);
                 mlPayload.put("session_id", eventId);
 
@@ -124,13 +139,17 @@ public class TelemetryFilter extends OncePerRequestFilter {
                     botProbability = responseNode.path("bot_probability").asDouble(0.0);
                     threatClass = responseNode.path("threat_class").asText("Benign");
 
-                    // Keep blocking strict to reduce false positives during mixed simulations.
-                    isBot = predictedMalicious && botProbability >= 0.85;
+                        isBot = predictedMalicious
+                            && !"Benign".equalsIgnoreCase(threatClass)
+                            && botProbability >= BLOCK_PROBABILITY_THRESHOLD;
                 } else {
                     logger.warn("ML Service returned non-200 status. Failing open.");
                 }
             } else {
-                logger.debug("Skipping ML inference for IP {} until session depth exceeds threshold. Current depth: {}", ipAddress, sessionDepth);
+                logger.debug("Skipping ML inference for IP {} until session depth exceeds threshold {}. Current depth: {}",
+                        ipAddress,
+                        SESSION_DEPTH_THRESHOLD,
+                        sessionDepth);
             }
 
         } catch (Exception e) {
@@ -153,12 +172,11 @@ public class TelemetryFilter extends OncePerRequestFilter {
         } finally {
             long latencyMs = System.currentTimeMillis() - startTime;
             int statusCode = response.getStatus();
-            String path = request.getRequestURI();
             String method = request.getMethod();
 
             RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(method, path, "api", ipAddress);
             RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(statusCode, latencyMs);
-            RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, isBot ? 1 : 0);
+            RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, isBot ? 1 : 0, threatClass);
 
             RequestEvent event = new RequestEvent(
                     eventId,
@@ -190,5 +208,17 @@ public class TelemetryFilter extends OncePerRequestFilter {
         }
 
         return request.getRemoteAddr() != null ? request.getRemoteAddr() : "anonymous";
+    }
+
+    private boolean isSuspiciousFloodAgent(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        if (userAgent == null) {
+            return false;
+        }
+
+        String lowerUserAgent = userAgent.toLowerCase();
+        return lowerUserAgent.contains("curl")
+                || lowerUserAgent.contains("scraperbot")
+                || lowerUserAgent.contains("locust");
     }
 }

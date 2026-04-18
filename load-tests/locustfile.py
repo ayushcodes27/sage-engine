@@ -69,8 +69,10 @@ class CloudflareVolumetricFlood(HttpUser):
         }
 
         with self.client.get("/echo?q=flood", headers=headers, name="Cloudflare Flood - DDoS", catch_response=True) as response:
-            if response.status_code in (200, 429, 403):
+            if response.status_code in (403, 429):
                 response.success()
+            else:
+                response.failure(f"Flood bypassed defense with status {response.status_code}")
 
 @tag('recon')
 class InfiltrationReconBot(HttpUser):

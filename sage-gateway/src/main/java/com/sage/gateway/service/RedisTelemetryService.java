@@ -117,4 +117,33 @@ public class RedisTelemetryService {
         // Bans the IP for 5 minutes (300 seconds)
         redisTemplate.opsForValue().set("sage:ban:" + ip, "true", java.time.Duration.ofMinutes(5));
     }
+
+    public boolean isGlobalPathFlooding(String path, long thresholdPerSecond) {
+        if (path == null || path.isBlank()) {
+            return false;
+        }
+
+        long currentSecond = Instant.now().getEpochSecond();
+        String safePath = path.replaceAll("[^a-zA-Z0-9_:/.-]", "_");
+        String key = "sage:global:path:" + safePath + ":" + currentSecond;
+        String blockKey = "sage:global:block:" + safePath;
+
+        // If a short endpoint cooldown is active, keep blocking immediately.
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(blockKey))) {
+            return true;
+        }
+
+        Long currentCount = redisTemplate.opsForValue().increment(key);
+        if (currentCount != null && currentCount == 1L) {
+            redisTemplate.expire(key, java.time.Duration.ofSeconds(2));
+        }
+
+        if (currentCount != null && currentCount > thresholdPerSecond) {
+            // Create a short-lived global endpoint block to prevent per-second burst escapes.
+            redisTemplate.opsForValue().set(blockKey, "1", java.time.Duration.ofSeconds(2));
+            return true;
+        }
+
+        return false;
+    }
 }
