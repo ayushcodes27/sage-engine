@@ -22,6 +22,7 @@ const io = new Server(server, {
 const BRIDGE_PORT = Number(process.env.BRIDGE_PORT || 6006);
 const KAFKA_BROKER = process.env.KAFKA_BROKER || 'localhost:9092';
 const KAFKA_TOPIC = process.env.KAFKA_TOPIC || 'gateway-telemetry';
+const KAFKA_GROUP_ID = process.env.KAFKA_GROUP_ID || `sage-dashboard-live-${process.pid}`;
 const GATEWAY_HEALTH_URL = process.env.GATEWAY_HEALTH_URL || 'http://localhost:8081/echo';
 const ML_HEALTH_URL = process.env.ML_HEALTH_URL || 'http://localhost:8000/docs';
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
@@ -32,8 +33,11 @@ const kafka = new Kafka({
   brokers: [KAFKA_BROKER],
 });
 
-const consumer = kafka.consumer({ groupId: 'sage-dashboard-live-v1' });
+let consumer;
 let kafkaConnected = false;
+let reconnectDelayMs = 1000;
+let reconnectTimer = null;
+let isStartingConsumer = false;
 
 function checkPort(host, port, timeoutMs = 900) {
   return new Promise((resolve) => {
@@ -96,36 +100,78 @@ async function collectServiceStatus() {
   return payload;
 }
 
-async function runKafkaConsumer() {
-  await consumer.connect();
-  kafkaConnected = true;
-  console.log('[+] Connected to Kafka Broker');
+function createConsumer() {
+  return kafka.consumer({ groupId: KAFKA_GROUP_ID });
+}
 
-  await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: false });
+function scheduleReconnect(reason) {
+  if (reconnectTimer) {
+    return;
+  }
 
-  consumer.on(consumer.events.CRASH, (e) => {
-    kafkaConnected = false;
-    console.error('[Bridge] Kafka consumer crashed:', e.payload.error);
-  });
+  kafkaConnected = false;
+  console.error(`[Bridge] Kafka unavailable (${reason}). Retrying in ${reconnectDelayMs}ms`);
 
-  await consumer.run({
-    eachMessage: async ({ message }) => {
+  reconnectTimer = setTimeout(async () => {
+    reconnectTimer = null;
+    reconnectDelayMs = Math.min(reconnectDelayMs * 2, 30000);
+    await startKafkaConsumer();
+  }, reconnectDelayMs);
+}
+
+async function startKafkaConsumer() {
+  if (isStartingConsumer) {
+    return;
+  }
+
+  isStartingConsumer = true;
+
+  try {
+    if (consumer) {
       try {
-        if (!message || !message.value) return;
-
-        const telemetryEvent = JSON.parse(message.value.toString());
-        console.log('[Kafka->Socket] Forwarding event:', {
-          eventId: telemetryEvent.eventId,
-          status: telemetryEvent.response?.status,
-          path: telemetryEvent.request?.path,
-        });
-
-        io.emit('telemetry_update', telemetryEvent);
-      } catch (error) {
-        console.error('[Bridge] Failed to process Kafka message:', error);
+        await consumer.disconnect();
+      } catch {
+        // Ignore disconnect errors while replacing a stale consumer.
       }
-    },
-  });
+    }
+
+    consumer = createConsumer();
+
+    consumer.on(consumer.events.CRASH, (e) => {
+      const reason = e?.payload?.error?.message || 'consumer crash event';
+      scheduleReconnect(reason);
+    });
+
+    await consumer.connect();
+    await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: false });
+    await consumer.run({
+      eachMessage: async ({ message }) => {
+        try {
+          if (!message || !message.value) return;
+
+          const telemetryEvent = JSON.parse(message.value.toString());
+          console.log('[Kafka->Socket] Forwarding event:', {
+            eventId: telemetryEvent.eventId,
+            status: telemetryEvent.response?.status,
+            path: telemetryEvent.request?.path,
+          });
+
+          io.emit('telemetry_update', telemetryEvent);
+        } catch (error) {
+          console.error('[Bridge] Failed to process Kafka message:', error);
+        }
+      },
+    });
+
+    kafkaConnected = true;
+    reconnectDelayMs = 1000;
+    console.log(`[+] Connected to Kafka Broker (${KAFKA_BROKER}) with group ${KAFKA_GROUP_ID}`);
+  } catch (error) {
+    const reason = error?.message || 'unknown Kafka error';
+    scheduleReconnect(reason);
+  } finally {
+    isStartingConsumer = false;
+  }
 }
 
 io.on('connection', (socket) => {
@@ -152,5 +198,19 @@ setInterval(() => {
 
 server.listen(BRIDGE_PORT, async () => {
   console.log(`[SAGE Bridge] WebSocket Server running on port ${BRIDGE_PORT}`);
-  await runKafkaConsumer().catch(console.error);
+  await startKafkaConsumer();
 });
+
+async function shutdown() {
+  try {
+    if (consumer) {
+      await consumer.disconnect();
+    }
+  } catch {
+    // Ignore disconnect errors during shutdown.
+  }
+  process.exit(0);
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
