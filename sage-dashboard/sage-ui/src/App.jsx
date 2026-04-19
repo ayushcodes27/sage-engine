@@ -4,7 +4,9 @@ import ControlPanel from "./components/ControlPanel";
 import TrafficVelocityChart from "./components/charts/TrafficVelocityChart";
 import ActionDistributionChart from "./components/charts/ActionDistributionChart";
 import MLConfidenceChart from "./components/charts/MLConfidenceChart";
+import ThreatClassBreakdownChart from "./components/charts/ThreatClassBreakdownChart";
 import FeatureMonitor from "./components/FeatureMonitor";
+import EndpointHeatmap from "./components/EndpointHeatmap";
 import ThreatLogTable from "./components/ThreatLogTable";
 import { useLiveTelemetry } from "./hooks/useLiveTelemetry";
 
@@ -14,6 +16,8 @@ export default function App() {
     actionTotals,
     velocitySeries,
     features,
+    threatClassTotals,
+    endpointHotspots,
     mlConfidence,
     logs,
     services,
@@ -35,6 +39,11 @@ export default function App() {
             <TrafficVelocityChart data={velocitySeries} />
             <ActionDistributionChart totals={actionTotals} />
             <MLConfidenceChart score={mlConfidence} />
+          </section>
+
+          <section className="insight-grid">
+            <ThreatClassBreakdownChart totals={threatClassTotals} />
+            <EndpointHeatmap hotspots={endpointHotspots} />
           </section>
 
           <section className="lower-grid">

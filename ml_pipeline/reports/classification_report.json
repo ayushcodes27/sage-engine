@@ -1,0 +1,80 @@
+{
+  "input": "C:\\Users\\deore\\Desktop\\Major-Project\\sage-engine\\training_data.csv",
+  "model": "C:\\Users\\deore\\Desktop\\Major-Project\\sage-engine\\sage_model.pkl",
+  "rows_total": 101639,
+  "class_counts": {
+    "flood": 69502,
+    "scraper": 26680,
+    "human": 2952,
+    "recon": 2505
+  },
+  "classification_report": {
+    "flood": {
+      "precision": 0.7961783439490446,
+      "recall": 0.7193727069994964,
+      "f1-score": 0.7558293337364423,
+      "support": 13901.0
+    },
+    "human": {
+      "precision": 0.2897350993377483,
+      "recall": 0.2966101694915254,
+      "f1-score": 0.2931323283082077,
+      "support": 590.0
+    },
+    "recon": {
+      "precision": 0.08119853613906679,
+      "recall": 0.7085828343313373,
+      "f1-score": 0.14570080032833982,
+      "support": 501.0
+    },
+    "scraper": {
+      "precision": 0.958810888252149,
+      "recall": 0.5016866566716641,
+      "f1-score": 0.6587106299212598,
+      "support": 5336.0
+    },
+    "accuracy": 0.6496950019677292,
+    "macro avg": {
+      "precision": 0.5314807169195022,
+      "recall": 0.5565630918735057,
+      "f1-score": 0.4633432730735624,
+      "support": 20328.0
+    },
+    "weighted avg": {
+      "precision": 0.8065483192721408,
+      "recall": 0.6496950019677292,
+      "f1-score": 0.701869719805021,
+      "support": 20328.0
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "SAGE_Endpoint_Concentration",
+      "importance": 0.303596627672675
+    },
+    {
+      "feature": "SAGE_Request_Velocity",
+      "importance": 0.1909380304720254
+    },
+    {
+      "feature": "SAGE_Cart_Ratio",
+      "importance": 0.1736967107092398
+    },
+    {
+      "feature": "SAGE_Session_Depth",
+      "importance": 0.13507948605670544
+    },
+    {
+      "feature": "SAGE_Behavioral_Diversity",
+      "importance": 0.11142759036710871
+    },
+    {
+      "feature": "SAGE_Temporal_Variance",
+      "importance": 0.05309785031914342
+    },
+    {
+      "feature": "SAGE_Asset_Skip_Ratio",
+      "importance": 0.032163704403102296
+    }
+  ]
+}

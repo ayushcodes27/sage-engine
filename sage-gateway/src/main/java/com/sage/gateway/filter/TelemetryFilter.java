@@ -62,6 +62,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
         long startTime = System.currentTimeMillis();
         String eventId = UUID.randomUUID().toString();
         String ipAddress = resolveClientIp(request);
+        String label = classifyByIP(ipAddress);
 
         // 1. FAST-PATH BLOCK
         if (redisTelemetryService.isIpBanned(ipAddress)) {
@@ -70,6 +71,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
             try {
                 RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), request.getRequestURI(), "api", ipAddress);
                 RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(HttpServletResponse.SC_FORBIDDEN, System.currentTimeMillis() - startTime);
+                RequestEvent.FeatureVector featureVector = new RequestEvent.FeatureVector(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
                 RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "FastPathBlock");
 
                 RequestEvent event = new RequestEvent(
@@ -78,8 +80,10 @@ public class TelemetryFilter extends OncePerRequestFilter {
                         "tenant_placeholder",
                         ipAddress,
                         ipAddress + "_session",
+                    label,
                         requestDetails,
                         responseDetails,
+                    featureVector,
                         mlMetadata
                 );
 
@@ -101,10 +105,54 @@ public class TelemetryFilter extends OncePerRequestFilter {
         boolean isBot = false;
         double botProbability = 0.0;
         String threatClass = "Benign";
+        Map<String, Double> features = Map.of(
+                "SAGE_Session_Depth", 0.0,
+                "SAGE_Temporal_Variance", 0.0,
+                "SAGE_Request_Velocity", 0.0,
+                "SAGE_Behavioral_Diversity", 0.0,
+                "SAGE_Endpoint_Concentration", 0.0,
+                "SAGE_Cart_Ratio", 0.0,
+                "SAGE_Asset_Skip_Ratio", 1.0
+        );
 
         try {
-            Map<String, Double> features = redisTelemetryService.processAndGetTelemetry(ipAddress, payloadSize);
+            features = redisTelemetryService.processAndGetTelemetry(ipAddress, payloadSize, path);
             double sessionDepth = features.getOrDefault("SAGE_Session_Depth", 0.0);
+            double endpointConcentration = features.getOrDefault("SAGE_Endpoint_Concentration", 0.0);
+            double cartRatio = features.getOrDefault("SAGE_Cart_Ratio", 0.0);
+            double assetSkipRatio = features.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0);
+
+            logger.info("SAGE feature vector ip={} values={}", ipAddress, features);
+
+            // Fast-path scraper detection (rule-based): throttle without ML round-trip.
+            if (endpointConcentration > 0.85 && cartRatio == 0.0 && assetSkipRatio > 0.95) {
+                logger.warn("🚨 SCRAPER FAST-PATH THROTTLE: ip={} endpointConcentration={} cartRatio={} assetSkipRatio={}",
+                        ipAddress,
+                        endpointConcentration,
+                        cartRatio,
+                        assetSkipRatio);
+                RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), path, "api", ipAddress);
+                RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(429, System.currentTimeMillis() - startTime);
+                RequestEvent.FeatureVector featureVector = toFeatureVector(features);
+                RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "ScraperFastPath");
+                RequestEvent event = new RequestEvent(
+                    eventId,
+                    Instant.now().toEpochMilli(),
+                    "tenant_placeholder",
+                    ipAddress,
+                    ipAddress + "_session",
+                    label,
+                    requestDetails,
+                    responseDetails,
+                    featureVector,
+                    mlMetadata
+                );
+                kafkaProducer.publishEvent(event);
+                response.setStatus(429);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Too Many Requests\", \"message\": \"Traffic throttled by SAGE scraper fast-path\"}");
+                return;
+            }
 
             // Global echo flood signal catches distributed spray patterns that evade per-IP depth growth.
             boolean globalEchoFlood = "/echo".equals(path)
@@ -160,6 +208,23 @@ public class TelemetryFilter extends OncePerRequestFilter {
         if (isBot) {
             logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Class: " + threatClass + " | Prob: " + botProbability);
             redisTelemetryService.banIp(ipAddress);
+            RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), path, "api", ipAddress);
+            RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(HttpServletResponse.SC_FORBIDDEN, System.currentTimeMillis() - startTime);
+            RequestEvent.FeatureVector featureVector = toFeatureVector(features);
+            RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, 1, threatClass);
+            RequestEvent event = new RequestEvent(
+                    eventId,
+                    Instant.now().toEpochMilli(),
+                    "tenant_placeholder",
+                    ipAddress,
+                    ipAddress + "_session",
+                    label,
+                    requestDetails,
+                    responseDetails,
+                    featureVector,
+                    mlMetadata
+            );
+            kafkaProducer.publishEvent(event);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Traffic blocked by SAGE Engine Anomaly Detection\"}");
@@ -176,6 +241,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
             RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(method, path, "api", ipAddress);
             RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(statusCode, latencyMs);
+                RequestEvent.FeatureVector featureVector = toFeatureVector(features);
             RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, isBot ? 1 : 0, threatClass);
 
             RequestEvent event = new RequestEvent(
@@ -184,8 +250,10 @@ public class TelemetryFilter extends OncePerRequestFilter {
                     "tenant_placeholder",
                     ipAddress,
                     ipAddress + "_session",
+                    label,
                     requestDetails,
                     responseDetails,
+                    featureVector,
                     mlMetadata
             );
 
@@ -220,5 +288,33 @@ public class TelemetryFilter extends OncePerRequestFilter {
         return lowerUserAgent.contains("curl")
                 || lowerUserAgent.contains("scraperbot")
                 || lowerUserAgent.contains("locust");
+    }
+
+    private String classifyByIP(String ip) {
+        if (ip == null) {
+            return "flood";
+        }
+        if (ip.startsWith("192.168") || ip.startsWith("10.")) {
+            return "human";
+        }
+        if (ip.startsWith("52.") || ip.startsWith("34.")) {
+            return "scraper";
+        }
+        if (ip.startsWith("185.") || ip.startsWith("176.")) {
+            return "recon";
+        }
+        return "flood";
+    }
+
+    private RequestEvent.FeatureVector toFeatureVector(Map<String, Double> features) {
+        return new RequestEvent.FeatureVector(
+                features.getOrDefault("SAGE_Session_Depth", 0.0),
+                features.getOrDefault("SAGE_Temporal_Variance", 0.0),
+                features.getOrDefault("SAGE_Request_Velocity", 0.0),
+                features.getOrDefault("SAGE_Behavioral_Diversity", 0.0),
+                features.getOrDefault("SAGE_Endpoint_Concentration", 0.0),
+                features.getOrDefault("SAGE_Cart_Ratio", 0.0),
+                features.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0)
+        );
     }
 }

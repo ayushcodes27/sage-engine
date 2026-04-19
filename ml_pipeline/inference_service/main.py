@@ -23,6 +23,8 @@ FEATURE_MAP = [
     "SAGE_Request_Velocity",
     "SAGE_Behavioral_Diversity",
 ]
+# NOTE: Gateway now sends 7 features. The 3 new scraper-focused features are accepted
+# by the request schema but intentionally not used for inference until model retraining.
 assembler = FeatureAssembler(host='localhost', port=6379)
 
 # Schemas
@@ -32,6 +34,9 @@ class GatewayTelemetry(BaseModel):
     SAGE_Temporal_Variance: float = Field(..., description="Flow IAT Std / Mean")
     SAGE_Request_Velocity: float = Field(..., description="Flow Pkts/s")
     SAGE_Behavioral_Diversity: float = Field(..., description="Fwd Pkt Len Std")
+    SAGE_Endpoint_Concentration: float = Field(..., description="Price+inventory+product hits / total hits")
+    SAGE_Cart_Ratio: float = Field(..., description="Cart+checkout hits / total hits")
+    SAGE_Asset_Skip_Ratio: float = Field(..., description="1 - (static hits / total hits)")
 
 class InferenceResult(BaseModel):
     session_id: str
@@ -46,11 +51,13 @@ class InferenceResult(BaseModel):
 async def lifespan(app: FastAPI):
     global MODEL, LABEL_ENCODER
     base_path = os.path.dirname(__file__)
-    model_dir = os.path.join(base_path, "models")
+    model_dir = os.path.abspath(os.path.join(base_path, "..", "models"))
+    fallback_model_dir = os.path.join(base_path, "models")
 
-    # We now look specifically for the Master artifacts
-    model_path = os.path.join(model_dir, "sage_master_rf.pkl")
+    model_path = os.path.join(model_dir, "sage_model.pkl")
     encoder_path = os.path.join(model_dir, "sage_label_encoder.pkl")
+    if not os.path.exists(encoder_path):
+        encoder_path = os.path.join(fallback_model_dir, "sage_label_encoder.pkl")
 
     if os.path.exists(model_path) and os.path.exists(encoder_path):
         MODEL = joblib.load(model_path)
@@ -60,7 +67,7 @@ async def lifespan(app: FastAPI):
         print(f"[+] Classes Detected: {LABEL_ENCODER.classes_}")
     else:
         print(
-            "WARNING: Missing sage_master_rf.pkl or sage_label_encoder.pkl in models/ directory. "
+            "WARNING: Missing sage_model.pkl or sage_label_encoder.pkl in models/ directory. "
             "Inference will return 503 until models are available."
         )
     yield

@@ -41,6 +41,34 @@ function toIsoTime(ms) {
   }
 }
 
+function normalizeThreatClass(event, statusCode) {
+  const mlClass = String(event?.mlMetadata?.threatClass || "").toLowerCase();
+  const label = String(event?.label || "").toLowerCase();
+
+  if (mlClass.includes("scraper") || mlClass === "bot") return "scraper";
+  if (mlClass.includes("flood") || mlClass.includes("fastpathblock")) return "flood";
+  if (mlClass.includes("infiltration") || mlClass.includes("recon") || mlClass.includes("probe")) {
+    return "recon";
+  }
+
+  if (["human", "scraper", "flood", "recon"].includes(label)) {
+    return label;
+  }
+
+  if (statusCode >= 400) {
+    return "scraper";
+  }
+
+  return "human";
+}
+
+function dominantThreatClass(classCounts) {
+  return Object.entries(classCounts).reduce((best, current) => {
+    if (current[1] > best[1]) return current;
+    return best;
+  }, ["human", 0])[0];
+}
+
 export function useLiveTelemetry() {
   const [metrics, setMetrics] = useState({
     totalRequests: 0,
@@ -55,7 +83,17 @@ export function useLiveTelemetry() {
     temporalVariance: { value: 0, percent: 0, unit: "ms" },
     requestVelocity: { value: 0, percent: 0, unit: "req/s" },
     behavioralDiversity: { value: 0, percent: 0, unit: "paths" },
+    endpointConcentration: { value: 0, percent: 0, unit: "ratio" },
+    cartRatio: { value: 0, percent: 0, unit: "ratio" },
+    assetSkipRatio: { value: 0, percent: 0, unit: "ratio" },
   });
+  const [threatClassTotals, setThreatClassTotals] = useState({
+    human: 0,
+    scraper: 0,
+    flood: 0,
+    recon: 0,
+  });
+  const [endpointHotspots, setEndpointHotspots] = useState([]);
   const [mlConfidence, setMlConfidence] = useState(0);
   const [logs, setLogs] = useState([]);
   const [services, setServices] = useState([
@@ -69,6 +107,7 @@ export function useLiveTelemetry() {
   const tickRef = useRef(20);
   const eventTimesRef = useRef([]);
   const endpointSetRef = useRef(new Set());
+  const endpointStatsRef = useRef(new Map());
   const ipSessionDepthRef = useRef(new Map());
   const gapSamplesRef = useRef([]);
   const lastEventTimeRef = useRef(null);
@@ -88,6 +127,7 @@ export function useLiveTelemetry() {
       const ipAddress = event?.request?.ip || event?.userId || "unknown";
       const endpoint = event?.request?.path || "/unknown";
       const score = clamp(botProbability * 100, 0, 100);
+      const threatClass = normalizeThreatClass(event, statusCode);
 
       setMetrics((prev) => ({
         totalRequests: prev.totalRequests + 1,
@@ -128,29 +168,96 @@ export function useLiveTelemetry() {
       const temporalVarianceValue = Number(meanGap.toFixed(1));
       const requestVelocityValue = rps;
       const behavioralDiversityValue = endpointSetRef.current.size;
+      const rawFeatures = event?.features || {};
+      const endpointConcentrationValue = Number(
+        rawFeatures.endpointConcentration ?? rawFeatures.SAGE_Endpoint_Concentration ?? 0
+      );
+      const cartRatioValue = Number(rawFeatures.cartRatio ?? rawFeatures.SAGE_Cart_Ratio ?? 0);
+      const assetSkipRatioValue = Number(rawFeatures.assetSkipRatio ?? rawFeatures.SAGE_Asset_Skip_Ratio ?? 0);
 
       setFeatures({
         sessionDepth: {
-          value: sessionDepthValue,
-          percent: clamp((sessionDepthValue / 320) * 100, 0, 100),
+          value: Number(rawFeatures.sessionDepth ?? rawFeatures.SAGE_Session_Depth ?? sessionDepthValue),
+          percent: clamp(
+            (Number(rawFeatures.sessionDepth ?? rawFeatures.SAGE_Session_Depth ?? sessionDepthValue) / 12) * 100,
+            0,
+            100
+          ),
           unit: "pkts",
         },
         temporalVariance: {
-          value: temporalVarianceValue,
-          percent: clamp((temporalVarianceValue / 450) * 100, 0, 100),
+          value: Number(rawFeatures.temporalVariance ?? rawFeatures.SAGE_Temporal_Variance ?? temporalVarianceValue),
+          percent: clamp(
+            (Number(rawFeatures.temporalVariance ?? rawFeatures.SAGE_Temporal_Variance ?? temporalVarianceValue) / 1000) *
+              100,
+            0,
+            100
+          ),
           unit: "ms",
         },
         requestVelocity: {
-          value: requestVelocityValue,
-          percent: clamp((requestVelocityValue / 120) * 100, 0, 100),
+          value: Number(rawFeatures.requestVelocity ?? rawFeatures.SAGE_Request_Velocity ?? requestVelocityValue),
+          percent: clamp(
+            (Number(rawFeatures.requestVelocity ?? rawFeatures.SAGE_Request_Velocity ?? requestVelocityValue) / 80) * 100,
+            0,
+            100
+          ),
           unit: "req/s",
         },
         behavioralDiversity: {
-          value: behavioralDiversityValue,
-          percent: clamp((behavioralDiversityValue / 20) * 100, 0, 100),
+          value: Number(
+            rawFeatures.behavioralDiversity ?? rawFeatures.SAGE_Behavioral_Diversity ?? behavioralDiversityValue
+          ),
+          percent: clamp(
+            (Number(
+              rawFeatures.behavioralDiversity ?? rawFeatures.SAGE_Behavioral_Diversity ?? behavioralDiversityValue
+            ) /
+              15) *
+              100,
+            0,
+            100
+          ),
           unit: "paths",
         },
+        endpointConcentration: {
+          value: endpointConcentrationValue,
+          percent: clamp(endpointConcentrationValue * 100, 0, 100),
+          unit: "ratio",
+        },
+        cartRatio: {
+          value: cartRatioValue,
+          percent: clamp(cartRatioValue * 100, 0, 100),
+          unit: "ratio",
+        },
+        assetSkipRatio: {
+          value: assetSkipRatioValue,
+          percent: clamp(assetSkipRatioValue * 100, 0, 100),
+          unit: "ratio",
+        },
       });
+
+      setThreatClassTotals((prev) => ({
+        ...prev,
+        [threatClass]: prev[threatClass] + 1,
+      }));
+
+      const currentEndpoint = endpointStatsRef.current.get(endpoint) || {
+        total: 0,
+        classCounts: { human: 0, scraper: 0, flood: 0, recon: 0 },
+      };
+      currentEndpoint.total += 1;
+      currentEndpoint.classCounts[threatClass] += 1;
+      endpointStatsRef.current.set(endpoint, currentEndpoint);
+
+      const topEndpoints = Array.from(endpointStatsRef.current.entries())
+        .map(([path, stats]) => ({
+          path,
+          hits: stats.total,
+          dominantClass: dominantThreatClass(stats.classCounts),
+        }))
+        .sort((a, b) => b.hits - a.hits)
+        .slice(0, 5);
+      setEndpointHotspots(topEndpoints);
 
       confidenceSamplesRef.current.push(score);
       confidenceSamplesRef.current = confidenceSamplesRef.current.slice(-12);
@@ -207,6 +314,8 @@ export function useLiveTelemetry() {
     actionTotals,
     velocitySeries,
     features,
+    threatClassTotals,
+    endpointHotspots,
     mlConfidence,
     logs,
     services,

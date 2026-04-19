@@ -5,6 +5,9 @@ const FEATURE_LABELS = [
   ["temporalVariance", "Temporal Variance"],
   ["requestVelocity", "Request Velocity"],
   ["behavioralDiversity", "Behavioral Diversity"],
+  ["endpointConcentration", "Endpoint Concentration"],
+  ["cartRatio", "Cart Ratio"],
+  ["assetSkipRatio", "Asset Skip Ratio"],
 ];
 
 export default function FeatureMonitor({ features }) {

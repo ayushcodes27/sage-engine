@@ -3,6 +3,7 @@ package com.sage.gateway.service;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,11 +18,24 @@ public class RedisTelemetryService {
         this.redisTemplate = redisTemplate;
     }
 
-    public Map<String, Double> processAndGetTelemetry(String ip, double payloadSize) {
+    public Map<String, Double> processAndGetTelemetry(String ip, double payloadSize, String path) {
         long currentTimestamp = Instant.now().toEpochMilli();
         String timeKey = "sage:timestamps:" + ip;
         String sizeKey = "sage:sizes:" + ip;
         String hashKey = "sage:telemetry:" + ip;
+
+        // Request counters for e-commerce scraper-focused features.
+        redisTemplate.opsForHash().increment(hashKey, "total_hits", 1);
+        String safePath = path == null ? "" : path;
+        if (safePath.matches("/api/price/.*|/api/inventory/.*|/products.*")) {
+            redisTemplate.opsForHash().increment(hashKey, "product_hits", 1);
+        }
+        if ("/cart".equals(safePath) || "/checkout".equals(safePath)) {
+            redisTemplate.opsForHash().increment(hashKey, "cart_hits", 1);
+        }
+        if (safePath.startsWith("/static/")) {
+            redisTemplate.opsForHash().increment(hashKey, "static_hits", 1);
+        }
 
         // LPUSH new data to the front of the lists
         redisTemplate.opsForList().leftPush(timeKey, String.valueOf(currentTimestamp));
@@ -44,24 +58,50 @@ public class RedisTelemetryService {
         double requestVelocity = calculateVelocity(times);
         double temporalVariance = calculateTemporalVariance(times);
         double behavioralDiversity = calculateStandardDeviation(sizes);
+        double totalHits = getCounter(hashKey, "total_hits");
+        double productHits = getCounter(hashKey, "product_hits");
+        double cartHits = getCounter(hashKey, "cart_hits");
+        double staticHits = getCounter(hashKey, "static_hits");
+
+        double endpointConcentration = totalHits > 0 ? productHits / totalHits : 0.0;
+        double cartRatio = totalHits > 0 ? cartHits / totalHits : 0.0;
+        double assetSkipRatio = totalHits > 0 ? 1.0 - (staticHits / totalHits) : 1.0;
 
         // Update the Redis Hash
         redisTemplate.opsForHash().put(hashKey, "SAGE_Session_Depth", String.valueOf(sessionDepth));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Request_Velocity", String.valueOf(requestVelocity));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Temporal_Variance", String.valueOf(temporalVariance));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Behavioral_Diversity", String.valueOf(behavioralDiversity));
+        redisTemplate.opsForHash().put(hashKey, "SAGE_Endpoint_Concentration", String.valueOf(endpointConcentration));
+        redisTemplate.opsForHash().put(hashKey, "SAGE_Cart_Ratio", String.valueOf(cartRatio));
+        redisTemplate.opsForHash().put(hashKey, "SAGE_Asset_Skip_Ratio", String.valueOf(assetSkipRatio));
 
         // Set a 1-hour TTL
-        redisTemplate.expire(hashKey, java.time.Duration.ofHours(1));
-        redisTemplate.expire(timeKey, java.time.Duration.ofHours(1));
-        redisTemplate.expire(sizeKey, java.time.Duration.ofHours(1));
+        redisTemplate.expire(hashKey, Duration.ofHours(1));
+        redisTemplate.expire(timeKey, Duration.ofHours(1));
+        redisTemplate.expire(sizeKey, Duration.ofHours(1));
 
         return Map.of(
                 "SAGE_Session_Depth", sessionDepth,
                 "SAGE_Request_Velocity", requestVelocity,
                 "SAGE_Temporal_Variance", temporalVariance,
-                "SAGE_Behavioral_Diversity", behavioralDiversity
+                "SAGE_Behavioral_Diversity", behavioralDiversity,
+                "SAGE_Endpoint_Concentration", endpointConcentration,
+                "SAGE_Cart_Ratio", cartRatio,
+                "SAGE_Asset_Skip_Ratio", assetSkipRatio
         );
+    }
+
+    private double getCounter(String hashKey, String field) {
+        Object val = redisTemplate.opsForHash().get(hashKey, field);
+        if (val == null) {
+            return 0.0;
+        }
+        try {
+            return Double.parseDouble(val.toString());
+        } catch (NumberFormatException ex) {
+            return 0.0;
+        }
     }
 
     private double calculateVelocity(List<Double> times) {

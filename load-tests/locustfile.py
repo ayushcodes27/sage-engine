@@ -1,94 +1,188 @@
 import random
 import sys
-from locust import HttpUser, task, between, constant, tag
+from itertools import cycle
 
-def generate_akamai_ip():
-    return f"192.168.10.{random.randint(1, 254)}"
+from locust import HttpUser, between, task, tag
 
-CLOUDFLARE_BOTNET_POOL = [
-    f"10.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
-    for _ in range(1000)
+
+def ip_residential():
+    if random.random() < 0.5:
+        return f"192.168.{random.randint(0, 255)}.{random.randint(1, 254)}"
+    return f"10.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
+
+
+def ip_datacenter():
+    prefix = random.choice((52, 34))
+    return f"{prefix}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
+
+
+def ip_distributed():
+    return f"{random.randint(11, 223)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
+
+
+def ip_tor_like():
+    prefix = random.choice((185, 176))
+    return f"{prefix}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
+
+
+SCRAPER_UA_POOL = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.124 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.111 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.4; rv:123.0) Gecko/20100101 Firefox/123.0",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.82 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/124.0.2478.80 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
 ]
 
-def generate_cloudflare_ip():
-    return random.choice(CLOUDFLARE_BOTNET_POOL)
 
-RECON_PROXIES = ["45.33.22.1", "45.33.22.2", "45.33.22.3", "45.33.22.4", "45.33.22.5"]
+FLOOD_SEARCH_TERMS = [
+    "deal",
+    "wireless",
+    "gaming",
+    "summer",
+    "pro",
+    "new",
+    "sale",
+    "premium",
+    "eco",
+    "smart",
+]
 
-@tag('human')
-class NormalHumanUser(HttpUser):
+
+SQLI_QUERIES = ["' OR 1=1", "../etc/passwd"]
+
+
+@tag("human")
+class HumanBrowser(HttpUser):
     scenario_tags = {"human"}
-    wait_time = between(3, 7)
+    fixed_count = 12
+    wait_time = between(3, 8)
+
+    def _headers(self):
+        return {
+            "X-Forwarded-For": ip_residential(),
+            "User-Agent": random.choice(SCRAPER_UA_POOL),
+            "Content-Type": "application/json",
+        }
+
+    def _random_product_id(self):
+        return random.randint(1, 50)
 
     def on_start(self):
-        self.session_ip = f"203.0.113.{random.randint(1, 100)}"
-        self.headers = {
-            "X-Forwarded-For": self.session_ip,
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0",
-            "Content-Type": "application/json"
-        }
+        headers = self._headers()
+        self.client.get("/static/style.css", headers=headers, name="Human - static css")
+        self.client.get("/static/app.js", headers=headers, name="Human - static js")
+        self.client.get("/static/logo.png", headers=headers, name="Human - static logo")
+
+    @task(4)
+    def browse_pages(self):
+        headers = self._headers()
+        path = random.choice(["/", "/products", "/cart"])
+        self.client.get(path, headers=headers, name=f"Human - {path}")
 
     @task(3)
-    def browse_api(self):
-        self.client.get("/api/get", headers=self.headers, name="Human - /api/get")
+    def view_product_and_price(self):
+        product_id = self._random_product_id()
+        headers = self._headers()
+        self.client.get(f"/products/{product_id}", headers=headers, name="Human - /products/:id")
+        self.client.get(f"/api/price/{product_id}", headers=headers, name="Human - /api/price/:id")
+
+        if random.random() < 0.30:
+            self.client.post("/checkout", json={"status": "mock"}, headers=headers, name="Human - /checkout")
+
+
+@tag("akamai_scraper")
+class AkamaiScraper(HttpUser):
+    scenario_tags = {"akamai_scraper"}
+    fixed_count = 14
+    wait_time = between(0.5, 1.5)
+
+    def on_start(self):
+        self._id_cycle = cycle(range(1, 51))
+
+    def _headers(self):
+        return {
+            "X-Forwarded-For": ip_datacenter(),
+            "User-Agent": random.choice(SCRAPER_UA_POOL),
+            "Content-Type": "application/json",
+        }
 
     @task(1)
-    def ping_echo(self):
-        self.client.get(f"/echo?q={random.randint(1, 1000)}", headers=self.headers, name="Human - /echo")
+    def product_listing(self):
+        self.client.get("/products", headers=self._headers(), name="Scraper - /products")
 
-@tag('akamai_scraper')
-class AkamaiAdvancedScraper(HttpUser):
-    scenario_tags = {"akamai_scraper"}
-    wait_time = constant(15)
+    @task(3)
+    def price_inventory_sweep(self):
+        product_id = next(self._id_cycle)
+        headers = self._headers()
+        self.client.get(f"/products/{product_id}", headers=headers, name="Scraper - /products/:id")
+        self.client.get(f"/api/price/{product_id}", headers=headers, name="Scraper - /api/price/:id")
+        self.client.get(f"/api/inventory/{product_id}", headers=headers, name="Scraper - /api/inventory/:id")
 
-    def on_start(self):
-        self.session_ip = generate_akamai_ip()
-        self.headers = {
-            "X-Forwarded-For": self.session_ip,
-            "User-Agent": "ScraperBot/5.2 (Burst/Sleep Mode)",
-            "Content-Type": "application/json"
-        }
 
-    @task
-    def execute_burst_scrape(self):
-        for _ in range(5):
-            self.client.get("/api/get", headers=self.headers, name="Akamai Scraper - Burst")
-
-@tag('cloudflare_flood')
-class CloudflareVolumetricFlood(HttpUser):
+@tag("cloudflare_flood")
+class CloudflareFlood(HttpUser):
     scenario_tags = {"cloudflare_flood"}
-    wait_time = constant(0)
+    fixed_count = 8
+    wait_time = between(0, 0.1)
 
-    @task
-    def execute_flood(self):
-        spoofed_ip = generate_cloudflare_ip()
-        headers = {
-            "X-Forwarded-For": spoofed_ip,
-            "User-Agent": "curl/7.68.0",
-            "Content-Type": "application/json"
+    def _headers(self):
+        return {
+            "X-Forwarded-For": ip_distributed(),
+            "User-Agent": "curl/8.6.0",
+            "Content-Type": "application/json",
         }
 
-        with self.client.get("/echo?q=flood", headers=headers, name="Cloudflare Flood - DDoS", catch_response=True) as response:
-            if response.status_code in (403, 429):
-                response.success()
-            else:
-                response.failure(f"Flood bypassed defense with status {response.status_code}")
+    @task(2)
+    def flood_products(self):
+        self.client.get("/products", headers=self._headers(), name="Flood - /products")
 
-@tag('recon')
-class InfiltrationReconBot(HttpUser):
+    @task(2)
+    def flood_search(self):
+        term = random.choice(FLOOD_SEARCH_TERMS)
+        self.client.get(f"/api/search?q={term}", headers=self._headers(), name="Flood - /api/search")
+
+    @task(3)
+    def flood_price(self):
+        product_id = random.randint(1, 50)
+        self.client.get(f"/api/price/{product_id}", headers=self._headers(), name="Flood - /api/price/:id")
+
+
+@tag("recon")
+class ReconBot(HttpUser):
     scenario_tags = {"recon"}
-    wait_time = constant(2)
+    fixed_count = 6
+    wait_time = between(2, 5)
 
-    def on_start(self):
-        self.headers = {
+    def _headers(self):
+        return {
+            "X-Forwarded-For": ip_tor_like(),
             "User-Agent": "python-requests/2.31.0",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
-    @task
-    def probe_api(self):
-        self.headers["X-Forwarded-For"] = random.choice(RECON_PROXIES)
-        self.client.get("/api/get", headers=self.headers, name="Recon - /api/get")
+    @task(2)
+    def probe_admin_metrics(self):
+        headers = self._headers()
+        self.client.get("/actuator/prometheus", headers=headers, name="Recon - /actuator/prometheus")
+        self.client.get("/admin/routes", headers=headers, name="Recon - /admin/routes")
+
+    @task(2)
+    def probe_search_injection(self):
+        payload = random.choice(SQLI_QUERIES)
+        self.client.get(f"/api/search?q={payload}", headers=self._headers(), name="Recon - /api/search (sqli)")
+
+    @task(1)
+    def probe_invalid_product(self):
+        self.client.get("/products/99999", headers=self._headers(), name="Recon - /products/99999")
+
+    @task(1)
+    def probe_path_traversal(self):
+        self.client.get("/static/../etc/passwd", headers=self._headers(), name="Recon - traversal")
 
 
 def _parse_selected_tags(argv):
@@ -107,10 +201,10 @@ def _apply_tag_based_user_activation():
         return
 
     user_classes = [
-        NormalHumanUser,
-        AkamaiAdvancedScraper,
-        CloudflareVolumetricFlood,
-        InfiltrationReconBot,
+        HumanBrowser,
+        AkamaiScraper,
+        CloudflareFlood,
+        ReconBot,
     ]
 
     for user_cls in user_classes:
@@ -119,3 +213,10 @@ def _apply_tag_based_user_activation():
 
 
 _apply_tag_based_user_activation()
+
+# Run config
+# locust -f locustfile.py --headless -u 40 -r 5 --run-time 5m --host http://localhost:3001
+# HumanBrowser: 12 users
+# AkamaiScraper: 14 users
+# CloudflareFlood: 8 users
+# ReconBot: 6 users

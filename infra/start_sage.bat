@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "ROOT=%~dp0"
+for %%I in ("%~dp0..") do set "ROOT=%%~fI\"
 set "BRIDGE_PORT=6006"
 set "KAFKA_GROUP_ID=sage-dashboard-live-v1"
 
@@ -18,7 +18,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo [0/4] Starting infrastructure services with Docker Compose...
 cd /d "%ROOT%"
-docker compose up -d
+docker compose -f "%ROOT%infra\docker-compose.yml" up -d
 if %ERRORLEVEL% NEQ 0 (
     echo Failed to start Docker Compose services.
     pause
