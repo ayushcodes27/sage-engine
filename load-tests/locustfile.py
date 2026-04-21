@@ -59,7 +59,7 @@ SQLI_QUERIES = ["' OR 1=1", "../etc/passwd"]
 @tag("human")
 class HumanBrowser(HttpUser):
     scenario_tags = {"human"}
-    fixed_count = 12
+    fixed_count = 8
     wait_time = between(3, 8)
 
     def _headers(self):
@@ -98,7 +98,7 @@ class HumanBrowser(HttpUser):
 @tag("akamai_scraper")
 class AkamaiScraper(HttpUser):
     scenario_tags = {"akamai_scraper"}
-    fixed_count = 14
+    fixed_count = 20
     wait_time = between(0.5, 1.5)
 
     def on_start(self):
@@ -152,10 +152,49 @@ class CloudflareFlood(HttpUser):
         self.client.get(f"/api/price/{product_id}", headers=self._headers(), name="Flood - /api/price/:id")
 
 
+@tag("unprotected_flood")
+class UnprotectedFlood(HttpUser):
+    scenario_tags = {"unprotected_flood"}
+    fixed_count = 8
+    wait_time = between(0, 0.1)
+
+    # Use absolute URLs so this class still targets 3001 even when global --host points to 8081.
+    target_base = "http://localhost:3001"
+
+    def _headers(self):
+        return {
+            "X-Forwarded-For": ip_distributed(),
+            "User-Agent": "curl/8.6.0",
+            "Content-Type": "application/json",
+        }
+
+    @task(2)
+    def flood_products(self):
+        self.client.get(f"{self.target_base}/products", headers=self._headers(), name="Unprotected Flood - /products")
+
+    @task(2)
+    def flood_search(self):
+        term = random.choice(FLOOD_SEARCH_TERMS)
+        self.client.get(
+            f"{self.target_base}/api/search?q={term}",
+            headers=self._headers(),
+            name="Unprotected Flood - /api/search",
+        )
+
+    @task(3)
+    def flood_price(self):
+        product_id = random.randint(1, 50)
+        self.client.get(
+            f"{self.target_base}/api/price/{product_id}",
+            headers=self._headers(),
+            name="Unprotected Flood - /api/price/:id",
+        )
+
+
 @tag("recon")
 class ReconBot(HttpUser):
     scenario_tags = {"recon"}
-    fixed_count = 6
+    fixed_count = 4
     wait_time = between(2, 5)
 
     def _headers(self):
@@ -204,6 +243,7 @@ def _apply_tag_based_user_activation():
         HumanBrowser,
         AkamaiScraper,
         CloudflareFlood,
+        UnprotectedFlood,
         ReconBot,
     ]
 
@@ -219,4 +259,5 @@ _apply_tag_based_user_activation()
 # HumanBrowser: 12 users
 # AkamaiScraper: 14 users
 # CloudflareFlood: 8 users
+# UnprotectedFlood: 8 users
 # ReconBot: 6 users

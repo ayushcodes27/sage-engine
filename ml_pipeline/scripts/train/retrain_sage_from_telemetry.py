@@ -17,6 +17,7 @@ FEATURES = [
     "SAGE_Endpoint_Concentration",
     "SAGE_Cart_Ratio",
     "SAGE_Asset_Skip_Ratio",
+    "SAGE_Sequential_Traversal",
 ]
 
 

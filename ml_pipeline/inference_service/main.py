@@ -22,9 +22,11 @@ FEATURE_MAP = [
     "SAGE_Temporal_Variance",
     "SAGE_Request_Velocity",
     "SAGE_Behavioral_Diversity",
+    "SAGE_Endpoint_Concentration",
+    "SAGE_Cart_Ratio",
+    "SAGE_Asset_Skip_Ratio",
+    "SAGE_Sequential_Traversal",
 ]
-# NOTE: Gateway now sends 7 features. The 3 new scraper-focused features are accepted
-# by the request schema but intentionally not used for inference until model retraining.
 assembler = FeatureAssembler(host='localhost', port=6379)
 
 # Schemas
@@ -37,6 +39,7 @@ class GatewayTelemetry(BaseModel):
     SAGE_Endpoint_Concentration: float = Field(..., description="Price+inventory+product hits / total hits")
     SAGE_Cart_Ratio: float = Field(..., description="Cart+checkout hits / total hits")
     SAGE_Asset_Skip_Ratio: float = Field(..., description="1 - (static hits / total hits)")
+    SAGE_Sequential_Traversal: float = Field(..., description="Consecutive numeric traversal score over recent resource IDs")
 
 class InferenceResult(BaseModel):
     session_id: str

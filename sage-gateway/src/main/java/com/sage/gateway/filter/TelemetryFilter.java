@@ -71,7 +71,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
             try {
                 RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), request.getRequestURI(), "api", ipAddress);
                 RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(HttpServletResponse.SC_FORBIDDEN, System.currentTimeMillis() - startTime);
-                RequestEvent.FeatureVector featureVector = new RequestEvent.FeatureVector(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                RequestEvent.FeatureVector featureVector = new RequestEvent.FeatureVector(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
                 RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "FastPathBlock");
 
                 RequestEvent event = new RequestEvent(
@@ -112,7 +112,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
                 "SAGE_Behavioral_Diversity", 0.0,
                 "SAGE_Endpoint_Concentration", 0.0,
                 "SAGE_Cart_Ratio", 0.0,
-                "SAGE_Asset_Skip_Ratio", 1.0
+            "SAGE_Asset_Skip_Ratio", 1.0,
+            "SAGE_Sequential_Traversal", 0.0
         );
 
         try {
@@ -314,7 +315,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
                 features.getOrDefault("SAGE_Behavioral_Diversity", 0.0),
                 features.getOrDefault("SAGE_Endpoint_Concentration", 0.0),
                 features.getOrDefault("SAGE_Cart_Ratio", 0.0),
-                features.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0)
+            features.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0),
+            features.getOrDefault("SAGE_Sequential_Traversal", 0.0)
         );
     }
 }

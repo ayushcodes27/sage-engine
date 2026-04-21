@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # Redis 7.x - Rate Limiting & State Management
@@ -88,12 +88,38 @@ services:
     networks:
       - sage-network
 
-  mock-backend:
-    image: nginx:alpine
+  ecommerce-shell:
+    build:
+      context: ../mock-target-site
+    container_name: sage-ecommerce
     ports:
-      - "8082:80"
-    command: >
-      sh -c "echo 'server { listen 80; location / { return 200 \"{\\\"status\\\": \\\"OK\\\"}\"; default_type application/json; } }' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+      - "3001:3001"        # unprotected — direct access for demo
+    networks:
+      - sage-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/products"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  sage-gateway:
+    build:
+      context: ../sage-gateway
+    container_name: sage-gateway
+    ports:
+      - "8080:8080"        # protected path
+    environment:
+      - UPSTREAM_URL=http://sage-ecommerce:3001
+      - REDIS_HOST=sage-redis
+      - KAFKA_BROKER=kafka:29092
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      ecommerce-shell:
+        condition: service_healthy
     networks:
       - sage-network
 

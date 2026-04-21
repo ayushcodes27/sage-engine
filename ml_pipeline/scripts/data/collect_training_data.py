@@ -27,6 +27,7 @@ def build_row(event):
         float(features.get("endpointConcentration", 0.0) or 0.0),
         float(features.get("cartRatio", 0.0) or 0.0),
         float(features.get("assetSkipRatio", 0.0) or 0.0),
+        float(features.get("sequentialTraversal", 0.0) or 0.0),
         label,
     ]
 
@@ -50,6 +51,7 @@ def main():
         "SAGE_Endpoint_Concentration",
         "SAGE_Cart_Ratio",
         "SAGE_Asset_Skip_Ratio",
+        "SAGE_Sequential_Traversal",
         "label",
     ]
 
