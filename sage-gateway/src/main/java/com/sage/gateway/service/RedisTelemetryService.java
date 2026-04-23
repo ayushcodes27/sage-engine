@@ -209,9 +209,41 @@ public class RedisTelemetryService {
         return Boolean.TRUE.equals(redisTemplate.hasKey("sage:ban:" + ip));
     }
 
+    public long incrementFloodBurstCounter(String ip) {
+        String key = "sage:flood:burst:" + ip;
+        Long count = redisTemplate.opsForValue().increment(key);
+        if (count != null && count == 1L) {
+            // Keep a short sliding burst window so only rapid sequences are escalated.
+            redisTemplate.expire(key, java.time.Duration.ofSeconds(10));
+        }
+        return count == null ? 0L : count;
+    }
+
     public void banIp(String ip) {
         // Bans the IP for 5 minutes (300 seconds)
         redisTemplate.opsForValue().set("sage:ban:" + ip, "true", java.time.Duration.ofMinutes(5));
+    }
+
+    public long incrementScraper429Counter(String ip) {
+        String key = "sage:scraper:429:" + ip;
+        Long count = redisTemplate.opsForValue().increment(key);
+        if (count != null && count == 1L) {
+            redisTemplate.expire(key, java.time.Duration.ofMinutes(5));
+        }
+        return count == null ? 0L : count;
+    }
+
+    public void resetScraper429Counter(String ip) {
+        redisTemplate.delete("sage:scraper:429:" + ip);
+    }
+
+    public long incrementReconProbeCounter(String ip) {
+        String key = "sage:recon:probe:" + ip;
+        Long count = redisTemplate.opsForValue().increment(key);
+        if (count != null && count == 1L) {
+            redisTemplate.expire(key, java.time.Duration.ofMinutes(10));
+        }
+        return count == null ? 0L : count;
     }
 
     public boolean isGlobalPathFlooding(String path, long thresholdPerSecond) {

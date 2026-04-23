@@ -1,6 +1,7 @@
 package com.sage.gateway.event;
 
 public record RequestEvent(
+    String eventType,
         String eventId,
         long timestamp,
         String tenantId,
