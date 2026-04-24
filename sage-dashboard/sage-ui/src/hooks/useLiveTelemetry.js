@@ -284,14 +284,16 @@ export function useLiveTelemetry() {
     });
 
     socket.on("service_status", (status) => {
+      const pingTime = toIsoTime(Date.now());
       setServices([
-        { name: "Kafka", status: status?.kafka || "throttle" },
-        { name: "Redis", status: status?.redis || "throttle" },
-        { name: "Gateway", status: status?.gateway || "throttle" },
+        { name: "Kafka", status: status?.kafka || "throttle", lastPing: pingTime },
+        { name: "Redis", status: status?.redis || "throttle", lastPing: pingTime },
+        { name: "Gateway", status: status?.gateway || "throttle", lastPing: pingTime },
         {
           name: "ML Service",
           status: status?.ml || "throttle",
           meta: `${Math.round(status?.mlLatencyMs || 0)} ms`,
+          lastPing: pingTime
         },
       ]);
     });

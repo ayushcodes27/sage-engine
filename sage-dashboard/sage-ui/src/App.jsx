@@ -1,3 +1,4 @@
+import { useState } from "react";
 import HeaderStatus from "./components/HeaderStatus";
 import GlobalMetrics from "./components/GlobalMetrics";
 import ControlPanel from "./components/ControlPanel";
@@ -23,22 +24,26 @@ export default function App() {
     services,
   } = useLiveTelemetry();
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   return (
     <div className="app-shell">
-      <div className="dashboard-layout">
+      <div className={`dashboard-layout ${!isSidebarOpen ? "sidebar-closed" : ""}`}>
         <ControlPanel
           services={services}
           logCount={logs.length}
+          isOpen={isSidebarOpen}
+          onToggle={setIsSidebarOpen}
         />
 
         <main className="main-column">
-          <HeaderStatus services={services} />
+          <HeaderStatus services={services} metrics={metrics} />
           <GlobalMetrics metrics={metrics} />
 
           <section className="chart-grid">
             <TrafficVelocityChart data={velocitySeries} />
             <ActionDistributionChart totals={actionTotals} />
-            <MLConfidenceChart score={mlConfidence} />
+            <MLConfidenceChart score={mlConfidence} hasData={logs.length > 0} />
           </section>
 
           <section className="insight-grid">

@@ -3,7 +3,7 @@ import Card from "./common/Card";
 export default function ThreatLogTable({ logs }) {
   return (
     <Card title="Live Threat Log" className="fade-in-delay-3">
-      <div className="log-table-wrap">
+      <div className="log-table-wrap" style={{ minHeight: '300px' }}>
         <table>
           <thead>
             <tr>
@@ -23,7 +23,9 @@ export default function ThreatLogTable({ logs }) {
                   <td className="mono">{log.ipAddress}</td>
                   <td>{log.endpoint}</td>
                   <td>{log.threatType}</td>
-                  <td className="mono">{log.score.toFixed(1)}%</td>
+                  <td className="mono" style={{ color: `hsl(${120 - (log.score * 1.2)}, 80%, 60%)`, fontWeight: 'bold' }}>
+                    {log.score.toFixed(1)}%
+                  </td>
                   <td>
                     <span className={`action-badge action-${log.action.toLowerCase()}`}>{log.action}</span>
                   </td>
@@ -31,8 +33,8 @@ export default function ThreatLogTable({ logs }) {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="empty-row">
-                  No threat activity yet. Start a simulation to stream telemetry.
+                <td colSpan={6} style={{ padding: '24px 8px', color: 'var(--text-muted)', textAlign: 'left' }}>
+                  No threat activity yet. Start a simulation to stream telemetry...
                 </td>
               </tr>
             )}

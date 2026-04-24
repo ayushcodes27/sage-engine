@@ -1,3 +1,4 @@
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Card from "./common/Card";
 
 const SERVICE_LABELS = {
@@ -6,9 +7,32 @@ const SERVICE_LABELS = {
   block: "Offline",
 };
 
-export default function ControlPanel({ services, logCount }) {
+export default function ControlPanel({ services, logCount, isOpen, onToggle }) {
+  if (!isOpen) {
+    return (
+      <aside className="control-column collapsed fade-in-delay-1">
+        <button 
+          onClick={() => onToggle(true)} 
+          className="collapse-toggle-btn" 
+          title="Expand Sidebar"
+        >
+          <PanelLeftOpen size={20} />
+        </button>
+      </aside>
+    );
+  }
+
   return (
-    <aside className="control-column fade-in-delay-1">
+    <aside className="control-column expanded fade-in-delay-1">
+      <div className="sidebar-header">
+        <button 
+          onClick={() => onToggle(false)} 
+          className="collapse-toggle-btn" 
+          title="Collapse Sidebar"
+        >
+          <PanelLeftClose size={20} />
+        </button>
+      </div>
       <Card title="Monitoring Scope" className="full-height">
         <div className="monitoring-note">
           Read-only mode enabled. This dashboard only visualizes live telemetry from Gateway, Kafka, Redis, and the ML service.
@@ -19,7 +43,13 @@ export default function ControlPanel({ services, logCount }) {
           <ul className="process-list mono">
             {services.map((service) => (
               <li key={service.name}>
-                {service.name}: {SERVICE_LABELS[service.status] || "Unknown"}
+                {service.name}:{" "}
+                <span className={service.status === "throttle" ? "service-degraded service-tooltip" : ""}>
+                  {SERVICE_LABELS[service.status] || "Unknown"}
+                  {service.status === "throttle" && (
+                    <span className="tooltip-text">Last ping: {service.lastPing || "Unknown"}</span>
+                  )}
+                </span>
               </li>
             ))}
           </ul>

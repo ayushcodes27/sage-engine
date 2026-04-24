@@ -27,30 +27,57 @@ export default function ThreatClassBreakdownChart({ totals }) {
     <Card title="Threat Class Distribution" className="fade-in-delay-2">
       <div className="distribution-wrap">
         <div className="distribution-bar-stack" aria-label="Threat class distribution segmented bar">
-          {rows.map((entry) => {
-            const segmentPercent = total ? (entry.value / total) * 100 : 0;
-            return (
-              <span
-                key={entry.key}
-                className="distribution-segment"
-                style={{
-                  width: `${segmentPercent}%`,
-                  backgroundColor: CLASS_COLORS[entry.key],
-                }}
-              />
-            );
-          })}
+          {total === 0 ? (
+            <span className="distribution-segment" style={{ width: '100%', backgroundColor: '#222228' }} />
+          ) : (
+            rows.map((entry) => {
+              const segmentPercent = total ? (entry.value / total) * 100 : 0;
+              return (
+                <span
+                  key={entry.key}
+                  className="distribution-segment"
+                  style={{
+                    width: `${segmentPercent}%`,
+                    backgroundColor: CLASS_COLORS[entry.key],
+                  }}
+                />
+              );
+            })
+          )}
         </div>
 
         <div className="legend-list mono">
           {rows.map((entry) => {
             const percent = total ? (entry.value / total) * 100 : 0;
+            const displayPercent = Math.max(5, percent);
+            const isZero = entry.value === 0;
             return (
-              <div key={entry.key} className="legend-item">
-                <span className="legend-color" style={{ backgroundColor: CLASS_COLORS[entry.key] }} />
+              <div 
+                key={entry.key} 
+                className="legend-item" 
+                style={{ 
+                  borderLeft: `3px solid ${CLASS_COLORS[entry.key]}`, 
+                  paddingLeft: '8px',
+                  paddingTop: '4px',
+                  paddingBottom: '4px',
+                  position: 'relative', 
+                  zIndex: 1
+                }}
+              >
+                <div 
+                  style={{ 
+                    position: 'absolute', 
+                    top: 0, left: 0, height: '100%', 
+                    width: `${displayPercent}%`, 
+                    backgroundColor: CLASS_COLORS[entry.key], 
+                    opacity: isZero ? 0.1 : 0.2, 
+                    zIndex: -1,
+                    transition: 'width 0.3s ease'
+                  }} 
+                />
                 <span>{entry.name}</span>
                 <span>{entry.value}</span>
-                <strong>{formatPercent(percent)}</strong>
+                <strong style={{ color: !isZero ? CLASS_COLORS[entry.key] : 'inherit' }}>{formatPercent(percent)}</strong>
               </div>
             );
           })}
