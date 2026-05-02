@@ -16,7 +16,7 @@ spring:
 
   data:
     redis:
-      host: localhost # Or Redis Cloud URL
+      host: ${REDIS_HOST:localhost} # Or Redis Cloud URL
       port: 6379
       timeout: 100ms
       connect-timeout: 200ms
@@ -40,18 +40,27 @@ sage:
   rate-limit:
     enabled: true
     default-policy:
-      replenish-rate: 100
-      burst-capacity: 200
+      replenish-rate: 25
+      burst-capacity: 50
     routes:
       secure-data-route:
-        replenish-rate: 1
-        burst-capacity: 2
-      auth-route:
-        replenish-rate: 2
-        burst-capacity: 5
-      transaction-route:
         replenish-rate: 10
         burst-capacity: 20
+      shop-browse-route:
+        replenish-rate: 120
+        burst-capacity: 240
+      shop-api-route:
+        replenish-rate: 120
+        burst-capacity: 240
+      shop-search-route:
+        replenish-rate: 80
+        burst-capacity: 160
+      shop-cart-route:
+        replenish-rate: 60
+        burst-capacity: 120
+      shop-checkout-route:
+        replenish-rate: 40
+        burst-capacity: 80
 
 management:
   endpoints:
@@ -69,4 +78,3 @@ resilience4j:
         minimumNumberOfCalls: 50
         waitDurationInOpenState: 15s
         permittedNumberOfCallsInHalfOpenState: 3
-

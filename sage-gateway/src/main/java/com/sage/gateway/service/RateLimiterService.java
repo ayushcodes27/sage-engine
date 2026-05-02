@@ -1,6 +1,7 @@
 package com.sage.gateway.service;
 
 import com.sage.gateway.config.RateLimitProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -8,7 +9,6 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +30,7 @@ public class RateLimiterService {
 
 
     public boolean isAllowed(String ipAddress, String routeId) {
+        String normalizedIp = normalizeClientIp(ipAddress);
 
         // Resolve rate limits based on the Route being accessed
         RateLimitProperties.Policy policy = rateLimitProperties.getRoutes()
@@ -38,7 +39,7 @@ public class RateLimiterService {
         // Build a single, highly isolated Redis key
         // Format: sage:ratelimit:ip:{ip}:route:{route}
         // Ex : sage:ratelimit:ip:192.168.1.5:route:auth-route
-        String routeKey = "sage:ratelimit:ip:" + ipAddress + ":route:" + routeId;
+        String routeKey = "sage:ratelimit:ip:" + normalizedIp + ":route:" + routeId;
 
         List<String> keys = Collections.singletonList(routeKey);
 
@@ -60,6 +61,27 @@ public class RateLimiterService {
             logger.error("Redis Rate Limiter failed: {}", e.getMessage());
             return true;
         }
+    }
+
+    public String extractClientIp(HttpServletRequest request) {
+        return normalizeClientIp(request.getHeader("X-Forwarded-For"),
+                request.getHeader("X-Real-IP"),
+                request.getRemoteAddr());
+    }
+
+    private String normalizeClientIp(String... candidates) {
+        for (String candidate : candidates) {
+            if (candidate == null || candidate.isBlank()) {
+                continue;
+            }
+
+            String firstHop = candidate.split(",")[0].trim();
+            if (!firstHop.isEmpty()) {
+                return firstHop;
+            }
+        }
+
+        return "anonymous";
     }
 
     // Helper methods used as configuration placeholders

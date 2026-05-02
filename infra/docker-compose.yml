@@ -93,7 +93,7 @@ services:
       context: ../mock-target-site
     container_name: sage-ecommerce
     ports:
-      - "3001:3001"        # unprotected — direct access for demo
+      - "3030:3001"        # unprotected — direct access for demo
     networks:
       - sage-network
     healthcheck:
@@ -107,12 +107,13 @@ services:
       context: ../sage-gateway
     container_name: sage-gateway
     ports:
-      - "8080:8080"        # protected path
+      - "8081:8081"        # protected path
     environment:
       - UPSTREAM_URL=http://sage-ecommerce:3001
       - REDIS_HOST=sage-redis
       - KAFKA_BROKER=kafka:29092
       - SPRING_PROFILES_ACTIVE=docker
+      - ML_URL=http://host.docker.internal:8000/predict
     depends_on:
       redis:
         condition: service_healthy

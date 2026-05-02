@@ -40,7 +40,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
 
-    private static final String PYTHON_ML_URL = "http://localhost:8000/predict";
+    @org.springframework.beans.factory.annotation.Value("${ML_URL:http://localhost:8000/predict}")
+    private String PYTHON_ML_URL;
     private static final Logger logger = LoggerFactory.getLogger(TelemetryFilter.class);
     private static final double SESSION_DEPTH_THRESHOLD = 6.0;
     private static final double BLOCK_PROBABILITY_THRESHOLD = 0.85;

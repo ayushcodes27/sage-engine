@@ -31,3 +31,6 @@ build/
 # Generated evaluation artifacts
 /ml_pipeline/evaluation/
 /ml_pipeline/inference_service/evaluation_report.json
+
+# Documentation
+SAGE_PROJECT_ANALYSIS.md

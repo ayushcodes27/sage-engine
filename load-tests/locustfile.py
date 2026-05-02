@@ -1,5 +1,6 @@
 import random
 import sys
+import time
 from itertools import cycle
 
 from locust import HttpUser, between, task, tag
@@ -64,8 +65,8 @@ class HumanBrowser(HttpUser):
 
     def _headers(self):
         return {
-            "X-Forwarded-For": ip_residential(),
-            "User-Agent": random.choice(SCRAPER_UA_POOL),
+            "X-Forwarded-For": self._ip,
+            "User-Agent": self._ua,
             "Content-Type": "application/json",
         }
 
@@ -73,6 +74,8 @@ class HumanBrowser(HttpUser):
         return random.randint(1, 50)
 
     def on_start(self):
+        self._ip = ip_residential()
+        self._ua = random.choice(SCRAPER_UA_POOL)
         headers = self._headers()
         self.client.get("/static/style.css", headers=headers, name="Human - static css")
         self.client.get("/static/app.js", headers=headers, name="Human - static js")
@@ -89,6 +92,7 @@ class HumanBrowser(HttpUser):
         product_id = self._random_product_id()
         headers = self._headers()
         self.client.get(f"/products/{product_id}", headers=headers, name="Human - /products/:id")
+        time.sleep(random.uniform(0.5, 1.5))
         self.client.get(f"/api/price/{product_id}", headers=headers, name="Human - /api/price/:id")
 
         if random.random() < 0.30:
