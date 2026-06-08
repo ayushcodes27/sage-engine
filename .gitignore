@@ -27,6 +27,8 @@ build/
 /data/
 /ml_pipeline/data/
 /ml_pipeline/inference_service/models/
+/ml_pipeline/models/*.pkl
+!/ml_pipeline/models/sage_model.pkl
 
 # Generated evaluation artifacts
 /ml_pipeline/evaluation/

@@ -1,0 +1,60 @@
+{
+  "cv_macro_f1_mean": 0.9963,
+  "cv_macro_f1_std": 0.0007,
+  "cv_fold_scores": [
+    0.9975,
+    0.9958,
+    0.9961,
+    0.9956,
+    0.9965
+  ],
+  "holdout_report": {
+    "flood": {
+      "precision": 0.9998987034035657,
+      "recall": 0.998381713360979,
+      "f1-score": 0.9991396325724986,
+      "support": 9887.0
+    },
+    "human": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4992.0
+    },
+    "recon": {
+      "precision": 0.9898477157360406,
+      "recall": 0.9982935153583617,
+      "f1-score": 0.994052676295667,
+      "support": 586.0
+    },
+    "scraper": {
+      "precision": 0.998157762518841,
+      "recall": 0.999832242912263,
+      "f1-score": 0.9989943010392223,
+      "support": 5961.0
+    },
+    "accuracy": 0.9991598991879026,
+    "macro avg": {
+      "precision": 0.9969760454146117,
+      "recall": 0.9991268679079008,
+      "f1-score": 0.9980466524768469,
+      "support": 21426.0
+    },
+    "weighted avg": {
+      "precision": 0.9991630572364036,
+      "recall": 0.9991598991879026,
+      "f1-score": 0.9991605266521217,
+      "support": 21426.0
+    }
+  },
+  "feature_importances": {
+    "SAGE_Endpoint_Concentration": 0.2488,
+    "SAGE_Request_Velocity": 0.2013,
+    "SAGE_Asset_Skip_Ratio": 0.1348,
+    "SAGE_Cart_Ratio": 0.1145,
+    "SAGE_Temporal_Variance": 0.1107,
+    "SAGE_Sequential_Traversal": 0.1012,
+    "SAGE_Behavioral_Diversity": 0.0588,
+    "SAGE_Session_Depth": 0.0299
+  }
+}

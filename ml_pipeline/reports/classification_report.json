@@ -1,84 +1,94 @@
 {
-  "input": "C:\\Users\\deore\\Desktop\\Major-Project\\sage-engine\\ml_pipeline\\data\\training_data_balanced.csv",
+  "input": "C:\\Users\\deore\\Desktop\\Major-Project\\sage-engine\\ml_pipeline\\data\\training_data.csv",
   "model": "C:\\Users\\deore\\Desktop\\Major-Project\\sage-engine\\ml_pipeline\\models\\sage_model.pkl",
-  "rows_total": 24863,
+  "rows_total": 14732,
   "class_counts": {
-    "flood": 16139,
-    "scraper": 7184,
-    "human": 865,
-    "recon": 675
+    "human": 14617,
+    "scraper": 60,
+    "flood": 55
   },
   "classification_report": {
     "flood": {
-      "precision": 0.7800201816347124,
-      "recall": 0.7184014869888475,
-      "f1-score": 0.7479438800193517,
-      "support": 3228.0
+      "precision": 1.0,
+      "recall": 0.8235294117647058,
+      "f1-score": 0.9032258064516129,
+      "support": 17.0
     },
     "human": {
-      "precision": 0.25668449197860965,
-      "recall": 0.2774566473988439,
-      "f1-score": 0.26666666666666666,
-      "support": 173.0
-    },
-    "recon": {
-      "precision": 0.0964824120603015,
-      "recall": 0.7111111111111111,
-      "f1-score": 0.16991150442477876,
-      "support": 135.0
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 4385.0
     },
     "scraper": {
-      "precision": 0.9498777506112469,
-      "recall": 0.5407098121085595,
-      "f1-score": 0.6891352549889135,
-      "support": 1437.0
+      "precision": 0.8571428571428571,
+      "recall": 1.0,
+      "f1-score": 0.9230769230769231,
+      "support": 18.0
     },
-    "accuracy": 0.6515181982706616,
+    "accuracy": 0.9993212669683258,
     "macro avg": {
-      "precision": 0.5207662090712176,
-      "recall": 0.5619197644018405,
-      "f1-score": 0.46841432652492765,
-      "support": 4973.0
+      "precision": 0.9523809523809524,
+      "recall": 0.9411764705882352,
+      "f1-score": 0.9421009098428454,
+      "support": 4420.0
     },
     "weighted avg": {
-      "precision": 0.7923408438941593,
-      "recall": 0.6515181982706616,
-      "f1-score": 0.6985163065658989,
-      "support": 4973.0
+      "precision": 0.9994182288299935,
+      "recall": 0.9993212669683258,
+      "f1-score": 0.9993145301640411,
+      "support": 4420.0
     }
   },
+  "confusion_matrix": [
+    [
+      4385,
+      0,
+      0
+    ],
+    [
+      0,
+      14,
+      3
+    ],
+    [
+      0,
+      0,
+      18
+    ]
+  ],
   "feature_importance": [
     {
-      "feature": "SAGE_Endpoint_Concentration",
-      "importance": 0.271083521691492
-    },
-    {
-      "feature": "SAGE_Request_Velocity",
-      "importance": 0.2561897933815045
+      "feature": "SAGE_Temporal_Variance",
+      "importance": 0.21187877597214733
     },
     {
       "feature": "SAGE_Session_Depth",
-      "importance": 0.15946220383797793
+      "importance": 0.17518136453707936
     },
     {
-      "feature": "SAGE_Cart_Ratio",
-      "importance": 0.14757654585516247
+      "feature": "SAGE_Endpoint_Concentration",
+      "importance": 0.1719201750843853
     },
     {
-      "feature": "SAGE_Behavioral_Diversity",
-      "importance": 0.1028409459493848
-    },
-    {
-      "feature": "SAGE_Temporal_Variance",
-      "importance": 0.05502989883589765
+      "feature": "SAGE_Request_Velocity",
+      "importance": 0.15653541016758668
     },
     {
       "feature": "SAGE_Asset_Skip_Ratio",
-      "importance": 0.0070177719163876315
+      "importance": 0.12731531423544745
+    },
+    {
+      "feature": "SAGE_Cart_Ratio",
+      "importance": 0.1252374259029815
+    },
+    {
+      "feature": "SAGE_Behavioral_Diversity",
+      "importance": 0.0316764414729686
     },
     {
       "feature": "SAGE_Sequential_Traversal",
-      "importance": 0.0007993185321931227
+      "importance": 0.00025509262740368776
     }
   ]
 }

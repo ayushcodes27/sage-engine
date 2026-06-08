@@ -42,6 +42,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
     @org.springframework.beans.factory.annotation.Value("${ML_URL:http://localhost:8000/predict}")
     private String PYTHON_ML_URL;
+    private static final boolean DATA_COLLECTION_MODE = false;
     private static final Logger logger = LoggerFactory.getLogger(TelemetryFilter.class);
     private static final double SESSION_DEPTH_THRESHOLD = 6.0;
     private static final double BLOCK_PROBABILITY_THRESHOLD = 0.85;
@@ -81,35 +82,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
         long eventTimestamp = Instant.now().toEpochMilli();
 
         // 1. FAST-PATH BLOCK
-        if (redisTelemetryService.isIpBanned(ipAddress)) {
+        if (!DATA_COLLECTION_MODE && redisTelemetryService.isIpBanned(ipAddress)) {
             logger.warn("🚨 FAST-PATH BLOCK: IP " + ipAddress + " is on the 5-minute ban list.");
-
-            try {
-                RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(method, path, "api", ipAddress);
-                RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(HttpServletResponse.SC_FORBIDDEN, System.currentTimeMillis() - startTime);
-                RequestEvent.FeatureVector featureVector = new RequestEvent.FeatureVector(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-                RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "FastPathBlock");
-
-                RequestEvent event = new RequestEvent(
-                        "request.blocked",
-                        eventId,
-                        eventTimestamp,
-                        "tenant_placeholder",
-                        ipAddress,
-                        ipAddress + "_session",
-                        label,
-                        requestDetails,
-                        responseDetails,
-                        featureVector,
-                        mlMetadata
-                );
-
-                kafkaProducer.publishEvent(event);
-
-            } catch (Exception e) {
-                logger.error("Failed to publish fast-path block to Kafka", e);
-            }
-
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"Traffic blocked by SAGE Engine Fast-Path\"}");
@@ -146,7 +120,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
             if (isSensitiveReconPath(path)) {
                 long probeCount = redisTelemetryService.incrementReconProbeCounter(ipAddress);
                 reconProbeCounted = true;
-                if (probeCount > RECON_BAN_THRESHOLD) {
+                if (!DATA_COLLECTION_MODE && probeCount > RECON_BAN_THRESHOLD) {
                     redisTelemetryService.banIp(ipAddress);
                     publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, "Recon", botProbability);
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -158,7 +132,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
             // Flood rule: allow a short grace sequence, then hard block rapid bursts from one IP.
             long burstCount = redisTelemetryService.incrementFloodBurstCounter(ipAddress);
-                if (burstCount > FLOOD_GRACE_REQUEST_COUNT
+                if (!DATA_COLLECTION_MODE
+                    && burstCount > FLOOD_GRACE_REQUEST_COUNT
                     && isSuspiciousFloodAgent(request)
                     && !isSensitiveReconPath(path)) {
                 redisTelemetryService.banIp(ipAddress);
@@ -178,7 +153,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
                         assetSkipRatio);
 
                 long consecutive429 = redisTelemetryService.incrementScraper429Counter(ipAddress);
-                if (consecutive429 >= SCRAPER_429_ESCALATION_THRESHOLD) {
+                if (!DATA_COLLECTION_MODE && consecutive429 >= SCRAPER_429_ESCALATION_THRESHOLD) {
                     redisTelemetryService.banIp(ipAddress);
                     publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, "Scraper", 1.0);
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -187,28 +162,30 @@ public class TelemetryFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), path, "api", ipAddress);
-                RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(429, System.currentTimeMillis() - startTime);
-                RequestEvent.FeatureVector featureVector = toFeatureVector(features);
-                RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "ScraperFastPath");
-                RequestEvent event = new RequestEvent(
-                        "threat.throttled",
-                        eventId,
-                        eventTimestamp,
-                        "tenant_placeholder",
-                        ipAddress,
-                        ipAddress + "_session",
-                        label,
-                        requestDetails,
-                        responseDetails,
-                        featureVector,
-                        mlMetadata
-                );
-                kafkaProducer.publishEvent(event);
-                response.setStatus(429);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"Too Many Requests\", \"message\": \"Traffic throttled by SAGE scraper fast-path\"}");
-                return;
+                if (!DATA_COLLECTION_MODE) {
+                    RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(request.getMethod(), path, "api", ipAddress);
+                    RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(429, System.currentTimeMillis() - startTime);
+                    RequestEvent.FeatureVector featureVector = toFeatureVector(features);
+                    RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "ScraperFastPath");
+                    RequestEvent event = new RequestEvent(
+                            "threat.throttled",
+                            eventId,
+                            eventTimestamp,
+                            "tenant_placeholder",
+                            ipAddress,
+                            ipAddress + "_session",
+                            label,
+                            requestDetails,
+                            responseDetails,
+                            featureVector,
+                            mlMetadata
+                    );
+                    kafkaProducer.publishEvent(event);
+                    response.setStatus(429);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Too Many Requests\", \"message\": \"Traffic throttled by SAGE scraper fast-path\"}");
+                    return;
+                }
             }
 
             redisTelemetryService.resetScraper429Counter(ipAddress);
@@ -234,7 +211,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
                 HttpRequest mlRequest = HttpRequest.newBuilder()
                         .uri(URI.create(PYTHON_ML_URL))
                         .header("Content-Type", "application/json")
-                        .timeout(Duration.ofMillis(2000))
+                        .timeout(Duration.ofMillis(100))
                         .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                         .build();
 
@@ -269,7 +246,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
         }
 
         // 3. ENFORCE DECISION
-        if (isBot) {
+        if (!DATA_COLLECTION_MODE && isBot) {
             logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Class: " + threatClass + " | Prob: " + botProbability);
             redisTelemetryService.banIp(ipAddress);
             publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, threatClass, botProbability);
@@ -292,7 +269,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
             if (statusCode == HttpServletResponse.SC_NOT_FOUND && !reconProbeCounted) {
                 long probeCount = redisTelemetryService.incrementReconProbeCounter(ipAddress);
-                if (probeCount > RECON_BAN_THRESHOLD && !redisTelemetryService.isIpBanned(ipAddress)) {
+                if (!DATA_COLLECTION_MODE && probeCount > RECON_BAN_THRESHOLD && !redisTelemetryService.isIpBanned(ipAddress)) {
                     redisTelemetryService.banIp(ipAddress);
                     publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, "Recon", botProbability);
 
@@ -404,6 +381,9 @@ public class TelemetryFilter extends OncePerRequestFilter {
             return "flood";
         }
         if (ip.startsWith("192.168") || ip.startsWith("10.")) {
+            return "human";
+        }
+        if (ip.startsWith("172.25.")) {
             return "human";
         }
         if (ip.startsWith("52.") || ip.startsWith("34.")) {

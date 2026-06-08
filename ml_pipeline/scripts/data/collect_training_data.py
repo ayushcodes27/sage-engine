@@ -17,7 +17,19 @@ def parse_args():
 
 def build_row(event):
     features = event.get("features", {}) if isinstance(event, dict) else {}
-    label = (event.get("label") if isinstance(event, dict) else None) or "unknown"
+    
+    # Enforce strict IP-based taxonomy mapping to prevent label hallucination
+    request_details = event.get("request", {}) if isinstance(event, dict) else {}
+    ip = str(request_details.get("ip") or event.get("userId") or "")
+    
+    if ip.startswith("172.25."):
+        label = "human"
+    elif ip.startswith("52.") or ip.startswith("34."):
+        label = "scraper"
+    elif ip.startswith("185.") or ip.startswith("176."):
+        label = "recon"
+    else:
+        label = "flood"
 
     return [
         float(features.get("sessionDepth", 0.0) or 0.0),
@@ -38,7 +50,7 @@ def main():
     conf = {
         "bootstrap.servers": args.bootstrap_servers,
         "group.id": args.group_id,
-        "auto.offset.reset": "latest",
+        "auto.offset.reset": "earliest",
     }
     consumer = Consumer(conf)
     consumer.subscribe([args.topic])
