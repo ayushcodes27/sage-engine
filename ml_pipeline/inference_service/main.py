@@ -29,7 +29,10 @@ FEATURE_MAP = [
     "SAGE_Asset_Skip_Ratio",
     "SAGE_Sequential_Traversal",
 ]
-assembler = FeatureAssembler(host='localhost', port=6379)
+import os
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+assembler = FeatureAssembler(host=REDIS_HOST, port=REDIS_PORT)
 
 # Schemas
 class GatewayTelemetry(BaseModel):

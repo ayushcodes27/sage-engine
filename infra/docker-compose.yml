@@ -102,6 +102,20 @@ services:
       timeout: 3s
       retries: 3
 
+  sage-ml:
+    build:
+      context: ../ml_pipeline
+      dockerfile: inference_service/Dockerfile
+    container_name: sage-ml
+    environment:
+      - REDIS_HOST=sage-redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - sage-network
+
   sage-gateway:
     build:
       context: ../sage-gateway
@@ -113,7 +127,7 @@ services:
       - REDIS_HOST=sage-redis
       - KAFKA_BROKER=kafka:29092
       - SPRING_PROFILES_ACTIVE=docker
-      - ML_URL=http://host.docker.internal:8000/predict
+      - ML_URL=http://sage-ml:8000/predict
     depends_on:
       redis:
         condition: service_healthy

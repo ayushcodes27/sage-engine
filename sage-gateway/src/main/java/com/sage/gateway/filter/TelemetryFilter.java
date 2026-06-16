@@ -74,7 +74,12 @@ public class TelemetryFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         long startTime = System.currentTimeMillis();
-        String eventId = UUID.randomUUID().toString();
+        String requestId = request.getHeader("X-Request-Id");
+        if (requestId == null || requestId.isBlank()) {
+            requestId = UUID.randomUUID().toString();
+        }
+        request.setAttribute("X-Request-Id", requestId);
+        String eventId = requestId;
         String ipAddress = resolveClientIp(request);
         String label = classifyByIP(ipAddress);
         String path = request.getRequestURI();
@@ -211,6 +216,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
                 HttpRequest mlRequest = HttpRequest.newBuilder()
                         .uri(URI.create(PYTHON_ML_URL))
                         .header("Content-Type", "application/json")
+                        .header("X-Request-Id", requestId)
                         .timeout(Duration.ofMillis(100))
                         .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                         .build();

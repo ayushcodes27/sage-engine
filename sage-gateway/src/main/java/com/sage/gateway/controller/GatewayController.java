@@ -93,8 +93,8 @@ public class GatewayController {
 
         } finally {
             // Temporarily disabled during testing.
-            // long duration = System.currentTimeMillis() - startTime;
-            // trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
+            long duration = System.currentTimeMillis() - startTime;
+            trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
         }
     }
 
