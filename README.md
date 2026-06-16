@@ -47,6 +47,8 @@ SAGE operates as a multi-component, orchestrated system designed for high availa
 -   **Asynchronous, Non-Blocking I/O**: The gateway is built on Spring WebFlux and Project Reactor, allowing it to handle a high volume of concurrent connections with minimal resource overhead.
 -   **Decoupled ML Inference**: The ML inference service is decoupled from the gateway, allowing it to be scaled independently and updated without service interruption. This design also allows for the use of different ML frameworks or models in the future.
 -   **Adversarial Training Data**: Replaced static datasets (like CIC-IDS2018) with a dynamic, synthesized data pipeline. Locust generates adversarial bot profiles (stealth scrapers, bursty floods) which are streamed via Kafka to train robust, production-ready models.
+-   **Distributed Tracing**: Automatically generates and injects `X-Request-Id` headers across the gateway, ML inference layer, and upstream proxy, enabling seamless end-to-end request tracing and debugging.
+-   **Durable Audit Logging**: Implements persistent rolling logs (`logs/traffic.log`) that record comprehensive traffic metrics and telemetry decisions for forensic analysis and compliance.
 -   **Scalable Infrastructure**: The entire system is containerized and orchestrated with Docker Compose, enabling horizontal scaling of individual components to meet demand.
 
 ## Setup and Run
