@@ -10,7 +10,7 @@ def parse_args():
     parser.add_argument("--bootstrap-servers", default="localhost:9092", help="Kafka bootstrap server(s)")
     parser.add_argument("--group-id", default="training-data-export", help="Kafka consumer group id")
     parser.add_argument("--output", default="ml_pipeline/data/training_data.csv", help="Output CSV path")
-    parser.add_argument("--max-rows", type=int, default=20000, help="Maximum number of rows to export")
+    parser.add_argument("--max-rows", type=int, default=50000, help="Maximum number of rows to export")
     parser.add_argument("--consumer-timeout-ms", type=int, default=10000, help="Stop if no new messages during timeout")
     return parser.parse_args()
 
@@ -24,7 +24,7 @@ def build_row(event):
     
     if ip.startswith("172.25."):
         label = "human"
-    elif ip.startswith("52.") or ip.startswith("34."):
+    elif ip.startswith("52.") or ip.startswith("34.") or ip.startswith("44."):
         label = "scraper"
     elif ip.startswith("185.") or ip.startswith("176."):
         label = "recon"
@@ -39,8 +39,8 @@ def build_row(event):
         float(features.get("endpointConcentration", 0.0) or 0.0),
         float(features.get("cartRatio", 0.0) or 0.0),
         float(features.get("assetSkipRatio", 0.0) or 0.0),
-        float(features.get("sequentialTraversal", 0.0) or 0.0),
         label,
+        ip,
     ]
 
 
@@ -63,8 +63,8 @@ def main():
         "SAGE_Endpoint_Concentration",
         "SAGE_Cart_Ratio",
         "SAGE_Asset_Skip_Ratio",
-        "SAGE_Sequential_Traversal",
         "label",
+        "session_id",
     ]
 
     rows_written = 0

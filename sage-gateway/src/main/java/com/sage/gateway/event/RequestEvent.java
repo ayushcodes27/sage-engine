@@ -22,8 +22,7 @@ public record RequestEvent(
         double behavioralDiversity,
         double endpointConcentration,
         double cartRatio,
-        double assetSkipRatio,
-        double sequentialTraversal
+        double assetSkipRatio
     ) {}
     public record MLMetadata(double botProbability, int isBotFlag, String threatClass) {}
 }

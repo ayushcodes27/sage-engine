@@ -42,7 +42,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
     @org.springframework.beans.factory.annotation.Value("${ML_URL:http://localhost:8000/predict}")
     private String PYTHON_ML_URL;
-    private static final boolean DATA_COLLECTION_MODE = false;
+    private static final boolean DATA_COLLECTION_MODE = true;
     private static final Logger logger = LoggerFactory.getLogger(TelemetryFilter.class);
     private static final double SESSION_DEPTH_THRESHOLD = 6.0;
     private static final double BLOCK_PROBABILITY_THRESHOLD = 0.85;
@@ -108,8 +108,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
                 "SAGE_Behavioral_Diversity", 0.0,
                 "SAGE_Endpoint_Concentration", 0.0,
                 "SAGE_Cart_Ratio", 0.0,
-            "SAGE_Asset_Skip_Ratio", 1.0,
-            "SAGE_Sequential_Traversal", 0.0
+            "SAGE_Asset_Skip_Ratio", 1.0
         );
 
         try {
@@ -409,8 +408,7 @@ public class TelemetryFilter extends OncePerRequestFilter {
                 features.getOrDefault("SAGE_Behavioral_Diversity", 0.0),
                 features.getOrDefault("SAGE_Endpoint_Concentration", 0.0),
                 features.getOrDefault("SAGE_Cart_Ratio", 0.0),
-            features.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0),
-            features.getOrDefault("SAGE_Sequential_Traversal", 0.0)
+            features.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0)
         );
     }
 }

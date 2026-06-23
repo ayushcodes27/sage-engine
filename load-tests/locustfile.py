@@ -24,6 +24,14 @@ def ip_tor_like():
     return f"{prefix}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
 
 
+def ip_adversarial_scraper():
+    return f"44.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
+
+
+def ip_slow_flood():
+    return f"88.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 254)}"
+
+
 SCRAPER_UA_POOL = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.124 Safari/537.36",
@@ -55,10 +63,23 @@ FLOOD_SEARCH_TERMS = [
 SQLI_QUERIES = ["' OR 1=1", "../etc/passwd"]
 
 
+RECON_UA_POOL = [
+    "python-requests/2.31.0",
+    "python-requests/2.28.1",
+    "python-urllib3/1.26.12",
+    "Go-http-client/1.1",
+    "Go-http-client/2.0",
+    "Nmap Scripting Engine",
+    "curl/7.68.0",
+    "Wget/1.21.2",
+    "masscan/1.3.2",
+]
+
+
 @tag("human")
 class HumanBrowser(HttpUser):
     scenario_tags = {"human"}
-    fixed_count = 8
+    fixed_count = random.randint(6, 12)
     wait_time = between(10, 15)
 
     def _headers(self):
@@ -107,7 +128,7 @@ class HumanBrowser(HttpUser):
 @tag("akamai_scraper")
 class AkamaiScraper(HttpUser):
     scenario_tags = {"akamai_scraper"}
-    fixed_count = 20
+    fixed_count = random.randint(15, 25)
     wait_time = between(0.5, 1.5)
 
     def on_start(self):
@@ -134,20 +155,24 @@ class AkamaiScraper(HttpUser):
         self.client.get(f"/api/price/{product_id}", headers=headers, name="Scraper - /api/price/:id")
         self.client.get(f"/api/inventory/{product_id}", headers=headers, name="Scraper - /api/inventory/:id")
 
+        if random.random() < 0.05:
+            self.client.post("/checkout", json={"status": "mock"}, headers=headers, name="Scraper - /checkout")
+
 
 @tag("cloudflare_flood")
 class CloudflareFlood(HttpUser):
     scenario_tags = {"cloudflare_flood"}
-    fixed_count = 8
+    fixed_count = random.randint(5, 12)
     wait_time = between(0, 0.1)
 
     def on_start(self):
         self._ip = ip_distributed()
 
     def _headers(self):
+        ua = random.choice(SCRAPER_UA_POOL) if random.random() < 0.15 else "curl/8.6.0"
         return {
             "X-Forwarded-For": self._ip,
-            "User-Agent": "curl/8.6.0",
+            "User-Agent": ua,
             "Content-Type": "application/json",
         }
 
@@ -169,10 +194,10 @@ class CloudflareFlood(HttpUser):
 @tag("unprotected_flood")
 class UnprotectedFlood(HttpUser):
     scenario_tags = {"unprotected_flood"}
-    fixed_count = 8
+    fixed_count = random.randint(5, 12)
     wait_time = between(0, 0.1)
 
-    # Use absolute URLs so this class still targets 3001 even when global --host points to 8081.
+    # Use absolute URLs so this class still targets 3001 (direct to target) even when global --host points to 8081 (gateway).
     target_base = "http://localhost:3001"
 
     def on_start(self):
@@ -211,16 +236,17 @@ class UnprotectedFlood(HttpUser):
 @tag("recon")
 class ReconBot(HttpUser):
     scenario_tags = {"recon"}
-    fixed_count = 4
+    fixed_count = random.randint(3, 8)
     wait_time = between(2, 5)
 
     def on_start(self):
         self._ip = ip_tor_like()
+        self._ua = random.choice(RECON_UA_POOL)
 
     def _headers(self):
         return {
             "X-Forwarded-For": self._ip,
-            "User-Agent": "python-requests/2.31.0",
+            "User-Agent": self._ua,
             "Content-Type": "application/json",
         }
 
@@ -247,7 +273,7 @@ class ReconBot(HttpUser):
 @tag("scraper")
 class StealthScraper(HttpUser):
     scenario_tags = {"scraper"}
-    fixed_count = 10
+    fixed_count = random.randint(8, 15)
     wait_time = between(2, 5)
 
     def on_start(self):
@@ -270,11 +296,14 @@ class StealthScraper(HttpUser):
         time.sleep(random.uniform(0.1, 0.3))
         self.client.get(f"/api/price/{product_id}", headers=headers, name="StealthScraper - /api/price/:id")
 
+        if random.random() < 0.05:
+            self.client.post("/checkout", json={"status": "mock"}, headers=headers, name="StealthScraper - /checkout")
+
 
 @tag("flood")
 class JitteredFlood(HttpUser):
     scenario_tags = {"flood"}
-    fixed_count = 5
+    fixed_count = random.randint(3, 8)
     wait_time = between(10, 15)
 
     def on_start(self):
@@ -301,6 +330,56 @@ class JitteredFlood(HttpUser):
             time.sleep(0.02)
 
 
+@tag("adversarial_scraper")
+class AdversarialScraper(HttpUser):
+    scenario_tags = {"adversarial_scraper"}
+    fixed_count = random.randint(8, 15)
+    wait_time = between(1, 4)
+
+    def on_start(self):
+        self._ip = ip_adversarial_scraper()
+        self._ua = random.choice(SCRAPER_UA_POOL)
+
+    def _headers(self):
+        return {
+            "X-Forwarded-For": self._ip,
+            "User-Agent": self._ua,
+            "Content-Type": "application/json",
+        }
+
+    @tag("adversarial_scraper")
+    @task(8)
+    def scrape_products(self):
+        self.client.get("/products", headers=self._headers(), name="AdversarialScraper - /products")
+
+    @tag("adversarial_scraper")
+    @task(2)
+    def hit_asset(self):
+        self.client.get("/static/style.css", headers=self._headers(), name="AdversarialScraper - /static/style.css")
+
+
+@tag("slow_flood")
+class SlowFlood(HttpUser):
+    scenario_tags = {"slow_flood"}
+    fixed_count = random.randint(3, 8)
+    wait_time = between(0.5, 1.5)
+
+    def on_start(self):
+        self._ip = ip_slow_flood()
+
+    def _headers(self):
+        return {
+            "X-Forwarded-For": self._ip,
+            "User-Agent": "curl/8.6.0",
+            "Content-Type": "application/json",
+        }
+
+    @tag("slow_flood")
+    @task
+    def flood_endpoint(self):
+        self.client.get("/checkout", json={"status": "mock"}, headers=self._headers(), name="SlowFlood - /checkout")
+
+
 def _parse_selected_tags(argv):
     selected = set()
     for idx, token in enumerate(argv):
@@ -324,6 +403,8 @@ def _apply_tag_based_user_activation():
         ReconBot,
         StealthScraper,
         JitteredFlood,
+        AdversarialScraper,
+        SlowFlood,
     ]
 
     for user_cls in user_classes:
@@ -334,7 +415,8 @@ def _apply_tag_based_user_activation():
 _apply_tag_based_user_activation()
 
 # Run config
-# locust -f locustfile.py --headless -u 40 -r 5 --run-time 5m --host http://localhost:3001
+# Run config
+# locust -f load-tests/locustfile.py --headless -u 40 -r 5 --run-time 5m --host http://localhost:8083
 # HumanBrowser: 12 users
 # AkamaiScraper: 14 users
 # CloudflareFlood: 8 users

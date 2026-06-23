@@ -39,28 +39,10 @@ public class RedisTelemetryService {
             redisTemplate.opsForHash().increment(hashKey, "static_hits", 1);
         }
 
-        double sequentialTraversalScore = 0.0;
-        if (safePath.matches("/products/\\d+|/api/price/\\d+|/api/inventory/\\d+")) {
-            String resourceId = safePath.replaceAll(".*/", "");
-            String seqKey = "sage:seq:" + ip;
-
-            redisTemplate.opsForList().leftPush(seqKey, resourceId);
-            redisTemplate.opsForList().trim(seqKey, 0, 19);
-            redisTemplate.expire(seqKey, 5, TimeUnit.MINUTES);
-
-            List<String> recentIds = redisTemplate.opsForList().range(seqKey, 0, -1);
-            if (recentIds == null) {
-                recentIds = new ArrayList<>();
-            }
-
-            sequentialTraversalScore = computeSequentialScore(
-                    recentIds.stream().map(Object::toString).collect(Collectors.toList())
-            );
-        }
-
         // LPUSH new data to the front of the lists
         redisTemplate.opsForList().leftPush(timeKey, String.valueOf(currentTimestamp));
-        redisTemplate.opsForList().leftPush(sizeKey, String.valueOf(payloadSize));
+        // Use path length instead of payload size (often 0) to give Behavioral_Diversity variance
+        redisTemplate.opsForList().leftPush(sizeKey, String.valueOf(safePath.length()));
 
         // LTRIM to keep only the last WINDOW_SIZE elements
         redisTemplate.opsForList().trim(timeKey, 0, WINDOW_SIZE - 1);
@@ -96,7 +78,6 @@ public class RedisTelemetryService {
         redisTemplate.opsForHash().put(hashKey, "SAGE_Endpoint_Concentration", String.valueOf(endpointConcentration));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Cart_Ratio", String.valueOf(cartRatio));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Asset_Skip_Ratio", String.valueOf(assetSkipRatio));
-        redisTemplate.opsForHash().put(hashKey, "SAGE_Sequential_Traversal", String.valueOf(sequentialTraversalScore));
 
         // Set a 1-hour TTL
         redisTemplate.expire(hashKey, Duration.ofHours(1));
@@ -110,42 +91,8 @@ public class RedisTelemetryService {
                 "SAGE_Behavioral_Diversity", behavioralDiversity,
                 "SAGE_Endpoint_Concentration", endpointConcentration,
                 "SAGE_Cart_Ratio", cartRatio,
-                "SAGE_Asset_Skip_Ratio", assetSkipRatio,
-                "SAGE_Sequential_Traversal", sequentialTraversalScore
+                "SAGE_Asset_Skip_Ratio", assetSkipRatio
         );
-    }
-
-    private double computeSequentialScore(List<String> ids) {
-        if (ids == null || ids.size() < 3) {
-            return 0.0;
-        }
-
-        List<String> deduped = new ArrayList<>();
-        for (String id : ids) {
-            if (deduped.isEmpty() || !id.equals(deduped.get(deduped.size() - 1))) {
-                deduped.add(id);
-            }
-        }
-
-        if (deduped.size() < 3) {
-            return 0.0;
-        }
-
-        int consecutivePairs = 0;
-        for (int i = 0; i < deduped.size() - 1; i++) {
-            try {
-                int current = Integer.parseInt(deduped.get(i));
-                int next = Integer.parseInt(deduped.get(i + 1));
-                // LPUSH order means index 0 is newest.
-                if (next + 1 == current) {
-                    consecutivePairs++;
-                }
-            } catch (NumberFormatException e) {
-                // Ignore non-numeric IDs.
-            }
-        }
-
-        return (double) consecutivePairs / (deduped.size() - 1);
     }
 
     private double getCounter(String hashKey, String field) {

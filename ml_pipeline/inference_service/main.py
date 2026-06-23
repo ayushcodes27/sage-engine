@@ -27,7 +27,6 @@ FEATURE_MAP = [
     "SAGE_Endpoint_Concentration",
     "SAGE_Cart_Ratio",
     "SAGE_Asset_Skip_Ratio",
-    "SAGE_Sequential_Traversal",
 ]
 import os
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
@@ -44,7 +43,6 @@ class GatewayTelemetry(BaseModel):
     SAGE_Endpoint_Concentration: float = Field(..., description="Price+inventory+product hits / total hits")
     SAGE_Cart_Ratio: float = Field(..., description="Cart+checkout hits / total hits")
     SAGE_Asset_Skip_Ratio: float = Field(..., description="1 - (static hits / total hits)")
-    SAGE_Sequential_Traversal: float = Field(..., description="Consecutive numeric traversal score over recent resource IDs")
 
 class InferenceResult(BaseModel):
     session_id: str
