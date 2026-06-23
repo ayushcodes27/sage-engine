@@ -16,16 +16,6 @@ Malicious bots are a growing threat responsible for credential stuffing, content
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    Client([Client/Locust]) --> Gateway[SAGE Gateway\n(Spring Boot)]
-    Gateway --> ML[ML Pipeline\n(FastAPI)]
-    ML -.->|Threat Score| Gateway
-    Gateway -->|Allow| Target[Target Site\n(Node.js)]
-    Gateway -.->|Events| Kafka[(Kafka)]
-    Kafka -.-> Dashboard[Dashboard\n(React)]
-```
-
 SAGE operates as a multi-component, orchestrated system designed for high availability and performance.
 
 1.  **`sage-gateway` (Spring Boot)**: The entry point for all traffic. This high-performance reverse proxy intercepts requests, extracts key metadata, and forwards it to the ML inference service for analysis. Based on the returned score, it either blocks the request or forwards it to the target application.
@@ -129,7 +119,3 @@ This evasion reveals that while ML models are powerful, they are bound by their 
 - **AdversarialScraper evasion (95.2%)**: The model's reliance on `Asset_Skip_Ratio` as a near-root split creates a known evasion vector. Fix: adversarial retraining with disguised scraper examples to force importance redistribution toward `Behavioral_Diversity` and `Session_Depth`.
 - **Synthetic training data**: All training data is generated from Locust scripts. Production deployment would require retraining on real labeled traffic logs to close the distribution gap.
 - **Session sequence modeling**: Current features are session aggregates, not sequences. An LSTM layer on URL traversal order would close the AdversarialScraper gap without requiring adversarial retraining.
-
-## License
-
-This project is licensed under the MIT License.
