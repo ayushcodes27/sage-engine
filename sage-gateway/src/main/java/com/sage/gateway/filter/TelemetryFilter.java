@@ -42,9 +42,9 @@ public class TelemetryFilter extends OncePerRequestFilter {
 
     @org.springframework.beans.factory.annotation.Value("${ML_URL:http://localhost:8000/predict}")
     private String PYTHON_ML_URL;
-    private static final boolean DATA_COLLECTION_MODE = true;
+    private static final boolean DATA_COLLECTION_MODE = false;
     private static final Logger logger = LoggerFactory.getLogger(TelemetryFilter.class);
-    private static final double SESSION_DEPTH_THRESHOLD = 6.0;
+    private static final double SESSION_DEPTH_THRESHOLD = 20.0;
     private static final double BLOCK_PROBABILITY_THRESHOLD = 0.85;
     private static final long ECHO_FLOOD_RPS_THRESHOLD = 30;
     private static final int FLOOD_GRACE_REQUEST_COUNT = 6;
@@ -206,7 +206,8 @@ public class TelemetryFilter extends OncePerRequestFilter {
             }
 
             // GRACE PERIOD
-            if (!isBot && sessionDepth > SESSION_DEPTH_THRESHOLD) {
+            double sessionDuration = features.getOrDefault("SAGE_Session_Duration", 0.0);
+            if (!isBot && sessionDepth > SESSION_DEPTH_THRESHOLD && sessionDuration >= 3.0) {
                 Map<String, Object> mlPayload = new HashMap<>(features);
                 mlPayload.put("session_id", eventId);
 

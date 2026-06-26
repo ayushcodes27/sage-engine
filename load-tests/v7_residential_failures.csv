@@ -1,0 +1,11 @@
+Method,Name,Error,Occurrences
+GET,Recon - blend,HTTPError('429 Client Error:  for url: Recon - blend'),2
+GET,Recon - sensitive,HTTPError('404 Client Error:  for url: Recon - sensitive'),93
+GET,Flood - target,HTTPError('403 Client Error:  for url: Flood - target'),891
+GET,Human - /products/[id],HTTPError('429 Client Error:  for url: Human - /products/[id]'),4
+GET,Scraper - target,HTTPError('500 Server Error:  for url: Scraper - target'),1
+GET,Flood - target,HTTPError('429 Client Error:  for url: Flood - target'),8
+GET,Scraper - target,HTTPError('429 Client Error:  for url: Scraper - target'),20
+GET,Recon - sensitive,HTTPError('403 Client Error:  for url: Recon - sensitive'),3
+GET,Scraper - target,HTTPError('403 Client Error:  for url: Scraper - target'),559
+GET,Recon - blend,HTTPError('403 Client Error:  for url: Recon - blend'),1

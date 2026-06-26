@@ -39,14 +39,17 @@ public class RedisTelemetryService {
             redisTemplate.opsForHash().increment(hashKey, "static_hits", 1);
         }
 
-        // LPUSH new data to the front of the lists
-        redisTemplate.opsForList().leftPush(timeKey, String.valueOf(currentTimestamp));
-        // Use path length instead of payload size (often 0) to give Behavioral_Diversity variance
-        redisTemplate.opsForList().leftPush(sizeKey, String.valueOf(safePath.length()));
+        // Only LPUSH if this is NOT a static asset
+        if (!safePath.startsWith("/static/")) {
+            // LPUSH new data to the front of the lists
+            redisTemplate.opsForList().leftPush(timeKey, String.valueOf(currentTimestamp));
+            // Use path length instead of payload size (often 0) to give Behavioral_Diversity variance
+            redisTemplate.opsForList().leftPush(sizeKey, String.valueOf(safePath.length()));
 
-        // LTRIM to keep only the last WINDOW_SIZE elements
-        redisTemplate.opsForList().trim(timeKey, 0, WINDOW_SIZE - 1);
-        redisTemplate.opsForList().trim(sizeKey, 0, WINDOW_SIZE - 1);
+            // LTRIM to keep only the last WINDOW_SIZE elements
+            redisTemplate.opsForList().trim(timeKey, 0, WINDOW_SIZE - 1);
+            redisTemplate.opsForList().trim(sizeKey, 0, WINDOW_SIZE - 1);
+        }
 
         // Fetch the sliding window
         List<String> rawTimes = redisTemplate.opsForList().range(timeKey, 0, -1);
@@ -58,6 +61,10 @@ public class RedisTelemetryService {
 
         // Calculate the 4 Core SAGE Features
         double sessionDepth = times.size();
+        double sessionDuration = 0.0;
+        if (times.size() >= 2) {
+            sessionDuration = (times.get(0) - times.get(times.size() - 1)) / 1000.0;
+        }
         double requestVelocity = calculateVelocity(times);
         double temporalVariance = calculateTemporalVariance(times);
         double behavioralDiversity = calculateStandardDeviation(sizes);
@@ -78,6 +85,7 @@ public class RedisTelemetryService {
         redisTemplate.opsForHash().put(hashKey, "SAGE_Endpoint_Concentration", String.valueOf(endpointConcentration));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Cart_Ratio", String.valueOf(cartRatio));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Asset_Skip_Ratio", String.valueOf(assetSkipRatio));
+        redisTemplate.opsForHash().put(hashKey, "SAGE_Session_Duration", String.valueOf(sessionDuration));
 
         // Set a 1-hour TTL
         redisTemplate.expire(hashKey, Duration.ofHours(1));
@@ -91,7 +99,8 @@ public class RedisTelemetryService {
                 "SAGE_Behavioral_Diversity", behavioralDiversity,
                 "SAGE_Endpoint_Concentration", endpointConcentration,
                 "SAGE_Cart_Ratio", cartRatio,
-                "SAGE_Asset_Skip_Ratio", assetSkipRatio
+                "SAGE_Asset_Skip_Ratio", assetSkipRatio,
+                "SAGE_Session_Duration", sessionDuration
         );
     }
 
