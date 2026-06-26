@@ -19,6 +19,9 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
+    @org.springframework.beans.factory.annotation.Value("${spring.kafka.bootstrap-servers:localhost:9092}")
+    private String bootstrapServers;
+
     @Bean
     public NewTopic gatewayTelemetryTopic() {
         return TopicBuilder.name("gateway-telemetry")
@@ -30,7 +33,7 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
         // PERFORMANCE TUNING:
         configProps.put(ProducerConfig.ACKS_CONFIG, "1");
@@ -57,7 +60,7 @@ public class KafkaConfig {
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         return new KafkaAdmin(configs);
     }
 }

@@ -14,16 +14,24 @@ REQUESTS_TOTAL = Counter('sage_inference_requests_total', 'Total prediction requ
 THREATS_DETECTED_TOTAL = Counter('sage_inference_threats_detected_total', 'Total requests classified as malicious')
 INFERENCE_LATENCY = Histogram('sage_inference_latency_seconds', 'Time spent processing the ML prediction')
 
+import pickle
+
 # Global State
 MODEL = None
-LABEL_ENCODER = None
+CLASSES = []
 FEATURE_MAP = [
     "SAGE_Session_Depth",
     "SAGE_Temporal_Variance",
     "SAGE_Request_Velocity",
     "SAGE_Behavioral_Diversity",
+    "SAGE_Endpoint_Concentration",
+    "SAGE_Cart_Ratio",
+    "SAGE_Asset_Skip_Ratio",
 ]
-assembler = FeatureAssembler(host='localhost', port=6379)
+import os
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+assembler = FeatureAssembler(host=REDIS_HOST, port=REDIS_PORT)
 
 # Schemas
 class GatewayTelemetry(BaseModel):
@@ -32,6 +40,9 @@ class GatewayTelemetry(BaseModel):
     SAGE_Temporal_Variance: float = Field(..., description="Flow IAT Std / Mean")
     SAGE_Request_Velocity: float = Field(..., description="Flow Pkts/s")
     SAGE_Behavioral_Diversity: float = Field(..., description="Fwd Pkt Len Std")
+    SAGE_Endpoint_Concentration: float = Field(..., description="Price+inventory+product hits / total hits")
+    SAGE_Cart_Ratio: float = Field(..., description="Cart+checkout hits / total hits")
+    SAGE_Asset_Skip_Ratio: float = Field(..., description="1 - (static hits / total hits)")
 
 class InferenceResult(BaseModel):
     session_id: str
@@ -44,23 +55,22 @@ class InferenceResult(BaseModel):
 # Lifespan & Initialization
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global MODEL, LABEL_ENCODER
+    global MODEL, CLASSES
     base_path = os.path.dirname(__file__)
-    model_dir = os.path.join(base_path, "models")
+    model_dir = os.path.abspath(os.path.join(base_path, "..", "models"))
+    model_path = os.path.join(model_dir, "sage_model.pkl")
 
-    # We now look specifically for the Master artifacts
-    model_path = os.path.join(model_dir, "sage_master_rf.pkl")
-    encoder_path = os.path.join(model_dir, "sage_label_encoder.pkl")
-
-    if os.path.exists(model_path) and os.path.exists(encoder_path):
-        MODEL = joblib.load(model_path)
-        LABEL_ENCODER = joblib.load(encoder_path)
+    if os.path.exists(model_path):
+        with open(model_path, "rb") as f:
+            model_data = pickle.load(f)
+        MODEL = model_data["model"]
+        CLASSES = model_data["classes"]
         print(f"[+] SAGE Engine ML Service Ready.")
         print(f"[+] Master Brain Loaded: {model_path}")
-        print(f"[+] Classes Detected: {LABEL_ENCODER.classes_}")
+        print(f"[+] Classes Detected: {CLASSES}")
     else:
         print(
-            "WARNING: Missing sage_master_rf.pkl or sage_label_encoder.pkl in models/ directory. "
+            f"WARNING: Missing {model_path} in models/ directory. "
             "Inference will return 503 until models are available."
         )
     yield
@@ -73,8 +83,8 @@ def predict_anomaly(data: GatewayTelemetry):
     """
     Receives real-time telemetry from the Java Gateway.
     """
-    if MODEL is None or LABEL_ENCODER is None:
-        raise HTTPException(status_code=503, detail="Model or Encoder not loaded")
+    if MODEL is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
 
     start_time = time.perf_counter()
     REQUESTS_TOTAL.inc()
@@ -86,14 +96,18 @@ def predict_anomaly(data: GatewayTelemetry):
 
         # Multiclass Inference
         probabilities = MODEL.predict_proba(X_input)[0]
-        predicted_idx = int(np.argmax(probabilities))
-        confidence = float(probabilities[predicted_idx])
+        max_prob_idx = int(np.argmax(probabilities))
+        confidence = float(probabilities[max_prob_idx])
+        predicted_class = CLASSES[max_prob_idx]
 
-        # Decode the integer prediction back to a string ("Benign", "Bot", etc.)
-        threat_class = str(LABEL_ENCODER.inverse_transform([predicted_idx])[0])
-
-        # SAGE Enforcement Logic: Anything not 'Benign' triggers the Java Ban
-        is_malicious = threat_class != "Benign"
+        # SAGE Enforcement Logic: Require confidence threshold for automated action
+        CONFIDENCE_THRESHOLD = 0.75
+        if predicted_class == "human" or confidence < CONFIDENCE_THRESHOLD:
+            is_malicious = False
+            threat_class = "Benign"
+        else:
+            is_malicious = True
+            threat_class = predicted_class
 
         if is_malicious:
             THREATS_DETECTED_TOTAL.inc()
@@ -119,8 +133,8 @@ async def predict_bot(user_id: str):
     """
     Pulls historical state from Redis via FeatureAssembler to make a prediction.
     """
-    if MODEL is None or LABEL_ENCODER is None:
-        raise HTTPException(status_code=503, detail="Model or Encoder not loaded")
+    if MODEL is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
 
     start_time = time.perf_counter()
     REQUESTS_TOTAL.inc()
@@ -129,11 +143,17 @@ async def predict_bot(user_id: str):
         vector = assembler.assemble(user_id)
 
         probabilities = MODEL.predict_proba(vector)[0]
-        predicted_idx = int(np.argmax(probabilities))
-        confidence = float(probabilities[predicted_idx])
+        max_prob_idx = int(np.argmax(probabilities))
+        confidence = float(probabilities[max_prob_idx])
+        predicted_class = CLASSES[max_prob_idx]
 
-        threat_class = str(LABEL_ENCODER.inverse_transform([predicted_idx])[0])
-        is_malicious = threat_class != "Benign"
+        CONFIDENCE_THRESHOLD = 0.75
+        if predicted_class == "human" or confidence < CONFIDENCE_THRESHOLD:
+            is_malicious = False
+            threat_class = "Benign"
+        else:
+            is_malicious = True
+            threat_class = predicted_class
 
         if is_malicious:
             THREATS_DETECTED_TOTAL.inc()
@@ -161,7 +181,7 @@ def health_check():
     return {
         "status": "operational" if MODEL is not None else "degraded",
         "model_loaded": MODEL is not None,
-        "classes": LABEL_ENCODER.classes_.tolist() if LABEL_ENCODER else [],
+        "classes": CLASSES if MODEL is not None else [],
         "feature_map": FEATURE_MAP,
     }
 

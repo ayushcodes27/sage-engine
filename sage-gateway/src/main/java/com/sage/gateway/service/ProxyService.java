@@ -40,6 +40,11 @@ public class ProxyService {
     public ResponseEntity<String> forwardRequest(String targetUrl, HttpMethod method, HttpServletRequest request, String body){
         var requestSpec = webClient.method(method).uri(targetUrl);
 
+        String requestId = (String) request.getAttribute("X-Request-Id");
+        if (requestId != null) {
+            requestSpec.header("X-Request-Id", requestId);
+        }
+
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();

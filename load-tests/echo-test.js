@@ -12,9 +12,18 @@ export const options = {
 
 export default function () {
     // Resolve target URL from environment variable, defaulting to local echo endpoint.
-    const url = __ENV.URL || 'http://localhost:8081/echo';
+    const baseUrl = __ENV.URL || 'http://localhost:8081';
+    const targets = ['/echo', '/api/benchmark', '/actuator/prometheus'];
+    const url = `${baseUrl}${targets[Math.floor(Math.random() * targets.length)]}`;
 
-    const res = http.get(url);
+    const randomIp = `10.${Math.floor(Math.random() * 220) + 10}.${Math.floor(Math.random() * 220) + 10}.${Math.floor(Math.random() * 220) + 10}`;
+
+    const res = http.get(url, {
+        headers: {
+            'X-Forwarded-For': randomIp,
+            'User-Agent': 'SAGE-Traffic-Sim/1.0'
+        }
+    });
 
     check(res, {
         'status is 200': (r) => r.status === 200,

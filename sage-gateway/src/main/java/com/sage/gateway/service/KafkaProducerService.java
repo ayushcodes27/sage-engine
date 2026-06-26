@@ -15,9 +15,6 @@ public class KafkaProducerService {
     private static final Logger log = LoggerFactory.getLogger(KafkaProducerService.class);
     private static final String TOPIC = "gateway-telemetry";
 
-    // Updated the generic type to <String, Object> to align with Spring Boot's Kafka auto-configuration
-    // and avoid custom serializer wiring. The JsonSerializer configured via application.yml
-    // handles automatic conversion of RequestEvent instances into JSON at publish time.
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public KafkaProducerService(KafkaTemplate<String, Object> kafkaTemplate) {
@@ -25,21 +22,17 @@ public class KafkaProducerService {
     }
 
     public void publishEvent(RequestEvent event) {
-        log.info("1: publishEvent called for EventId: {}", event.eventId());
-
         try {
             String routingKey = event.sessionId();
             CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(TOPIC, routingKey, event);
 
             future.whenComplete((result, ex) -> {
                 if (ex != null) {
-                    log.error("❌ STEP 2: Kafka broker rejected the event!", ex);
-                } else {
-                    log.info("✅ STEP 2: Event saved successfully. Partition: {}", result.getRecordMetadata().partition());
+                    log.debug("Kafka broker rejected telemetry event {}", event.eventId(), ex);
                 }
             });
         } catch (Exception e) {
-            log.error("CRITICAL: Failed before sending to Kafka! JSON Serialization error.", e);
+            log.debug("Skipping telemetry publish for event {}", event.eventId(), e);
         }
     }
 }

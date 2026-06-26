@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -73,8 +74,7 @@ public class GatewayController {
                 return filterResult.get();
             }
 
-            String backendPath = path.replaceFirst("^/api", "");
-            String target = matchedRoute.backendUrl() + backendPath;
+            String target = buildTargetUrl(matchedRoute, request);
 
             ResponseEntity<String> response = proxyService.forwardRequest(
                     target,
@@ -93,8 +93,8 @@ public class GatewayController {
 
         } finally {
             // Temporarily disabled during testing.
-            // long duration = System.currentTimeMillis() - startTime;
-            // trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
+            long duration = System.currentTimeMillis() - startTime;
+            trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
         }
     }
 
@@ -122,5 +122,25 @@ public class GatewayController {
         }
 
         return Optional.empty();
+    }
+
+    private String buildTargetUrl(RouteDefinition matchedRoute, HttpServletRequest request) {
+        Map<String, String> proxyConfig = matchedRoute.filters() == null
+                ? Collections.emptyMap()
+                : matchedRoute.filters().getOrDefault("Proxy", Collections.emptyMap());
+
+        String stripPrefix = proxyConfig.getOrDefault("stripPrefix", "");
+        String requestPath = request.getRequestURI();
+        String targetPath = requestPath;
+
+        if (!stripPrefix.isBlank() && requestPath.startsWith(stripPrefix)) {
+            targetPath = requestPath.substring(stripPrefix.length());
+            if (targetPath.isBlank()) {
+                targetPath = "/";
+            }
+        }
+
+        String query = request.getQueryString();
+        return matchedRoute.backendUrl() + targetPath + (query == null || query.isBlank() ? "" : "?" + query);
     }
 }

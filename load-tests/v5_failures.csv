@@ -1,0 +1,34 @@
+Method,Name,Error,Occurrences
+GET,Scraper - /api/price/:id,HTTPError('503 Server Error:  for url: Scraper - /api/price/:id'),662
+GET,Human - /products,HTTPError('503 Server Error:  for url: Human - /products'),6
+GET,Recon - /api/search (sqli),HTTPError('503 Server Error:  for url: Recon - /api/search (sqli)'),25
+GET,Unprotected Flood - /products,"ConnectionRefusedError(10061, '[WinError 10061] No connection could be made because the target machine actively refused it.')",28
+GET,Scraper - /api/inventory/:id,HTTPError('503 Server Error:  for url: Scraper - /api/inventory/:id'),661
+GET,Human - /products/:id,HTTPError('503 Server Error:  for url: Human - /products/:id'),11
+POST,StealthScraper - /checkout,HTTPError('503 Server Error:  for url: StealthScraper - /checkout'),10
+GET,Human - static logo,HTTPError('503 Server Error:  for url: Human - static logo'),3
+GET,Scraper - /products/:id,HTTPError('503 Server Error:  for url: Scraper - /products/:id'),662
+GET,AdversarialScraper - /products,HTTPError('503 Server Error:  for url: AdversarialScraper - /products'),222
+GET,Human - /products (burst),HTTPError('503 Server Error:  for url: Human - /products (burst)'),9
+GET,Flood - /products,HTTPError('503 Server Error:  for url: Flood - /products'),528
+GET,JitteredFlood - burst,HTTPError('503 Server Error:  for url: JitteredFlood - burst'),818
+GET,Human - /cart,HTTPError('503 Server Error:  for url: Human - /cart'),6
+GET,SlowFlood - /checkout,HTTPError('503 Server Error:  for url: SlowFlood - /checkout'),211
+GET,Recon - traversal,HTTPError('404 Client Error:  for url: Recon - traversal'),18
+GET,Unprotected Flood - /api/search,"ConnectionRefusedError(10061, '[WinError 10061] No connection could be made because the target machine actively refused it.')",25
+GET,Recon - /products/99999,HTTPError('503 Server Error:  for url: Recon - /products/99999'),19
+GET,Human - /,HTTPError('503 Server Error:  for url: Human - /'),3
+GET,Human - /api/price/:id,HTTPError('503 Server Error:  for url: Human - /api/price/:id'),11
+GET,StealthScraper - /api/price/:id,HTTPError('503 Server Error:  for url: StealthScraper - /api/price/:id'),211
+GET,Scraper - /products,HTTPError('503 Server Error:  for url: Scraper - /products'),224
+GET,Human - /cart (burst),HTTPError('503 Server Error:  for url: Human - /cart (burst)'),8
+POST,Scraper - /checkout,HTTPError('503 Server Error:  for url: Scraper - /checkout'),33
+GET,Flood - /api/search,HTTPError('503 Server Error:  for url: Flood - /api/search'),554
+GET,Recon - /admin/routes,HTTPError('404 Client Error:  for url: Recon - /admin/routes'),37
+GET,Human - static css,HTTPError('503 Server Error:  for url: Human - static css'),3
+GET,Unprotected Flood - /api/price/:id,"ConnectionRefusedError(10061, '[WinError 10061] No connection could be made because the target machine actively refused it.')",30
+GET,Flood - /api/price/:id,HTTPError('503 Server Error:  for url: Flood - /api/price/:id'),846
+GET,StealthScraper - /products/:id,HTTPError('503 Server Error:  for url: StealthScraper - /products/:id'),211
+GET,AdversarialScraper - /static/style.css,HTTPError('503 Server Error:  for url: AdversarialScraper - /static/style.css'),59
+POST,Human - /checkout,HTTPError('503 Server Error:  for url: Human - /checkout'),3
+GET,Human - static js,HTTPError('503 Server Error:  for url: Human - static js'),3
