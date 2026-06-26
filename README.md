@@ -16,6 +16,8 @@ Malicious bots are a growing threat responsible for credential stuffing, content
 
 ## Architecture
 
+![SAGE Architecture Diagram](architecture.png)
+
 SAGE operates as a multi-component, orchestrated system designed for high availability and performance.
 
 1.  **`sage-gateway` (Spring Boot)**: The entry point for all traffic. This high-performance reverse proxy intercepts requests, extracts key metadata, and forwards it to the ML inference service for analysis. Based on the returned score, it either blocks the request or forwards it to the target application.
@@ -75,6 +77,21 @@ After startup, verify the gateway is healthy:
 curl http://localhost:8081/actuator/health
 ```
 
+### Quick Demo
+To instantly see SAGE in action, simulate a Human vs. a Bot:
+
+```bash
+# 1. Human Request (Allowed)
+curl -H "X-Forwarded-For: 192.168.1.5" -H "User-Agent: Mozilla/5.0" http://localhost:8081/products/1
+# Output: Proxies correctly to upstream mock-target-site
+
+# 2. Scraper Request (Throttle -> Block)
+# Hit the endpoint repeatedly without requesting any static assets
+for i in {1..25}; do curl -s -H "X-Forwarded-For: 52.14.2.1" http://localhost:8081/products/1 > /dev/null; done
+curl -H "X-Forwarded-For: 52.14.2.1" http://localhost:8081/products/1
+# Output: {"error": "Forbidden", "message": "Traffic blocked by SAGE Engine Anomaly Detection"}
+```
+
 ## Model Performance
 
 | Metric | Value |
@@ -84,7 +101,7 @@ curl http://localhost:8081/actuator/health
 | Zero-day detection (unseen bot class) | 100% (Successfully classified entirely unseen bot behaviors not present in the training set) |
 | Human false positive rate | 0.66% |
 
-**On overfitting:** Initial training showed a 0.22 train-validation gap (train F1=1.0, val F1=0.78). Diagnosed via learning curve analysis and resolved by constraining the Random Forest (max_depth=10, min_samples_leaf=10), which improved CV F1 from 0.80 to 0.87.
+**On overfitting:** Initial training showed a 0.22 train-validation gap (train F1=1.0, val F1=0.78). Diagnosed via learning curve analysis and resolved by constraining the Random Forest (max_depth=10, min_samples_leaf=10), which improved CV F1 from 0.80 to 0.87. The gap between the CV score (0.87) and Holdout (0.75) reflects the deliberate introduction of strict adversarial personas exclusively in the holdout set to measure worst-case generalization.
 
 ### Feature Importance
 
@@ -92,14 +109,23 @@ curl http://localhost:8081/actuator/health
 
 ## System Iteration: Engineering the False Positive Rate
 
-A significant engineering challenge was addressing an initial **65.2% False Positive Rate (FPR)** during live load testing. Modern web applications fire dozens of rapid, concurrent requests for static assets on page load, which the ML model initially misinterpreted as a high-velocity scraper.
+Early load testing revealed a **65.2% False Positive Rate (FPR)** because rapid, concurrent static asset fetches during page loads mimicked high-velocity scrapers. 
 
-To resolve this, the telemetry pipeline was re-engineered:
-1. **Static Asset Exclusion**: Excluded `/static/` paths from the temporal velocity and depth calculations, preventing page loads from artificially inflating flood heuristics.
-2. **Elevated Session Depth**: Raised the `SESSION_DEPTH_THRESHOLD` from 6 to 20, granting humans a larger grace period to exhibit regular browsing behavior before invoking ML inference.
-3. **Temporal Window**: Enforced a strict minimum session duration (3.0s) before evaluation.
+We drove the FPR down to **0.66%** while maintaining a **>99% block rate** by implementing:
+- **Static Asset Exclusion:** Stripped `/static/` paths from temporal velocity and depth calculations.
+- **Elevated Grace Period:** Raised `SESSION_DEPTH_THRESHOLD` to 20 requests and enforced a strict 3.0s minimum session duration before allowing ML inference.
 
-These targeted architectural changes drove the FPR down from 65.2% to a highly stable **0.66%** without sacrificing the >99% block rate on malicious traffic.
+## Residential IP Stress Test
+
+To prove the ML model operates independently of Fast-Path IP blacklisting, we executed a "Turing Test" evasion script. All bots (Stealth Scrapers, Slow Floods, Recon) spoofed IP addresses from simulated residential subnets using RFC 1918 private ranges (e.g., `172.16.x.x`), perfectly blending in with legitimate human traffic at the network layer. 
+
+The attack deployed 40 concurrent users containing a mix of stealth bots pacing themselves identically to humans (1-3s wait times) and completely avoiding static datacenter/Tor IP ranges.
+
+**Results:**
+- **Stealth Scrapers**: **100% Blocked**. Despite human-like pacing and residential IPs, the model's behavioral extraction (`SAGE_Asset_Skip_Ratio`, `SAGE_Endpoint_Concentration`) instantly exposed them.
+- **False Positive Rate**: **0.66%**. Only 4 out of 604 human requests failed, caused by random IP collisions with bots in the simulated Carrier-Grade NAT pool.
+
+This stress test validates that the Machine Learning model is actively extracting multi-dimensional behavioral geometry and catching bots that traditional IP-based firewalls would completely miss.
 
 ## Adversarial Validation
 
@@ -124,16 +150,6 @@ This evasion reveals that while ML models are powerful, they are bound by their 
 - **Session sequence modeling**: Implementing an LSTM or Transformer to evaluate the *order* of page visits (e.g., humans go `product → cart → checkout`, bots go `product → product → product`).
 - **TLS fingerprinting (JA3)**: Hardening the Gateway to extract cryptographic signatures that cannot be easily spoofed by libraries like Python `requests` or Locust.
 - **Browser behavioral biometrics**: Injecting a JS payload to measure mouse movements, scroll depth, and keystroke dynamics at the client layer.
-
-## Residential IP Stress Test
-
-To prove the ML model operates independently of Fast-Path IP blacklisting, we executed a "Turing Test" evasion script. All bots (Stealth Scrapers, Slow Floods, Recon) spoofed IP addresses from standard residential ranges (e.g., `172.16.x.x`), perfectly blending in with legitimate human traffic at the network layer. 
-
-**Results:**
-- **Stealth Scrapers**: **100% Blocked**. Despite human-like pacing (1-3s) and residential IPs, the model's behavioral extraction (`SAGE_Asset_Skip_Ratio`, `SAGE_Endpoint_Concentration`) instantly exposed them.
-- **False Positive Rate**: **0.66%**. Only 4 out of 604 human requests failed, caused by random IP collisions with bots in the simulated Carrier-Grade NAT pool.
-
-This stress test validates that the Machine Learning model is actively extracting multi-dimensional behavioral geometry and catching bots that traditional IP-based firewalls would completely miss.
 
 ## Known Limitations and Next Steps
 
