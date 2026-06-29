@@ -1,7 +1,6 @@
 import random
 import sys
-import time
-from itertools import cycle
+import gevent
 
 from locust import HttpUser, between, task, tag
 
@@ -109,7 +108,7 @@ class HumanBrowser(HttpUser):
         # Human burst simulation: 30% chance to run 2-4 rapid requests
         if random.random() < 0.30:
             for _ in range(random.randint(2, 4)):
-                time.sleep(random.uniform(0.2, 0.8))
+                gevent.sleep(random.uniform(0.2, 0.8))
                 sub_path = random.choice(["/products", "/cart"])
                 self.client.get(sub_path, headers=headers, name=f"Human - {sub_path} (burst)")
 
@@ -118,7 +117,7 @@ class HumanBrowser(HttpUser):
         product_id = self._random_product_id()
         headers = self._headers()
         self.client.get(f"/products/{product_id}", headers=headers, name="Human - /products/:id")
-        time.sleep(random.uniform(0.5, 1.5))
+        gevent.sleep(random.uniform(0.5, 1.5))
         self.client.get(f"/api/price/{product_id}", headers=headers, name="Human - /api/price/:id")
 
         if random.random() < 0.30:
@@ -132,7 +131,6 @@ class AkamaiScraper(HttpUser):
     wait_time = between(0.5, 1.5)
 
     def on_start(self):
-        self._id_cycle = cycle(range(1, 51))
         self._ip = ip_datacenter()
         self._ua = random.choice(SCRAPER_UA_POOL)
 
@@ -140,7 +138,6 @@ class AkamaiScraper(HttpUser):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
-            "Content-Type": "application/json",
         }
 
     @task(1)
@@ -149,7 +146,7 @@ class AkamaiScraper(HttpUser):
 
     @task(3)
     def price_inventory_sweep(self):
-        product_id = next(self._id_cycle)
+        product_id = random.randint(1, 50)
         headers = self._headers()
         self.client.get(f"/products/{product_id}", headers=headers, name="Scraper - /products/:id")
         self.client.get(f"/api/price/{product_id}", headers=headers, name="Scraper - /api/price/:id")
@@ -159,46 +156,11 @@ class AkamaiScraper(HttpUser):
             self.client.post("/checkout", json={"status": "mock"}, headers=headers, name="Scraper - /checkout")
 
 
-@tag("cloudflare_flood")
-class CloudflareFlood(HttpUser):
-    scenario_tags = {"cloudflare_flood"}
-    fixed_count = random.randint(5, 12)
-    wait_time = between(0, 0.1)
-
-    def on_start(self):
-        self._ip = ip_distributed()
-
-    def _headers(self):
-        ua = random.choice(SCRAPER_UA_POOL) if random.random() < 0.15 else "curl/8.6.0"
-        return {
-            "X-Forwarded-For": self._ip,
-            "User-Agent": ua,
-            "Content-Type": "application/json",
-        }
-
-    @task(2)
-    def flood_products(self):
-        self.client.get("/products", headers=self._headers(), name="Flood - /products")
-
-    @task(2)
-    def flood_search(self):
-        term = random.choice(FLOOD_SEARCH_TERMS)
-        self.client.get(f"/api/search?q={term}", headers=self._headers(), name="Flood - /api/search")
-
-    @task(3)
-    def flood_price(self):
-        product_id = random.randint(1, 50)
-        self.client.get(f"/api/price/{product_id}", headers=self._headers(), name="Flood - /api/price/:id")
-
-
 @tag("unprotected_flood")
 class UnprotectedFlood(HttpUser):
     scenario_tags = {"unprotected_flood"}
-    fixed_count = random.randint(5, 12)
-    wait_time = between(0, 0.1)
-
-    # Use absolute URLs so this class still targets 3001 (direct to target) even when global --host points to 8081 (gateway).
-    target_base = "http://localhost:3001"
+    fixed_count = random.randint(20, 30)
+    wait_time = between(0.0, 0.1)
 
     def on_start(self):
         self._ip = ip_distributed()
@@ -210,24 +172,27 @@ class UnprotectedFlood(HttpUser):
             "Content-Type": "application/json",
         }
 
+    @tag("unprotected_flood")
     @task(2)
     def flood_products(self):
-        self.client.get(f"{self.target_base}/products", headers=self._headers(), name="Unprotected Flood - /products")
+        self.client.get("/products", headers=self._headers(), name="Unprotected Flood - /products")
 
+    @tag("unprotected_flood")
     @task(2)
     def flood_search(self):
         term = random.choice(FLOOD_SEARCH_TERMS)
         self.client.get(
-            f"{self.target_base}/api/search?q={term}",
+            f"/api/search?q={term}",
             headers=self._headers(),
             name="Unprotected Flood - /api/search",
         )
 
+    @tag("unprotected_flood")
     @task(3)
     def flood_price(self):
         product_id = random.randint(1, 50)
         self.client.get(
-            f"{self.target_base}/api/price/{product_id}",
+            f"/api/price/{product_id}",
             headers=self._headers(),
             name="Unprotected Flood - /api/price/:id",
         )
@@ -277,7 +242,6 @@ class StealthScraper(HttpUser):
     wait_time = between(2, 5)
 
     def on_start(self):
-        self._id_cycle = cycle(range(1, 51))
         self._ip = ip_datacenter()
         self._ua = random.choice(SCRAPER_UA_POOL)
 
@@ -285,15 +249,14 @@ class StealthScraper(HttpUser):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
-            "Content-Type": "application/json",
         }
 
     @task
     def sequential_crawl(self):
-        product_id = next(self._id_cycle)
+        product_id = random.randint(1, 50)
         headers = self._headers()
         self.client.get(f"/products/{product_id}", headers=headers, name="StealthScraper - /products/:id")
-        time.sleep(random.uniform(0.1, 0.3))
+        gevent.sleep(random.uniform(0.1, 0.3))
         self.client.get(f"/api/price/{product_id}", headers=headers, name="StealthScraper - /api/price/:id")
 
         if random.random() < 0.05:
@@ -303,8 +266,8 @@ class StealthScraper(HttpUser):
 @tag("flood")
 class JitteredFlood(HttpUser):
     scenario_tags = {"flood"}
-    fixed_count = random.randint(3, 8)
-    wait_time = between(10, 15)
+    fixed_count = random.randint(15, 20)
+    wait_time = between(10, 12)
 
     def on_start(self):
         self._ip = ip_distributed()
@@ -316,6 +279,7 @@ class JitteredFlood(HttpUser):
             "Content-Type": "application/json",
         }
 
+    @tag("flood")
     @task
     def burst_flood(self):
         headers = self._headers()
@@ -327,7 +291,7 @@ class JitteredFlood(HttpUser):
                 f"/api/price/{random.randint(1, 50)}"
             ])
             self.client.get(path, headers=headers, name="JitteredFlood - burst")
-            time.sleep(0.02)
+            gevent.sleep(0.02)
 
 
 @tag("adversarial_scraper")
@@ -335,6 +299,7 @@ class AdversarialScraper(HttpUser):
     scenario_tags = {"adversarial_scraper"}
     fixed_count = random.randint(8, 15)
     wait_time = between(1, 4)
+    _next_product_id = random.randint(1, 50)
 
     def on_start(self):
         self._ip = ip_adversarial_scraper()
@@ -344,13 +309,32 @@ class AdversarialScraper(HttpUser):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
-            "Content-Type": "application/json",
         }
 
     @tag("adversarial_scraper")
-    @task(8)
+    @task(7)
+    def scrape_product_details(self):
+        product_id = self._next_product_id
+        self._next_product_id = 1 if self._next_product_id >= 50 else self._next_product_id + 1
+        headers = self._headers()
+        self.client.get(f"/products/{product_id}", headers=headers, name="AdversarialScraper - /products/:id")
+        gevent.sleep(random.uniform(0.1, 0.3))
+        self.client.get(f"/api/price/{product_id}", headers=headers, name="AdversarialScraper - /api/price/:id")
+        self.client.get(f"/api/inventory/{product_id}", headers=headers, name="AdversarialScraper - /api/inventory/:id")
+
+        if random.random() < 0.18:
+            self.client.post("/checkout", json={"status": "mock"}, headers=headers, name="AdversarialScraper - /checkout")
+
+    @tag("adversarial_scraper")
+    @task(3)
     def scrape_products(self):
         self.client.get("/products", headers=self._headers(), name="AdversarialScraper - /products")
+
+    @tag("adversarial_scraper")
+    @task(2)
+    def scrape_search(self):
+        term = random.choice(FLOOD_SEARCH_TERMS)
+        self.client.get(f"/api/search?q={term}", headers=self._headers(), name="AdversarialScraper - /api/search")
 
     @tag("adversarial_scraper")
     @task(2)
@@ -361,7 +345,7 @@ class AdversarialScraper(HttpUser):
 @tag("slow_flood")
 class SlowFlood(HttpUser):
     scenario_tags = {"slow_flood"}
-    fixed_count = random.randint(3, 8)
+    fixed_count = random.randint(10, 15)
     wait_time = between(0.5, 1.5)
 
     def on_start(self):
@@ -377,7 +361,7 @@ class SlowFlood(HttpUser):
     @tag("slow_flood")
     @task
     def flood_endpoint(self):
-        self.client.get("/checkout", json={"status": "mock"}, headers=self._headers(), name="SlowFlood - /checkout")
+        self.client.post("/checkout", json={"status": "mock"}, headers=self._headers(), name="SlowFlood - /checkout")
 
 
 def _parse_selected_tags(argv):
@@ -398,7 +382,6 @@ def _apply_tag_based_user_activation():
     user_classes = [
         HumanBrowser,
         AkamaiScraper,
-        CloudflareFlood,
         UnprotectedFlood,
         ReconBot,
         StealthScraper,
@@ -419,6 +402,5 @@ _apply_tag_based_user_activation()
 # locust -f load-tests/locustfile.py --headless -u 40 -r 5 --run-time 5m --host http://localhost:8083
 # HumanBrowser: 12 users
 # AkamaiScraper: 14 users
-# CloudflareFlood: 8 users
-# UnprotectedFlood: 8 users
+# UnprotectedFlood: 20-30 users
 # ReconBot: 6 users

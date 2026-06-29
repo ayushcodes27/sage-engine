@@ -59,41 +59,66 @@ public class GatewayController {
         long startTime = System.currentTimeMillis();
         String path = request.getRequestURI();
         int statusCode = 500;
+        ResponseEntity<String> finalResponse = null;
+        Exception requestException = null;
+        RouteDefinition matchedRoute = null;
 
         try {
-            RouteDefinition matchedRoute = routeResolver.resolve(path, request);
+            matchedRoute = routeResolver.resolve(path, request);
 
             if (matchedRoute == null) {
                 statusCode = 404;
-                return ResponseEntity.status(404).body("Gateway Error: Route Not Found");
+                finalResponse = ResponseEntity.status(404).body("Gateway Error: Route Not Found");
+                return finalResponse;
             }
 
             Optional<ResponseEntity<String>> filterResult = applyPreProxyFilters(request, matchedRoute);
             if (filterResult.isPresent()) {
-                statusCode = filterResult.get().getStatusCode().value();
-                return filterResult.get();
+                finalResponse = filterResult.get();
+                statusCode = finalResponse.getStatusCode().value();
+                return finalResponse;
             }
 
             String target = buildTargetUrl(matchedRoute, request);
 
-            ResponseEntity<String> response = proxyService.forwardRequest(
+            finalResponse = proxyService.forwardRequest(
                     target,
                     HttpMethod.valueOf(request.getMethod()),
                     request,
                     body
             );
 
-            statusCode = response.getStatusCode().value();
-            return response;
+            statusCode = finalResponse.getStatusCode().value();
+            return finalResponse;
 
         } catch (Exception e) {
             statusCode = 500;
+            requestException = e;
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Gateway Error: " + e.getMessage());
+            finalResponse = ResponseEntity.internalServerError().body("Gateway Error: " + e.getMessage());
+            return finalResponse;
 
         } finally {
-            // Temporarily disabled during testing.
             long duration = System.currentTimeMillis() - startTime;
+            
+            // Post Process filters
+            for (GatewayFilter filter : availableFilters) {
+                boolean shouldRun = filter.isGlobal();
+                if (!shouldRun && matchedRoute != null && matchedRoute.filters() != null) {
+                    shouldRun = matchedRoute.filters().containsKey(filter.getName());
+                }
+                
+                if (shouldRun) {
+                    try {
+                        filter.postProcess(request, finalResponse, duration, requestException);
+                    } catch (Exception ex) {
+                        System.err.println("Error in postProcess for filter: " + filter.getName());
+                        ex.printStackTrace();
+                    }
+                }
+            }
+
+            // Temporarily disabled during testing.
             trafficLogger.logTraffic(tenantId, userId, path, duration, statusCode);
         }
     }
@@ -104,17 +129,22 @@ public class GatewayController {
 
         Map<String, Map<String, String>> routeFilters = matchedRoute.filters();
         if (routeFilters == null) {
-            return Optional.empty();
+            routeFilters = Collections.emptyMap();
         }
 
         for (GatewayFilter filter : availableFilters) {
-            System.out.println("PIPELINE TRIGGERED: Attempting to run filter -> " + filter.getName());
-
-            if (!routeFilters.containsKey(filter.getName())) {
-                continue;
+            boolean shouldRun = filter.isGlobal();
+            if (!shouldRun) {
+                shouldRun = routeFilters.containsKey(filter.getName());
             }
 
-            Map<String, String> filterConfig = routeFilters.get(filter.getName());
+            if (!shouldRun) {
+                continue;
+            }
+            
+            System.out.println("PIPELINE TRIGGERED: Attempting to run filter -> " + filter.getName());
+            
+            Map<String, String> filterConfig = routeFilters.getOrDefault(filter.getName(), Collections.emptyMap());
             Optional<ResponseEntity<String>> filterResult = filter.filter(request, filterConfig);
             if (filterResult.isPresent()) {
                 return filterResult;

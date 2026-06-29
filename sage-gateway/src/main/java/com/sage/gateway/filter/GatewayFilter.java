@@ -15,4 +15,12 @@ public interface GatewayFilter {
     Optional<ResponseEntity<String>> filter(HttpServletRequest request, Map<String, String> config);
 
     String getName();
+
+    default boolean isGlobal() {
+        return false;
+    }
+
+    default void postProcess(HttpServletRequest request, ResponseEntity<String> response, long latency, Exception ex) {
+        // Default no-op
+    }
 }

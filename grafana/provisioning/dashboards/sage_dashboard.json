@@ -1,0 +1,75 @@
+{
+  "title": "SAGE Engine Operations",
+  "uid": "sage-ops-1",
+  "schemaVersion": 38,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Total Gateway Traffic (RPS)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (status)",
+          "legendFormat": "HTTP {{status}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Response Time (ms)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_sum[1m])) / sum(rate(http_server_requests_seconds_count[1m])) * 1000",
+          "legendFormat": "Latency (ms)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Traffic by Route (RPS)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (uri)",
+          "legendFormat": "{{uri}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "piechart",
+      "title": "Allowed vs Blocked (Total Count)",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(http_server_requests_seconds_count{status=~\"2.*|3.*|404|5.*\"}) or vector(0)",
+          "legendFormat": "Allowed (Passed Filter)",
+          "refId": "Allowed"
+        },
+        {
+          "expr": "sum(http_server_requests_seconds_count{status=~\"403|429\"}) or vector(0)",
+          "legendFormat": "Blocked (ML/Rate Limit)",
+          "refId": "Blocked"
+        }
+      ],
+      "options": {
+        "pieType": "donut"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "ML Blocks & Rate Limits (last 5m)",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"403|429\"}[5m])) or vector(0)",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,7 @@ package com.sage.gateway.filter;
 
 import com.sage.gateway.service.RateLimiterService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
+@Order(2)
 public class RateLimitFilter implements GatewayFilter {
 
     private final RateLimiterService rateLimiterService;

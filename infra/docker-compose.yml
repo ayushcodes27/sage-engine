@@ -101,6 +101,8 @@ services:
       context: ../ml_pipeline
       dockerfile: inference_service/Dockerfile
     container_name: sage-ml
+    ports:
+      - "8000:8000"
     environment:
       - REDIS_HOST=sage-redis
       - REDIS_PORT=6379
