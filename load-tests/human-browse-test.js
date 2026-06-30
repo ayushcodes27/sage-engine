@@ -28,7 +28,7 @@ function randomIp() {
 
 export default function () {
   const path = PATHS[Math.floor(Math.random() * PATHS.length)];
-  const url = `http://localhost:8081${path}?session=${Math.floor(Math.random() * 90000)}`;
+  const url = `http://localhost:8083${path}?session=${Math.floor(Math.random() * 90000)}`;
 
   const res = http.get(url, {
     headers: {

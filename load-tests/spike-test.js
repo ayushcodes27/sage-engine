@@ -18,7 +18,7 @@ export const options = {
 
 export default function () {
     // Target echo endpoint to measure raw gateway responsiveness under spike load.
-    const url = __ENV.URL || 'http://localhost:8081/echo';
+    const url = __ENV.URL || 'http://localhost:8083/echo';
 
     const res = http.get(url, {
         headers: { 'Connection': 'keep-alive' } // Reuse connections to minimize transport overhead.

@@ -16,7 +16,7 @@ export const options = {
 
 export default function () {
     // Resolve target endpoint (typically local mock or echo service).
-    const url = __ENV.URL || 'http://localhost:8081/echo';
+    const url = __ENV.URL || 'http://localhost:8083/echo';
 
     const res = http.get(url, {
         headers: { 'Connection': 'keep-alive' } // Enable connection reuse for consistent throughput behavior.

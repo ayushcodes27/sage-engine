@@ -25,7 +25,7 @@ function randomIp() {
 
 export default function () {
   const path = CRAWL_PATHS[Math.floor(Math.random() * CRAWL_PATHS.length)];
-  const url = `http://localhost:8081${path}?p=${Math.floor(Math.random() * 1000)}`;
+  const url = `http://localhost:8083${path}?p=${Math.floor(Math.random() * 1000)}`;
 
   const res = http.get(url, {
     headers: {

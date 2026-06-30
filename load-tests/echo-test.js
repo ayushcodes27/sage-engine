@@ -12,7 +12,7 @@ export const options = {
 
 export default function () {
     // Resolve target URL from environment variable, defaulting to local echo endpoint.
-    const baseUrl = __ENV.URL || 'http://localhost:8081';
+    const baseUrl = __ENV.URL || 'http://localhost:8083';
     const targets = ['/echo', '/api/benchmark', '/actuator/prometheus'];
     const url = `${baseUrl}${targets[Math.floor(Math.random() * targets.length)]}`;
 
