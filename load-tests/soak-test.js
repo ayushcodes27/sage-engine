@@ -11,7 +11,7 @@ export const options = {
 
 export default function () {
     // Target the echo endpoint to evaluate raw JVM behavior without rate limiting influence.
-    const url = 'http://localhost:8081/echo';
+    const url = 'http://localhost:8083/echo';
 
     const res = http.get(url, {
         headers: { 'Connection': 'keep-alive' } // Maintain persistent connections to reduce handshake overhead.

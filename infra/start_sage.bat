@@ -64,14 +64,14 @@ echo [2/4] Starting Java Spring Boot Gateway...
 start "SAGE - Java API Gateway" cmd /k "cd /d ""%ROOT%sage-gateway"" && mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local"
 
 echo [3/4] Starting Node.js Kafka Bridge...
-start "SAGE - WebSocket Bridge" cmd /k "cd /d ""%ROOT%sage-dashboard"" && set BRIDGE_PORT=%BRIDGE_PORT% && set KAFKA_GROUP_ID=%KAFKA_GROUP_ID% && set GATEWAY_HEALTH_URL=http://localhost:8081/echo && set ML_HEALTH_URL=http://localhost:8000/docs && node bridge.js"
+start "SAGE - WebSocket Bridge" cmd /k "cd /d ""%ROOT%sage-dashboard"" && set BRIDGE_PORT=%BRIDGE_PORT% && set KAFKA_GROUP_ID=%KAFKA_GROUP_ID% && set GATEWAY_HEALTH_URL=http://localhost:8083/echo && set ML_HEALTH_URL=http://localhost:8000/docs && node bridge.js"
 
 echo [4/4] Starting React UI Dashboard...
 start "SAGE - React UI" cmd /k "cd /d ""%ROOT%sage-dashboard\sage-ui"" && npm run dev"
 
 echo.
 echo All SAGE services have been launched.
-echo Gateway:   http://localhost:8081/echo
+echo Gateway:   http://localhost:8083/echo
 echo Bridge:    http://localhost:6006/api/status
 echo Dashboard running at: http://localhost:5173
 echo ===================================================

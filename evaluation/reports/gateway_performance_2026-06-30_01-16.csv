@@ -1,0 +1,2 @@
+"Scenario","Users","Duration","Throughput_ReqPerSec","Median_Latency_ms","P99_Latency_ms","Request_Count","Failure_Count"
+"Full Combat","140","10m","524.3725105142274","7","62","314278","311000"

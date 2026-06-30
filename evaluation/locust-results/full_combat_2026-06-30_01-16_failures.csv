@@ -1,0 +1,43 @@
+Method,Name,Error,Occurrences
+GET,AdversarialScraper - /api/inventory/:id,HTTPError('429 Client Error:  for url: AdversarialScraper - /api/inventory/:id'),1
+POST,Scraper - /checkout,HTTPError('403 Client Error:  for url: Scraper - /checkout'),487
+GET,StealthScraper - /api/price/:id,HTTPError('429 Client Error:  for url: StealthScraper - /api/price/:id'),16
+GET,Recon - /api/search (sqli),HTTPError('403 Client Error:  for url: Recon - /api/search (sqli)'),196
+GET,JitteredFlood - burst,HTTPError('403 Client Error:  for url: JitteredFlood - burst'),32696
+GET,Unprotected Flood - /api/search,HTTPError('403 Client Error:  for url: Unprotected Flood - /api/search'),66195
+GET,StealthScraper - /api/price/:id,HTTPError('403 Client Error:  for url: StealthScraper - /api/price/:id'),1252
+GET,Scraper - /api/inventory/:id,HTTPError('403 Client Error:  for url: Scraper - /api/inventory/:id'),9822
+POST,SlowFlood - /checkout,HTTPError('403 Client Error:  for url: SlowFlood - /checkout'),7084
+GET,Scraper - /products/:id,HTTPError('429 Client Error:  for url: Scraper - /products/:id'),43
+GET,StealthScraper - /products/:id,HTTPError('403 Client Error:  for url: StealthScraper - /products/:id'),1250
+POST,AdversarialScraper - /checkout,HTTPError('403 Client Error:  for url: AdversarialScraper - /checkout'),109
+GET,Recon - /products/99999,HTTPError('403 Client Error:  for url: Recon - /products/99999'),90
+GET,Unprotected Flood - /products,HTTPError('429 Client Error:  for url: Unprotected Flood - /products'),15
+GET,AdversarialScraper - /api/inventory/:id,HTTPError('403 Client Error:  for url: AdversarialScraper - /api/inventory/:id'),603
+GET,Scraper - /api/price/:id,HTTPError('403 Client Error:  for url: Scraper - /api/price/:id'),9790
+GET,Scraper - /products,HTTPError('403 Client Error:  for url: Scraper - /products'),3398
+GET,Recon - /products/99999,HTTPError('404 Client Error:  for url: Recon - /products/99999'),114
+GET,Scraper - /products/:id,HTTPError('500 Server Error:  for url: Scraper - /products/:id'),3
+GET,Unprotected Flood - /api/price/:id,HTTPError('429 Client Error:  for url: Unprotected Flood - /api/price/:id'),37
+GET,Unprotected Flood - /api/price/:id,HTTPError('403 Client Error:  for url: Unprotected Flood - /api/price/:id'),99177
+POST,SlowFlood - /checkout,HTTPError('500 Server Error:  for url: SlowFlood - /checkout'),1
+GET,Recon - traversal,HTTPError('404 Client Error:  for url: Recon - traversal'),199
+GET,AdversarialScraper - /products/:id,HTTPError('429 Client Error:  for url: AdversarialScraper - /products/:id'),11
+GET,AdversarialScraper - /products,HTTPError('429 Client Error:  for url: AdversarialScraper - /products'),1
+GET,AdversarialScraper - /api/price/:id,HTTPError('403 Client Error:  for url: AdversarialScraper - /api/price/:id'),593
+GET,AdversarialScraper - /static/style.css,HTTPError('403 Client Error:  for url: AdversarialScraper - /static/style.css'),187
+GET,AdversarialScraper - /api/search,HTTPError('403 Client Error:  for url: AdversarialScraper - /api/search'),187
+GET,AdversarialScraper - /products,HTTPError('403 Client Error:  for url: AdversarialScraper - /products'),269
+GET,Scraper - /products,HTTPError('429 Client Error:  for url: Scraper - /products'),17
+GET,JitteredFlood - burst,HTTPError('429 Client Error:  for url: JitteredFlood - burst'),21
+GET,Scraper - /api/price/:id,HTTPError('429 Client Error:  for url: Scraper - /api/price/:id'),32
+GET,Recon - /admin/routes,HTTPError('404 Client Error:  for url: Recon - /admin/routes'),369
+GET,AdversarialScraper - /api/price/:id,HTTPError('429 Client Error:  for url: AdversarialScraper - /api/price/:id'),10
+GET,StealthScraper - /products/:id,HTTPError('500 Server Error:  for url: StealthScraper - /products/:id'),2
+GET,StealthScraper - /products/:id,HTTPError('429 Client Error:  for url: StealthScraper - /products/:id'),16
+GET,AdversarialScraper - /products/:id,HTTPError('403 Client Error:  for url: AdversarialScraper - /products/:id'),592
+GET,Scraper - /products,HTTPError('500 Server Error:  for url: Scraper - /products'),3
+GET,Scraper - /products/:id,HTTPError('403 Client Error:  for url: Scraper - /products/:id'),9776
+GET,Unprotected Flood - /products,HTTPError('403 Client Error:  for url: Unprotected Flood - /products'),66262
+GET,Recon - /products/99999,HTTPError('429 Client Error:  for url: Recon - /products/99999'),5
+POST,StealthScraper - /checkout,HTTPError('403 Client Error:  for url: StealthScraper - /checkout'),69

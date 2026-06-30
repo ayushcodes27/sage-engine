@@ -12,7 +12,7 @@ export const options = {
 
 export default function () {
     // Proxy endpoint under load test
-    const url = 'http://localhost:8081/api/benchmark';
+    const url = 'http://localhost:8083/api/benchmark';
 
     const params = {
         headers: {

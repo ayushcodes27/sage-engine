@@ -25,7 +25,7 @@ export const options = {
 };
 
 export default function () {
-    const url = 'http://localhost:8081/echo';
+    const url = 'http://localhost:8083/echo';
 
     // Generate randomized client IPs to distribute traffic across rate-limit keys.
     const randomIp = `10.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;

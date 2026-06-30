@@ -16,9 +16,9 @@ export const options = {
 };
 
 const TARGETS = [
-  'http://localhost:8081/echo',
-  'http://localhost:8081/api/benchmark',
-  'http://localhost:8081/actuator/prometheus',
+  'http://localhost:8083/echo',
+  'http://localhost:8083/api/benchmark',
+  'http://localhost:8083/actuator/prometheus',
 ];
 
 function randomIp() {

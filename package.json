@@ -1,0 +1,28 @@
+{
+  "name": "sage-engine",
+  "version": "1.0.0",
+  "description": "SAGE is a real-time, ML-driven security engine designed to detect and mitigate sophisticated bot attacks against web applications.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayushcodes27/sage-engine.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ayushcodes27/sage-engine/issues"
+  },
+  "homepage": "https://github.com/ayushcodes27/sage-engine#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.0.1"
+  },
+  "dependencies": {
+    "puppeteer": "^25.2.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

@@ -37,3 +37,10 @@ build/
 # Documentation
 SAGE_PROJECT_ANALYSIS.md
 SAGE_Architecture_Document.md
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -119,13 +119,15 @@ def predict_anomaly(data: GatewayTelemetry):
         return InferenceResult(
             session_id=data.session_id,
             is_bot=is_malicious,
-            bot_probability=confidence,
+            bot_probability=float(confidence if is_malicious else (1.0 - confidence)),
             threat_class=threat_class,
             confidence=round(confidence, 4),
             processing_time_ms=round(processing_time_sec * 1000, 3)
         )
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/predict/{user_id}")
