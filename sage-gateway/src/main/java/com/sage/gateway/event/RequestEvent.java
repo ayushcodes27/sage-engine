@@ -24,5 +24,5 @@ public record RequestEvent(
         double cartRatio,
         double assetSkipRatio
     ) {}
-    public record MLMetadata(double botProbability, int isBotFlag, String threatClass) {}
+    public record MLMetadata(double botProbability, int isBotFlag, String threatClass, String evaluationStatus) {}
 }

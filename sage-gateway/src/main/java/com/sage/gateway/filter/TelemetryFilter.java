@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sage.gateway.event.RequestEvent;
 import com.sage.gateway.service.KafkaProducerService;
 import com.sage.gateway.service.RedisTelemetryService;
+import io.micrometer.core.instrument.MeterRegistry;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Order(3)
@@ -35,6 +38,7 @@ public class TelemetryFilter implements GatewayFilter {
     private final KafkaProducerService kafkaProducer;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final MeterRegistry meterRegistry;
 
     @org.springframework.beans.factory.annotation.Value("${ML_URL:http://localhost:8000/predict}")
     private String PYTHON_ML_URL;
@@ -55,10 +59,13 @@ public class TelemetryFilter implements GatewayFilter {
             "/debug"
     );
 
-    public TelemetryFilter(RedisTelemetryService redisTelemetryService, KafkaProducerService kafkaProducer, ObjectMapper objectMapper) {
+    private static final Semaphore ML_BACKPRESSURE = new Semaphore(50);
+
+    public TelemetryFilter(RedisTelemetryService redisTelemetryService, KafkaProducerService kafkaProducer, ObjectMapper objectMapper, MeterRegistry meterRegistry) {
         this.redisTelemetryService = redisTelemetryService;
         this.kafkaProducer = kafkaProducer;
         this.objectMapper = objectMapper;
+        this.meterRegistry = meterRegistry;
         this.httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofMillis(500))
@@ -108,6 +115,8 @@ public class TelemetryFilter implements GatewayFilter {
         boolean isBot = false;
         double botProbability = 0.0;
         String threatClass = "Benign";
+        String evaluationStatus = "Skipped";
+        String enforcementAction = "Allowed";
         boolean reconProbeCounted = false;
         Map<String, Double> features = Map.of(
                 "SAGE_Session_Depth", 0.0,
@@ -168,7 +177,7 @@ public class TelemetryFilter implements GatewayFilter {
                     RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(method, path, "api", ipAddress);
                     RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(429, System.currentTimeMillis() - startTime);
                     RequestEvent.FeatureVector featureVector = toFeatureVector(features);
-                    RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "ScraperFastPath");
+                    RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(1.0, 1, "ScraperFastPath", "Skipped");
                     RequestEvent event = new RequestEvent("threat.throttled", eventId, eventTimestamp, "tenant_placeholder", ipAddress, ipAddress + "_session", label, requestDetails, responseDetails, featureVector, mlMetadata);
                     kafkaProducer.publishEvent(event);
                     return Optional.of(buildErrorResponse(HttpStatus.TOO_MANY_REQUESTS, "Traffic throttled by SAGE scraper fast-path"));
@@ -186,6 +195,7 @@ public class TelemetryFilter implements GatewayFilter {
                 threatClass = "Flood";
                 botProbability = 0.98;
                 isBot = true;
+                enforcementAction = "Blocked";
             }
 
             // GRACE PERIOD
@@ -193,6 +203,7 @@ public class TelemetryFilter implements GatewayFilter {
             if (!isBot && sessionDepth > SESSION_DEPTH_THRESHOLD && sessionDuration >= 3.0) {
                 Map<String, Object> mlPayload = new HashMap<>(features);
                 mlPayload.put("session_id", eventId);
+                mlPayload.put("gateway_timestamp_ms", System.currentTimeMillis());
 
                 String jsonBody = objectMapper.writeValueAsString(mlPayload);
 
@@ -200,46 +211,99 @@ public class TelemetryFilter implements GatewayFilter {
                         .uri(URI.create(PYTHON_ML_URL))
                         .header("Content-Type", "application/json")
                         .header("X-Request-Id", requestId)
-                        .timeout(Duration.ofMillis(100))
                         .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                         .build();
 
-                HttpResponse<String> mlResponse = httpClient.send(mlRequest, HttpResponse.BodyHandlers.ofString());
+                boolean acquired = false;
+                try {
+                    acquired = ML_BACKPRESSURE.tryAcquire(5, TimeUnit.MILLISECONDS);
+                    if (!acquired) {
+                        evaluationStatus = "Timeout";
+                        enforcementAction = "Challenged";
+                        isBot = false;
+                        logger.warn("ML Backpressure kicked in. Rejecting request to ML queue and failing closed to gray zone.");
+                    } else {
+                        HttpResponse<String> mlResponse = httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString())
+                                .get(100, TimeUnit.MILLISECONDS);
 
-                if (mlResponse.statusCode() == 200) {
-                    JsonNode responseNode = objectMapper.readTree(mlResponse.body());
-                    boolean predictedMalicious = responseNode.path("is_bot").asBoolean(false);
-                    botProbability = responseNode.path("bot_probability").asDouble(0.0);
-                    threatClass = responseNode.path("threat_class").asText("Benign");
+                        if (mlResponse.statusCode() == 200) {
+                            evaluationStatus = "Scored";
+                            
+                            JsonNode responseNode = objectMapper.readTree(mlResponse.body());
+                            boolean predictedMalicious = responseNode.path("is_bot").asBoolean(false);
+                            botProbability = responseNode.path("bot_probability").asDouble(0.0);
+                            threatClass = responseNode.path("threat_class").asText("Benign");
 
-                    isBot = predictedMalicious
-                            && !"Benign".equalsIgnoreCase(threatClass)
-                            && botProbability >= BLOCK_PROBABILITY_THRESHOLD;
-
-                    if ("Flood".equalsIgnoreCase(threatClass) && sessionDepth > SESSION_DEPTH_THRESHOLD) {
-                        isBot = true;
+                            if ("Flood".equalsIgnoreCase(threatClass) && sessionDepth > SESSION_DEPTH_THRESHOLD) {
+                                isBot = true;
+                                enforcementAction = "Blocked";
+                            } else if (botProbability >= 0.80) {
+                                isBot = true;
+                                enforcementAction = "Blocked";
+                            } else if (botProbability < 0.30) {
+                                isBot = false;
+                                enforcementAction = "Allowed";
+                            } else {
+                                isBot = false;
+                                enforcementAction = "Challenged";
+                            }
+                            
+                            String sageProfile = request.getHeader("X-Sage-Profile");
+                            if (sageProfile == null) sageProfile = "unknown";
+                            logger.info("🎯 ML SCORED - Profile: {} | Prob: {} | Action: {} | Features: {}", sageProfile, botProbability, enforcementAction, features);
+                        } else {
+                            evaluationStatus = "Failed";
+                            enforcementAction = "Challenged";
+                            logger.warn("ML Service returned non-200 status. Failing closed to Challenge.");
+                        }
                     }
-                } else {
-                    logger.warn("ML Service returned non-200 status. Failing open.");
+                } catch (java.util.concurrent.TimeoutException | InterruptedException e) {
+                    evaluationStatus = "Timeout";
+                    enforcementAction = "Challenged";
+                    logger.error("SAGE ML Pipeline failed (Timeout). Failing closed to Challenge.");
+                } catch (java.util.concurrent.ExecutionException e) {
+                    evaluationStatus = "Error";
+                    enforcementAction = "Challenged";
+                    logger.error("SAGE ML Pipeline failed (Execution Error). Failing closed to Challenge.", e);
+                } finally {
+                    if (acquired) {
+                        ML_BACKPRESSURE.release();
+                    }
                 }
             } else {
                 logger.debug("Skipping ML inference for IP {} until session depth exceeds threshold {}. Current depth: {}", ipAddress, SESSION_DEPTH_THRESHOLD, sessionDepth);
             }
 
         } catch (Exception e) {
-            logger.error("SAGE ML Pipeline failed. Bypassing anomaly detection for this request.", e);
+            evaluationStatus = "Error";
+            logger.error("SAGE Gateway Filter failed processing. Bypassing anomaly detection for this request.", e);
+        }
+        
+        meterRegistry.counter("sage_gateway_ml_inference_outcomes_total", "outcome", evaluationStatus).increment();
+        if ("Scored".equals(evaluationStatus)) {
+            String sageProfile = request.getHeader("X-Sage-Profile");
+            if (sageProfile == null) sageProfile = "unknown";
+            meterRegistry.counter("sage_gateway_ml_enforcement_total", "action", enforcementAction, "profile", sageProfile).increment();
         }
         
         request.setAttribute("SAGE-BotProbability", botProbability);
         request.setAttribute("SAGE-IsBot", isBot);
         request.setAttribute("SAGE-ThreatClass", threatClass);
+        request.setAttribute("SAGE-EvaluationStatus", evaluationStatus);
 
         // 3. ENFORCE DECISION
-        if (!DATA_COLLECTION_MODE && isBot) {
-            logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Class: " + threatClass + " | Prob: " + botProbability);
-            redisTelemetryService.banIp(ipAddress);
-            publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, threatClass, botProbability);
-            return Optional.of(buildErrorResponse(HttpStatus.FORBIDDEN, "Traffic blocked by SAGE Engine Anomaly Detection"));
+        if (!DATA_COLLECTION_MODE) {
+            if ("Blocked".equals(enforcementAction) && isBot) {
+                logger.warn("🚨 SAGE ENGINE BLOCKED BOT! IP: " + ipAddress + " | Class: " + threatClass + " | Prob: " + botProbability);
+                redisTelemetryService.banIp(ipAddress);
+                publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, threatClass, botProbability);
+                return Optional.of(buildErrorResponse(HttpStatus.FORBIDDEN, "Traffic blocked by SAGE Engine Anomaly Detection"));
+            } else if ("Challenged".equals(enforcementAction)) {
+                logger.info("⚠️ SAGE ENGINE CHALLENGED! IP: " + ipAddress + " | Prob: " + botProbability);
+                // In production: frontend JS challenge verifies real browser.
+                // No server-side blocking — the challenge is non-blocking.
+                request.setAttribute("X-Sage-Challenge", "required");
+            }
         }
 
         // Allow traffic to proceed to next filter
@@ -269,6 +333,7 @@ public class TelemetryFilter implements GatewayFilter {
         double botProbability = request.getAttribute("SAGE-BotProbability") != null ? (double) request.getAttribute("SAGE-BotProbability") : 0.0;
         boolean isBot = request.getAttribute("SAGE-IsBot") != null ? (boolean) request.getAttribute("SAGE-IsBot") : false;
         String threatClass = request.getAttribute("SAGE-ThreatClass") != null ? (String) request.getAttribute("SAGE-ThreatClass") : "Benign";
+        String evaluationStatus = request.getAttribute("SAGE-EvaluationStatus") != null ? (String) request.getAttribute("SAGE-EvaluationStatus") : "Skipped";
         boolean reconProbeCounted = request.getAttribute("SAGE-ReconProbeCounted") != null ? (boolean) request.getAttribute("SAGE-ReconProbeCounted") : false;
 
         int statusCode = response != null ? response.getStatusCode().value() : (ex != null ? 500 : 200);
@@ -278,7 +343,7 @@ public class TelemetryFilter implements GatewayFilter {
         RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(method, path, "api", ipAddress);
         RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(statusCode, latencyMs);
         RequestEvent.FeatureVector featureVector = toFeatureVector(features);
-        RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, isBot ? 1 : 0, threatClass);
+        RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, isBot ? 1 : 0, threatClass, evaluationStatus);
 
         if (statusCode == HttpServletResponse.SC_NOT_FOUND && !reconProbeCounted) {
             long probeCount = redisTelemetryService.incrementReconProbeCounter(ipAddress);
@@ -287,7 +352,7 @@ public class TelemetryFilter implements GatewayFilter {
                 publishThreatBlockedEvent(eventId, eventTimestamp, ipAddress, label, method, path, startTime, features, "Recon", botProbability);
                 // Note: since this is postProcess, the response is already generated. We can't change it. 
                 // But we still logged the ban and event. The NEXT request will be blocked by fast-path.
-                mlMetadata = new RequestEvent.MLMetadata(botProbability, 1, "Recon");
+                mlMetadata = new RequestEvent.MLMetadata(botProbability, 1, "Recon", evaluationStatus);
             }
         }
 
@@ -321,7 +386,9 @@ public class TelemetryFilter implements GatewayFilter {
         RequestEvent.RequestDetails requestDetails = new RequestEvent.RequestDetails(method, path, "api", ipAddress);
         RequestEvent.ResponseDetails responseDetails = new RequestEvent.ResponseDetails(403, System.currentTimeMillis() - startTime);
         RequestEvent.FeatureVector featureVector = toFeatureVector(features);
-        RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, 1, threatClass);
+        String currentEvalStatus = "Skipped"; // blocked events in fast-path didn't reach ML usually, except if this is called after scoring
+        if (botProbability > 0) currentEvalStatus = "Scored";
+        RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(botProbability, 1, threatClass, currentEvalStatus);
 
         RequestEvent event = new RequestEvent(
                 "threat.blocked",

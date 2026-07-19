@@ -1,75 +1,873 @@
 {
-  "title": "SAGE Engine Operations",
+  "title": "SAGE Engine — Bot Defense Operations",
   "uid": "sage-ops-1",
-  "schemaVersion": 38,
+  "schemaVersion": 39,
   "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "timezone": "browser",
+  "style": "dark",
+  "tags": ["sage", "security", "gateway", "ml"],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
   "panels": [
+
     {
-      "type": "timeseries",
-      "title": "Total Gateway Traffic (RPS)",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "type": "row",
+      "title": "⚡ SAGE — Real-Time Traffic Overview",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false,
+      "panels": []
+    },
+
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Requests (last 5m)",
+      "description": "Total number of HTTP requests processed by the gateway in the last 5 minutes.",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
-          "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (status)",
-          "legendFormat": "HTTP {{status}}",
+          "expr": "sum(increase(http_server_requests_seconds_count[5m])) or vector(0)",
+          "legendFormat": "",
           "refId": "A"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#FF9830", "value": 500 },
+              { "color": "#F2495C", "value": 2000 }
+            ]
+          },
+          "unit": "short",
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      }
     },
+
     {
-      "type": "timeseries",
-      "title": "Average Response Time (ms)",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "type": "stat",
+      "title": "Threats Blocked (last 5m)",
+      "description": "Total 403 + 429 responses issued by SAGE (ML blocks + rate limits + rule-based blocks).",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
-          "expr": "sum(rate(http_server_requests_seconds_sum[1m])) / sum(rate(http_server_requests_seconds_count[1m])) * 1000",
-          "legendFormat": "Latency (ms)",
+          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"403|429\"}[5m])) or vector(0)",
+          "legendFormat": "",
           "refId": "A"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#FF9830", "value": 10 },
+              { "color": "#F2495C", "value": 50 }
+            ]
+          },
+          "unit": "short",
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "area"
+      }
     },
+
     {
+      "id": 3,
+      "type": "stat",
+      "title": "ML Inferences (total)",
+      "description": "Cumulative count of predictions made by the SAGE ML inference service.",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(sage_inference_requests_total) or vector(0)",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#8AB8FF", "value": null },
+              { "color": "#73BF69", "value": 50 }
+            ]
+          },
+          "unit": "short",
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "area"
+      }
+    },
+
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "ML Threats Detected (total)",
+      "description": "Cumulative number of requests classified as malicious by the ML model.",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(sage_inference_threats_detected_total) or vector(0)",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#FF9830", "value": 5 },
+              { "color": "#F2495C", "value": 20 }
+            ]
+          },
+          "unit": "short",
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "area"
+      }
+    },
+
+    {
+      "id": 5,
+      "type": "gauge",
+      "title": "ML Inference Latency (p95)",
+      "description": "95th percentile ML inference latency. Should stay under 50ms for real-time enforcement.",
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(sage_inference_latency_seconds_bucket[5m])) by (le)) * 1000 or vector(0)",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#FF9830", "value": 30 },
+              { "color": "#F2495C", "value": 100 }
+            ]
+          },
+          "unit": "ms",
+          "min": 0,
+          "max": 200,
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      }
+    },
+
+    {
+      "id": 6,
+      "type": "gauge",
+      "title": "Block Rate %",
+      "description": "Percentage of total traffic being blocked (403/429) right now.",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_server_requests_seconds_count{status=~\"403|429\"}[2m])) / sum(rate(http_server_requests_seconds_count[2m]))) * 100 or vector(0)",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#FF9830", "value": 30 },
+              { "color": "#F2495C", "value": 70 }
+            ]
+          },
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "color": { "mode": "thresholds" }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "📊 Gateway Traffic & Latency",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "collapsed": false,
+      "panels": []
+    },
+
+    {
+      "id": 10,
       "type": "timeseries",
-      "title": "Traffic by Route (RPS)",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "title": "Gateway Traffic (Requests/sec) by HTTP Status",
+      "description": "Real-time request rate broken down by HTTP status code. Shows the balance between allowed (2xx) and blocked (403/429) traffic.",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"2..\"}[1m])) or vector(0)",
+          "legendFormat": "✅ 2xx (Allowed)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=\"403\"}[1m])) or vector(0)",
+          "legendFormat": "🛑 403 (ML/Rule Block)",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=\"429\"}[1m])) or vector(0)",
+          "legendFormat": "⚠️ 429 (Rate Limited)",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[1m])) or vector(0)",
+          "legendFormat": "💥 5xx (Errors)",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "pointSize": 5,
+            "showPoints": "auto",
+            "stacking": { "mode": "none" },
+            "axisLabel": "req/s"
+          },
+          "unit": "reqps"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "✅ 2xx (Allowed)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "🛑 403 (ML/Rule Block)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "⚠️ 429 (Rate Limited)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "💥 5xx (Errors)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Average Gateway Response Latency (ms)",
+      "description": "Mean response time across all endpoints. Spikes here indicate backend saturation or ML inference overhead.",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "(sum(rate(http_server_requests_seconds_sum[1m])) / sum(rate(http_server_requests_seconds_count[1m]))) * 1000",
+          "legendFormat": "Avg Latency",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "axisLabel": "ms"
+          },
+          "unit": "ms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#73BF69", "value": null },
+              { "color": "#FF9830", "value": 50 },
+              { "color": "#F2495C", "value": 150 }
+            ]
+          },
+          "color": { "mode": "continuous-GrYlRd" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "single" },
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "🛡️ SAGE Threat Detection & Enforcement",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "collapsed": false,
+      "panels": []
+    },
+
+    {
+      "id": 120,
+      "type": "piechart",
+      "title": "ML Enforcement Actions (Risk Tiers)",
+      "description": "Outcomes of ML evaluation grouped by risk tiers (Allowed, Challenged, Blocked).",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(sage_gateway_ml_enforcement_total{action=\"Allowed\"}[$__range])) or vector(0)",
+          "legendFormat": "✅ Allowed (p < 0.30)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(sage_gateway_ml_enforcement_total{action=\"Challenged\"}[$__range])) or vector(0)",
+          "legendFormat": "⚠️ Challenged (Gray Zone)",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(sage_gateway_ml_enforcement_total{action=\"Blocked\"}[$__range])) or vector(0)",
+          "legendFormat": "🛑 Blocked (p >= 0.80)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "✅ Allowed (p < 0.30)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "⚠️ Challenged (Gray Zone)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "🛑 Blocked (p >= 0.80)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "pieType": "donut",
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single" }
+      }
+    },
+
+    {
+      "id": 20,
+      "type": "piechart",
+      "title": "Traffic Disposition — Allowed vs Blocked",
+      "description": "Overall breakdown of how SAGE classified and handled traffic. Shows the proportion of allowed vs blocked requests.",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"2..|3..|404|5..\"}[$__range])) or vector(0)",
+          "legendFormat": "✅ Allowed",
+          "refId": "Allowed"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{status=\"429\"}[$__range])) or vector(0)",
+          "legendFormat": "⚠️ Rate Limited (429)",
+          "refId": "RateLimited"
+        },
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{status=\"403\"}[$__range])) or vector(0)",
+          "legendFormat": "🛑 Blocked (403)",
+          "refId": "Blocked"
+        }
+      ],
+      "fieldConfig": {
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "✅ Allowed" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "⚠️ Rate Limited (429)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "🛑 Blocked (403)" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "pieType": "donut",
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+        "tooltip": { "mode": "single" }
+      }
+    },
+
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "ML Inference Rate & Threat Detection Rate",
+      "description": "How many ML predictions the SAGE model is making per second, and how many of those are threats.",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum(rate(sage_inference_requests_total[1m])) or vector(0)",
+          "legendFormat": "ML Inferences/s",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(sage_inference_threats_detected_total[1m])) or vector(0)",
+          "legendFormat": "Threats Detected/s",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "stacking": { "mode": "none" }
+          },
+          "unit": "ops"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "ML Inferences/s" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#8AB8FF", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Threats Detected/s" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF6B6B", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "ML Inference Latency Distribution",
+      "description": "p50, p90, and p99 latency of the Random Forest ML model predictions. Real-time enforcement requires sub-100ms latency.",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(sage_inference_latency_seconds_bucket[2m])) by (le)) * 1000",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(sage_inference_latency_seconds_bucket[2m])) by (le)) * 1000",
+          "legendFormat": "p90",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(sage_inference_latency_seconds_bucket[2m])) by (le)) * 1000",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          },
+          "unit": "ms",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "🌐 Route-Level Traffic Analysis",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "collapsed": false,
+      "panels": []
+    },
+
+    {
+      "id": 30,
+      "type": "timeseries",
+      "title": "Traffic by Endpoint (RPS)",
+      "description": "Per-route request rate. Useful for identifying which endpoints are under scraping or flood attack.",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
           "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (uri)",
           "legendFormat": "{{uri}}",
           "refId": "A"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "stacking": { "mode": "normal" }
+          },
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
     },
+
     {
-      "type": "piechart",
-      "title": "Allowed vs Blocked (Total Count)",
-      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "id": 31,
+      "type": "timeseries",
+      "title": "Latency by Endpoint (ms)",
+      "description": "Average response time per route. Helps identify slow endpoints or those degraded by attack traffic.",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
-          "expr": "sum(http_server_requests_seconds_count{status=~\"2.*|3.*|404|5.*\"}) or vector(0)",
-          "legendFormat": "Allowed (Passed Filter)",
-          "refId": "Allowed"
-        },
-        {
-          "expr": "sum(http_server_requests_seconds_count{status=~\"403|429\"}) or vector(0)",
-          "legendFormat": "Blocked (ML/Rate Limit)",
-          "refId": "Blocked"
+          "expr": "(sum(rate(http_server_requests_seconds_sum[1m])) by (uri) / sum(rate(http_server_requests_seconds_count[1m])) by (uri)) * 1000",
+          "legendFormat": "{{uri}}",
+          "refId": "A"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          },
+          "unit": "ms",
+          "color": { "mode": "palette-classic" }
+        }
+      },
       "options": {
-        "pieType": "donut"
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+
+    {
+      "type": "row",
+      "title": "🖥️ JVM & System Health",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "collapsed": false,
+      "panels": []
+    },
+
+    {
+      "id": 40,
+      "type": "timeseries",
+      "title": "JVM Heap Memory Usage",
+      "description": "Heap memory utilization of the sage-gateway JVM. Sustained growth may indicate a memory leak under soak testing.",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 33 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "Used ({{id}})",
+          "refId": "A"
+        },
+        {
+          "expr": "jvm_memory_max_bytes{area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "Max ({{id}})",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "fillOpacity": 15
+          },
+          "unit": "decmbytes",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+
+    {
+      "id": 41,
+      "type": "timeseries",
+      "title": "JVM Thread Count",
+      "description": "Active thread count in the gateway JVM. Monitors virtual thread pool behavior under load.",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 33 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads or jvm_threads_live",
+          "legendFormat": "Live Threads",
+          "refId": "A"
+        },
+        {
+          "expr": "jvm_threads_daemon_threads or jvm_threads_daemon",
+          "legendFormat": "Daemon Threads",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15
+          },
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+
+    {
+      "id": 42,
+      "type": "timeseries",
+      "title": "System CPU & Process CPU",
+      "description": "CPU usage of the gateway JVM process vs overall system CPU.",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 33 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "system_cpu_usage * 100 or process_runtime_jvm_system_cpu_utilization * 100",
+          "legendFormat": "System CPU %",
+          "refId": "A"
+        },
+        {
+          "expr": "process_cpu_usage * 100 or process_runtime_jvm_cpu_utilization * 100",
+          "legendFormat": "Process CPU %",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 20
+          },
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
     {
-      "type": "stat",
-      "title": "ML Blocks & Rate Limits (last 5m)",
-      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "id": 50,
+      "type": "timeseries",
+      "title": "Gateway ML Inference Outcomes",
+      "description": "Real-time rate of ML inferences as seen from the Gateway. Tracks how many were successfully scored vs timed out (failed open).",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 41 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "targets": [
         {
-          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"403|429\"}[5m])) or vector(0)",
+          "expr": "sum(rate(sage_gateway_ml_inference_outcomes_total[1m])) by (outcome)",
+          "legendFormat": "{{outcome}}",
           "refId": "A"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "stacking": { "mode": "normal" }
+          },
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Scored" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Timeout" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Error" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+    {
+      "id": 51,
+      "type": "timeseries",
+      "title": "Challenged Traffic (Gray Zone)",
+      "description": "Traffic correctly penalized by the 1.5s delay. Look for scrapers here. If 'human' appears here, we have False Positives.",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 41 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum by (profile) (rate(sage_gateway_ml_enforcement_total{action=\"Challenged\"}[1m]))",
+          "legendFormat": "{{profile}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "stacking": { "mode": "normal" }
+          },
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
+    },
+    {
+      "id": 52,
+      "type": "timeseries",
+      "title": "Allowed Traffic (Safe Zone)",
+      "description": "Traffic passed through without ML penalty. Human traffic MUST be the overwhelming majority here.",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 41 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "sum by (profile) (rate(sage_gateway_ml_enforcement_total{action=\"Allowed\"}[1m]))",
+          "legendFormat": "{{profile}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "stacking": { "mode": "normal" }
+          },
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
+      }
     }
-  ]
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": { "text": "Prometheus", "value": "Prometheus" },
+        "hide": 2
+      }
+    ]
+  }
 }
