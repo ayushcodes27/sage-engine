@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 from contextlib import asynccontextmanager
 from assembler import FeatureAssembler
+import asyncio
+from concurrent.futures import ProcessPoolExecutor
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from pydantic import BaseModel, Field
 
@@ -33,9 +35,19 @@ REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
 assembler = FeatureAssembler(host=REDIS_HOST, port=REDIS_PORT)
 
+_process_pool = ProcessPoolExecutor(max_workers=2)
+
+def _run_inference(feature_vector: list) -> list:
+    """Pure CPU work — runs in subprocess, GIL-free."""
+    if MODEL is None:
+        raise ValueError("Model not loaded")
+    X_input = pd.DataFrame([feature_vector], columns=FEATURE_MAP)
+    return MODEL.predict_proba(X_input)[0].tolist()
+
 # Schemas
 class GatewayTelemetry(BaseModel):
     session_id: str
+    gateway_timestamp_ms: float = 0.0
     SAGE_Session_Depth: float = Field(..., description="Total Fwd + Bwd Packets")
     SAGE_Temporal_Variance: float = Field(..., description="Flow IAT Std / Mean")
     SAGE_Request_Velocity: float = Field(..., description="Flow Pkts/s")
@@ -79,7 +91,7 @@ app = FastAPI(lifespan=lifespan, title="SAGE ML Inference (Multiclass)")
 
 # Endpoints
 @app.post("/predict", response_model=InferenceResult)
-def predict_anomaly(data: GatewayTelemetry):
+async def predict_anomaly(data: GatewayTelemetry):
     """
     Receives real-time telemetry from the Java Gateway.
     """
@@ -92,10 +104,11 @@ def predict_anomaly(data: GatewayTelemetry):
     try:
         # Extract features in the EXACT order the Random Forest expects
         input_vector = [getattr(data, feature_name) for feature_name in FEATURE_MAP]
-        X_input = pd.DataFrame([input_vector], columns=FEATURE_MAP)
+        
+        # Async offload of CPU-bound work
+        loop = asyncio.get_event_loop()
+        probabilities = await loop.run_in_executor(_process_pool, _run_inference, input_vector)
 
-        # Multiclass Inference
-        probabilities = MODEL.predict_proba(X_input)[0]
         max_prob_idx = int(np.argmax(probabilities))
         confidence = float(probabilities[max_prob_idx])
         predicted_class = CLASSES[max_prob_idx]
@@ -115,6 +128,8 @@ def predict_anomaly(data: GatewayTelemetry):
         # Latency Tracking
         processing_time_sec = time.perf_counter() - start_time
         INFERENCE_LATENCY.observe(processing_time_sec)
+
+        print(f"[DEBUG-INFERENCE] sessionId={data.session_id}, class={predicted_class}, is_malicious={is_malicious}, confidence={confidence:.4f}", flush=True)
 
         return InferenceResult(
             session_id=data.session_id,

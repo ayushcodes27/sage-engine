@@ -40,27 +40,27 @@ sage:
   rate-limit:
     enabled: true
     default-policy:
-      replenish-rate: 25
-      burst-capacity: 50
+      replenish-rate: 5
+      burst-capacity: 10
     routes:
       secure-data-route:
+        replenish-rate: 3
+        burst-capacity: 5
+      shop-browse-route:
         replenish-rate: 10
         burst-capacity: 20
-      shop-browse-route:
-        replenish-rate: 120
-        burst-capacity: 240
       shop-api-route:
-        replenish-rate: 120
-        burst-capacity: 240
+        replenish-rate: 5
+        burst-capacity: 10
       shop-search-route:
-        replenish-rate: 80
-        burst-capacity: 160
+        replenish-rate: 3
+        burst-capacity: 6
       shop-cart-route:
-        replenish-rate: 60
-        burst-capacity: 120
+        replenish-rate: 5
+        burst-capacity: 10
       shop-checkout-route:
-        replenish-rate: 40
-        burst-capacity: 80
+        replenish-rate: 2
+        burst-capacity: 5
 
 management:
   endpoints:

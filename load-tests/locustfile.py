@@ -78,14 +78,18 @@ RECON_UA_POOL = [
 @tag("human")
 class HumanBrowser(HttpUser):
     scenario_tags = {"human"}
-    fixed_count = random.randint(6, 12)
-    wait_time = between(10, 15)
+    fixed_count = random.randint(150, 200)
+    wait_time = between(1, 3)
 
     def _headers(self):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
             "Content-Type": "application/json",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Sec-Fetch-Dest": "document",
+            "X-Sage-Profile": "human",
         }
 
     def _random_product_id(self):
@@ -138,6 +142,10 @@ class AkamaiScraper(HttpUser):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Sec-Fetch-Dest": "document",
+            "X-Sage-Profile": "akamai_scraper",
         }
 
     @task(1)
@@ -159,7 +167,7 @@ class AkamaiScraper(HttpUser):
 @tag("unprotected_flood")
 class UnprotectedFlood(HttpUser):
     scenario_tags = {"unprotected_flood"}
-    fixed_count = random.randint(20, 30)
+    fixed_count = random.randint(5, 10)
     wait_time = between(0.0, 0.1)
 
     def on_start(self):
@@ -170,6 +178,7 @@ class UnprotectedFlood(HttpUser):
             "X-Forwarded-For": self._ip,
             "User-Agent": "curl/8.6.0",
             "Content-Type": "application/json",
+            "X-Sage-Profile": "unprotected_flood",
         }
 
     @tag("unprotected_flood")
@@ -213,6 +222,7 @@ class ReconBot(HttpUser):
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
             "Content-Type": "application/json",
+            "X-Sage-Profile": "recon",
         }
 
     @task(2)
@@ -238,7 +248,7 @@ class ReconBot(HttpUser):
 @tag("scraper")
 class StealthScraper(HttpUser):
     scenario_tags = {"scraper"}
-    fixed_count = random.randint(8, 15)
+    fixed_count = random.randint(20, 30)
     wait_time = between(2, 5)
 
     def on_start(self):
@@ -249,9 +259,13 @@ class StealthScraper(HttpUser):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Sec-Fetch-Dest": "document",
+            "X-Sage-Profile": "stealth_scraper",
         }
 
-    @task
+    @task(3)
     def sequential_crawl(self):
         product_id = random.randint(1, 50)
         headers = self._headers()
@@ -261,6 +275,15 @@ class StealthScraper(HttpUser):
 
         if random.random() < 0.05:
             self.client.post("/checkout", json={"status": "mock"}, headers=headers, name="StealthScraper - /checkout")
+
+    @task(1)
+    def evade_fast_path(self):
+        # Mix in non-product and static assets to lower endpointConcentration and assetSkipRatio
+        # This guarantees it bypasses Tier 1 and hits the ML layer
+        headers = self._headers()
+        self.client.get("/static/style.css", headers=headers, name="StealthScraper - /static/style.css")
+        term = random.choice(FLOOD_SEARCH_TERMS)
+        self.client.get(f"/api/search?q={term}", headers=headers, name="StealthScraper - /api/search")
 
 
 @tag("flood")
@@ -277,6 +300,7 @@ class JitteredFlood(HttpUser):
             "X-Forwarded-For": self._ip,
             "User-Agent": "curl/8.6.0",
             "Content-Type": "application/json",
+            "X-Sage-Profile": "jittered_flood",
         }
 
     @tag("flood")
@@ -309,6 +333,10 @@ class AdversarialScraper(HttpUser):
         return {
             "X-Forwarded-For": self._ip,
             "User-Agent": self._ua,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Sec-Fetch-Dest": "document",
+            "X-Sage-Profile": "adversarial_scraper",
         }
 
     @tag("adversarial_scraper")
@@ -356,6 +384,7 @@ class SlowFlood(HttpUser):
             "X-Forwarded-For": self._ip,
             "User-Agent": "curl/8.6.0",
             "Content-Type": "application/json",
+            "X-Sage-Profile": "slow_flood",
         }
 
     @tag("slow_flood")
@@ -366,11 +395,14 @@ class SlowFlood(HttpUser):
 
 def _parse_selected_tags(argv):
     selected = set()
-    for idx, token in enumerate(argv):
-        if token == "--tags" and idx + 1 < len(argv):
-            selected.update(part.strip() for part in argv[idx + 1].split(",") if part.strip())
-        elif token.startswith("--tags="):
-            selected.update(part.strip() for part in token.split("=", 1)[1].split(",") if part.strip())
+    in_tags = False
+    for token in argv:
+        if token in ("--tags", "-T"):
+            in_tags = True
+        elif token.startswith("-"):
+            in_tags = False
+        elif in_tags:
+            selected.update(part.strip() for part in token.split(",") if part.strip())
     return selected
 
 

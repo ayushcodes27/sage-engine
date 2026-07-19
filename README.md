@@ -106,6 +106,19 @@ curl http://localhost:8083/actuator/health
 
 ![Feature Importance](ml_pipeline/models/feature_importance.png)
 
+## Live Traffic Monitoring
+
+SAGE provides deep observability into traffic classification, ML inference latency, and threat mitigation via Grafana.
+
+### Real-Time Traffic Overview
+![Real-Time Traffic Overview](evaluation/images/1.png)
+*A sustained 10-minute mixed-traffic simulation (65,000+ requests). The gateway processes traffic at ~47 req/s with an average proxy latency of ~21ms. SAGE concurrently handles legitimate traffic (green) while actively blocking floods and scrapers (red) in real-time.*
+
+### Threat Detection & Enforcement
+![Threat Detection & Enforcement](evaluation/images/2.png)
+*Detailed breakdown of traffic disposition and ML performance. Volumetric and scraper bots are neutralized at the edge (47% Blocked, 7% Rate Limited). Because simulated human traffic from load testers lacks genuine browser telemetry, the ML model correctly routes it to the "Challenged" gray zone (probability 0.30 - 0.80) to prevent false positives, applying a non-blocking `X-Sage-Challenge: required` header for client-side JS verification. Python ML inference executes rapidly out-of-band (p50: ~40ms, p99: ~97ms).*
+
+
 ## Adversarial Validation
 
 To stress-test the robustness of the 7-feature behavioral model, we engineered an active evasion test using Locust. Two adversarial personas were created specifically to spoof the model's highest-weighted features:
