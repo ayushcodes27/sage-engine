@@ -41,7 +41,7 @@ def get_tag_file_bytes(tag: str, rel_path: str) -> bytes:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Verify frozen model manifests against disk and git tag.")
-    parser.add_argument("--tag", default="v2-frozen-models", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v2", help="Git tag containing frozen manifest")
     parser.add_argument("--local-manifest", help="Optional fallback path to local manifest if tag is not yet created")
     return parser.parse_args()
 

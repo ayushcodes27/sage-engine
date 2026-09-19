@@ -217,7 +217,7 @@ def main():
     
     manifest = {
         "manifest_version": "2.0",
-        "tag": "v2-frozen-models",
+        "tag": "v2-frozen-models-v2",
         "threshold_provenance": threshold_provenance,
         "active_deployment": active_deployment,
         "models": models,
