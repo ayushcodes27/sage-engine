@@ -132,3 +132,53 @@ def test_unscored_records_do_not_fail_identity_gate(expected_identity):
     assert len(errors) == 0
     assert scored_count == 5
     assert unscored_count == 10
+
+
+def test_manifest_active_deployment_matches_intended_shadow_model_table_row():
+    from pathlib import Path
+    manifest_path = Path(__file__).resolve().parents[1] / "models" / "frozen_models_manifest.json"
+    assert manifest_path.exists(), f"Manifest not found at {manifest_path}"
+    
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+        
+    assert "intended_shadow_model" in manifest, "Manifest must declare intended_shadow_model"
+    intended = manifest["intended_shadow_model"]
+    assert intended == "eclog_timing_binary_model", f"Expected intended shadow eclog_timing_binary_model, got {intended}"
+    
+    active = manifest.get("active_deployment", {})
+    assert active.get("shadow_model_name") == intended, "active_deployment.shadow_model_name must match intended_shadow_model"
+    
+    # Assert model SHA matches model table row exactly
+    models = manifest.get("models", {})
+    assert intended in models, f"Model {intended} missing from manifest models table"
+    expected_model_sha = models[intended]["sha256"]
+    assert active.get("shadow_model_sha256") == expected_model_sha, (
+        f"active_deployment.shadow_model_sha256 ({active.get('shadow_model_sha256')}) "
+        f"does not match model table row ({expected_model_sha})"
+    )
+    
+    # Assert contract hash and feature list hash match contract table row
+    contracts = manifest.get("contracts", {})
+    contract_name = active.get("shadow_contract_name")
+    assert contract_name == "contract_eclog_timing_8feat", f"Unexpected shadow contract name: {contract_name}"
+    assert contract_name in contracts, f"Contract {contract_name} missing from contracts table"
+    
+    expected_contract_sha = contracts[contract_name]["sha256"]
+    expected_feat_list_sha = contracts[contract_name]["feature_list_sha256"]
+    
+    assert active.get("shadow_contract_hash") == expected_contract_sha, (
+        f"active_deployment.shadow_contract_hash ({active.get('shadow_contract_hash')}) "
+        f"does not match contract table row ({expected_contract_sha})"
+    )
+    assert active.get("shadow_feature_list_hash") == expected_feat_list_sha, (
+        f"active_deployment.shadow_feature_list_hash ({active.get('shadow_feature_list_hash')}) "
+        f"does not match contract table row ({expected_feat_list_sha})"
+    )
+    
+    # Assert 8 features including Navigation_Gap and Long_Gap_Ratio
+    feat_list = contracts[contract_name]["features"]
+    assert len(feat_list) == 8, f"Expected 8 features for timing model, found {len(feat_list)}"
+    assert "SAGE_NonStatic_Navigation_Gap" in feat_list
+    assert "SAGE_NonStatic_Long_Gap_Ratio" in feat_list
+

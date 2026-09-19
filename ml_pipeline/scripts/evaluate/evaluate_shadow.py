@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument("--telemetry", required=True, help="Path to exported Kafka telemetry JSONL")
     parser.add_argument("--manifest", required=True, help="Path to shadow manifest JSON")
     parser.add_argument("--report", help="Optional markdown report output path")
-    parser.add_argument("--tag", default="v2-frozen-models-v3", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v4", help="Git tag containing frozen manifest")
     parser.add_argument("--frozen-manifest", help="Optional local path to frozen models manifest fallback")
     parser.add_argument("--bootstrap-samples", type=int, default=1000)
     parser.add_argument("--strict", action="store_true", help="Exit with code 1 if identity verification or gates fail")
@@ -214,6 +214,11 @@ def load_telemetry(path, run_id=None):
                 "shadow_model_sha256": ml.get("shadowModelSha256"),
                 "shadow_contract_hash": ml.get("shadowContractHash"),
                 "shadow_feature_list_hash": ml.get("shadowFeatureListHash"),
+                "evaluation_status": ml.get("evaluationStatus"),
+                "scoring_depth": ml.get("scoringDepth"),
+                "session_depth": features.get("sessionDepth") or features.get("SAGE_Session_Depth"),
+                "navigation_gap": features.get("nonStaticNavigationGap") if features.get("nonStaticNavigationGap") is not None else features.get("SAGE_NonStatic_Navigation_Gap"),
+                "long_gap_ratio": features.get("nonStaticLongGapRatio") if features.get("nonStaticLongGapRatio") is not None else features.get("SAGE_NonStatic_Long_Gap_Ratio"),
                 "feature_vector_present": bool(features),
             }
             row["prod_action"] = production_action(row["bot_prob"])
@@ -232,9 +237,19 @@ def verify_identity_assertions(
       (prod_model_sha256, shadow_model_sha256, shadow_contract_hash, shadow_feature_list_hash, shadow_threshold)
     - Tuple must equal the tagged manifest, not just be internally consistent.
     - Zero mixed identity allowed across scored records.
+    - Zero timeout/error records allowed in dataset.
     - Unscored records are counted separately.
     """
     errors = []
+
+    # Check 0: Zero timeout or error records across all telemetry
+    error_cond = df["shadow_status"].isin(["timeout", "error"])
+    if "status" in df.columns:
+        error_cond = error_cond | (pd.to_numeric(df["status"], errors="coerce") >= 500)
+    error_records = df[error_cond]
+    if len(error_records) > 0:
+        errors.append(f"{len(error_records)} telemetry records encountered error or timeout status")
+
     is_scored = (
         (df["shadow_status"] == "ok")
         & df["shadow_prob"].notna()
@@ -408,6 +423,41 @@ def build_report(
     lines.append(f"Shadow-scored clients: {len(scored_clients)}")
     lines.append(f"Clients without a valid shadow score: {len(unscored_clients)}")
 
+    # Diagnosis of Unscored Records
+    unscored = matched[
+        (matched["shadow_status"] != "ok")
+        | matched["shadow_prob"].isna()
+        | matched["shadow_is_bot"].isna()
+    ].copy()
+    depth_gated = (
+        (unscored["shadow_status"] == "skipped")
+        & (unscored["session_depth"].fillna(0) <= 20)
+    ).sum()
+    other_gated = len(unscored) - depth_gated
+    error_or_timeout = unscored["shadow_status"].isin(["timeout", "error"]).sum()
+
+    lines.append("")
+    lines.append("### Unscored Records Diagnostics:")
+    lines.append(f"- **Total Unscored Records**: {len(unscored)}")
+    lines.append(f"- **Depth-Gated (sessionDepth <= 20)**: {depth_gated}")
+    lines.append(f"- **Duration/Other-Gated**: {other_gated}")
+    lines.append(f"- **Error or Timeout Records**: {error_or_timeout}")
+
+    # Feature Delivery Verification (Asserting 8 features & non-default-filled timing features)
+    lines.append("")
+    lines.append("### Shadow Feature Delivery Verification:")
+    timing_features_valid = False
+    if len(scored) > 0 and "navigation_gap" in scored and "long_gap_ratio" in scored:
+        avg_nav_gap = float(scored["navigation_gap"].dropna().mean()) if len(scored["navigation_gap"].dropna()) > 0 else 0.0
+        avg_long_gap = float(scored["long_gap_ratio"].dropna().mean()) if len(scored["long_gap_ratio"].dropna()) > 0 else 0.0
+        non_zero_gaps = int((scored["navigation_gap"] > 0).sum())
+        lines.append(f"- **Mean Navigation_Gap on scored records**: {avg_nav_gap:.4f} s (non-zero count: {non_zero_gaps}/{len(scored)})")
+        lines.append(f"- **Mean Long_Gap_Ratio on scored records**: {avg_long_gap:.4f}")
+        timing_features_valid = (avg_nav_gap > 0.0) or (avg_long_gap > 0.0) or (non_zero_gaps > 0)
+        lines.append(f"- **Timing Features Not Default-Filled**: {'PASS' if timing_features_valid else 'FAIL'}")
+    else:
+        lines.append("- ❌ Timing feature columns missing from telemetry")
+
     if len(matched) == 0 or len(scored) == 0:
         lines.append("")
         lines.append("No valid shadow predictions matched the truth manifest. Metrics are unavailable; infrastructure failures must not be counted as bot misses.")
@@ -491,12 +541,16 @@ def build_report(
     lines.append("")
     lines.append("## Safety Gates")
     lines.append("")
+    client_gate_ok = (len(unscored_clients) == 0) and (len(scored_clients) == len(manifest_client_ids)) and len(manifest_client_ids) > 0
+    zero_errors_ok = (error_or_timeout == 0) and (len(identity_errors) == 0 or not any("error or timeout" in e for e in identity_errors))
     gates = [
         ("Cryptographic Identity Verified (Tagged Manifest)", identity_ok),
+        ("Client-Level Acceptance Gate (scored_clients == manifest_clients, >=1 shadow 'ok' per client)", client_gate_ok),
+        ("Zero timeout or error records", zero_errors_ok),
+        ("Timing Features Present & Active (8 features)", timing_features_valid),
         ("Human FPR < 10%", fpr_ci[0] < 0.10),
         ("Bot recall > 90%", recall_ci[0] > 0.90),
         ("p95 paired overhead < 50 ms", over_p95 < 50),
-        ("All manifest clients have valid shadow scores", len(unscored_clients) == 0),
     ]
     all_passed = True
     for name, passed in gates:

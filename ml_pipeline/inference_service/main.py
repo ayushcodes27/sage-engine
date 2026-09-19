@@ -165,10 +165,10 @@ async def lifespan(app: FastAPI):
         print(f"WARNING: Missing PROD model {prod_path}")
         
     # 3. Load Shadow Model with hash-before-unpickle
-    shadow_target = os.getenv("SHADOW_MODEL_FILE", "eclog_weak_binary_model.pkl")
+    shadow_target = os.getenv("SHADOW_MODEL_FILE", "eclog_timing_binary_model.pkl")
     shadow_path = os.path.join(model_dir, shadow_target)
     if not os.path.exists(shadow_path):
-        fallback_path = os.path.join(model_dir, "eclog_weak_binary_model.pkl")
+        fallback_path = os.path.join(model_dir, "eclog_timing_binary_model.pkl")
         if os.path.exists(fallback_path):
             shadow_path = fallback_path
 

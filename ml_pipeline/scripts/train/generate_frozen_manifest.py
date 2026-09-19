@@ -204,10 +204,13 @@ def main():
     
     # 6. Active Deployment Identity Tuple
     active_deployment = {
+        "prod_model_name": "sage_binary_model",
+        "shadow_model_name": "eclog_timing_binary_model",
         "prod_model_sha256": models["sage_binary_model"]["sha256"],
-        "shadow_model_sha256": models["eclog_weak_binary_model"]["sha256"],
-        "shadow_contract_hash": contracts["contract_prod_7feat"]["sha256"],
-        "shadow_feature_list_hash": contracts["contract_prod_7feat"]["feature_list_sha256"],
+        "shadow_model_sha256": models["eclog_timing_binary_model"]["sha256"],
+        "shadow_contract_name": "contract_eclog_timing_8feat",
+        "shadow_contract_hash": contracts["contract_eclog_timing_8feat"]["sha256"],
+        "shadow_feature_list_hash": contracts["contract_eclog_timing_8feat"]["feature_list_sha256"],
         "shadow_threshold": 0.35,
     }
     
@@ -217,7 +220,8 @@ def main():
     
     manifest = {
         "manifest_version": "2.0",
-        "tag": "v2-frozen-models-v3",
+        "tag": "v2-frozen-models-v4",
+        "intended_shadow_model": "eclog_timing_binary_model",
         "threshold_provenance": threshold_provenance,
         "active_deployment": active_deployment,
         "models": models,

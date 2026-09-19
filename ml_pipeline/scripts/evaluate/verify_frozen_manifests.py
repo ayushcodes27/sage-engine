@@ -41,7 +41,7 @@ def get_tag_file_bytes(tag: str, rel_path: str) -> bytes:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Verify frozen model manifests against disk and git tag.")
-    parser.add_argument("--tag", default="v2-frozen-models-v3", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v4", help="Git tag containing frozen manifest")
     parser.add_argument("--local-manifest", help="Optional fallback path to local manifest if tag is not yet created")
     return parser.parse_args()
 
@@ -113,8 +113,8 @@ def verify(tag: str, local_manifest: str = None) -> bool:
 
     print("[+] All frozen files are byte-identical and hash-verified!")
 
-    # 2. Check Python environment dependencies
-    print("[*] Verifying critical python package versions...")
+    # 2. Check Python environment dependencies (including redis & uvicorn)
+    print("\n[*] Verifying critical python package versions...")
     try:
         pip_res = subprocess.run(
             [sys.executable, "-m", "pip", "freeze"],
@@ -132,21 +132,102 @@ def verify(tag: str, local_manifest: str = None) -> bool:
             line.split("==", 1) for line in saved_freeze.splitlines() if "==" in line
         )
 
-        critical_pkgs = ["xgboost", "scikit-learn", "numpy", "pandas", "fastapi", "pydantic"]
+        critical_pkgs = ["xgboost", "scikit-learn", "numpy", "pandas", "fastapi", "pydantic", "redis", "uvicorn"]
         for pkg in critical_pkgs:
             exp = saved_pkgs.get(pkg)
             cur = current_pkgs.get(pkg)
             if exp and cur and exp != cur:
                 print(f"[-] WARNING: Package version mismatch for {pkg}: manifest={exp}, current={cur}")
-            elif exp and not cur:
+            elif not cur:
                 print(f"[-] WARNING: Package {pkg} is missing from current environment")
             else:
                 print(f"    [+] {pkg} == {cur} (OK)")
     except Exception as e:
         print(f"[-] Warning: Failed to verify pip packages: {e}")
 
-    # 3. Verify Active Deployment Tuple
+    # 3. Clean-Tree Status Check
+    print("\n[*] Checking Git working tree clean status...")
+    try:
+        status_res = subprocess.run(
+            ["git", "status", "--porcelain"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=str(REPO_ROOT),
+        )
+        status_lines = [l for l in status_res.stdout.splitlines() if l.strip()]
+        tracked_changes = [l for l in status_lines if not l.startswith("??")]
+        if not status_lines:
+            print("    [+] Working tree is completely clean.")
+        elif not tracked_changes:
+            print(f"    [!] Working tree clean for tracked files ({len(status_lines)} untracked files present).")
+        else:
+            print(f"    [!] Tracked changes detected in working tree ({len(tracked_changes)} files modified/staged):")
+            for tc in tracked_changes[:5]:
+                print(f"        {tc}")
+    except Exception as e:
+        print(f"[-] Warning: Failed to check git status: {e}")
+
+    # 4. Maven Dependency Check
+    print("\n[*] Checking Maven dependencies for sage-gateway...")
+    try:
+        mvn_res = subprocess.run(
+            ["mvn", "-version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            shell=True,
+        )
+        if mvn_res.returncode == 0:
+            first_line = mvn_res.stdout.splitlines()[0] if mvn_res.stdout.splitlines() else "Maven present"
+            print(f"    [+] Maven binary verified: {first_line}")
+            # Check gateway pom exists
+            gateway_pom = REPO_ROOT / "sage-gateway" / "pom.xml"
+            if gateway_pom.exists():
+                print(f"    [+] Gateway pom.xml verified: {gateway_pom}")
+        else:
+            print(f"    [-] Warning: Maven check failed: {mvn_res.stderr.strip()}")
+    except Exception as e:
+        print(f"[-] Warning: Maven check skipped ({e})")
+
+    # 5. List Previous Tags
+    print("\n[*] Listing previous repository tags...")
+    try:
+        tag_res = subprocess.run(
+            ["git", "tag", "-l"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=str(REPO_ROOT),
+        )
+        tags = [t.strip() for t in tag_res.stdout.splitlines() if t.strip()]
+        for t in tags:
+            print(f"    - Tag: {t}")
+    except Exception as e:
+        print(f"[-] Warning: Failed to list tags: {e}")
+
+    # 6. Verify Active Deployment Tuple Self-Consistency
+    print("\n[*] Verifying Active Deployment Tuple against Model & Contract tables...")
     active = manifest.get("active_deployment", {})
+    intended = manifest.get("intended_shadow_model")
+    print(f"    Intended Shadow Model: {intended}")
+    assert intended == "eclog_timing_binary_model", f"Expected intended eclog_timing_binary_model, got {intended}"
+    assert active.get("shadow_model_name") == intended, "active_deployment.shadow_model_name must match intended"
+    
+    models = manifest.get("models", {})
+    contracts = manifest.get("contracts", {})
+    assert intended in models, f"Model {intended} missing from models table"
+    exp_model_sha = models[intended]["sha256"]
+    assert active.get("shadow_model_sha256") == exp_model_sha, "Shadow model SHA mismatch with table row"
+    
+    contract_name = active.get("shadow_contract_name")
+    assert contract_name in contracts, f"Contract {contract_name} missing from contracts table"
+    exp_contract_sha = contracts[contract_name]["sha256"]
+    exp_feat_sha = contracts[contract_name]["feature_list_sha256"]
+    assert active.get("shadow_contract_hash") == exp_contract_sha, "Shadow contract SHA mismatch with table row"
+    assert active.get("shadow_feature_list_hash") == exp_feat_sha, "Shadow feature list SHA mismatch with table row"
+    print("    [+] Active deployment tuple strictly matches model and contract table rows!")
+
     print(f"\n[+] Active Deployment Tuple:\n{json.dumps(active, indent=2)}")
     print("\n[+] Verification SUCCESS: Frozen files and manifest are valid.")
     return True

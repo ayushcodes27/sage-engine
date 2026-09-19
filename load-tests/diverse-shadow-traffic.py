@@ -241,12 +241,13 @@ def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False):
 
     if is_dry_run:
         # Dry-run requirement: exactly 25 non-static requests per client, ending with probe path
-        # Changes only volume; maintains non-static navigation behavior
+        # Changes only volume; maintains non-static navigation behavior.
+        # Paced at 0.15s per request to ensure sessionDuration >= 3.0s is met for both clients.
         for i in range(25):
             path = NON_STATIC_PATHS[i % len(NON_STATIC_PATHS)]
             tracked_fetch(path)
-            time.sleep(0.05 if profile_name == "fast_scraper" else 0.1)
-        time.sleep(0.1)
+            time.sleep(0.15)
+        time.sleep(0.2)
         tracked_fetch(SCORING_PROBE_PATH, is_probe=True)
         return {
             "client_id": client_id,
