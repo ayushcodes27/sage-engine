@@ -102,6 +102,10 @@ public class MLInferenceFilter implements GatewayFilter {
         Double shadowInferenceLatencyMs = null;
         String contractHash = "unknown";
         String modelVersion = "unknown";
+        String prodModelSha256 = null;
+        String shadowModelSha256 = null;
+        String shadowContractHash = null;
+        String shadowFeatureListHash = null;
 
         try {
             features = redisTelemetryService.processAndGetTelemetry(ipAddress, payloadSize, path);
@@ -119,11 +123,6 @@ public class MLInferenceFilter implements GatewayFilter {
                     shouldScoreFresh = true;
                 }
             }
-
-            String prodModelSha256 = null;
-            String shadowModelSha256 = null;
-            String shadowContractHash = null;
-            String shadowFeatureListHash = null;
 
             if (!cachedDecision.isEmpty() && !shouldScoreFresh) {
                 isBot = Boolean.parseBoolean(cachedDecision.getOrDefault("isBot", "false"));
