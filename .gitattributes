@@ -2,3 +2,9 @@
 *.pkl -text
 *.json -text
 *.csv -text
+
+# Explicit scoring-path code and configuration in frozen set
+ml_pipeline/inference_service/main.py -text
+sage-gateway/src/main/java/com/sage/gateway/service/RedisTelemetryService.java -text
+sage-gateway/src/main/java/com/sage/gateway/filter/MLInferenceFilter.java -text
+sage-gateway/src/main/resources/application.yaml -text
