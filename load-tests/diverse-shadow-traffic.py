@@ -242,12 +242,13 @@ def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False):
     if is_dry_run:
         # Dry-run requirement: exactly 25 non-static requests per client, ending with probe path
         # Changes only volume; maintains non-static navigation behavior.
-        # Paced at 0.15s per request to ensure sessionDuration >= 3.0s is met for both clients.
+        # Paced at 0.60s for slow clients (gaps >= 0.5s), and 0.15s for interactive/rapid clients.
+        delay = 0.60 if "slow" in profile_name else 0.15
         for i in range(25):
             path = NON_STATIC_PATHS[i % len(NON_STATIC_PATHS)]
             tracked_fetch(path)
-            time.sleep(0.15)
-        time.sleep(0.2)
+            time.sleep(delay)
+        time.sleep(delay)
         tracked_fetch(SCORING_PROBE_PATH, is_probe=True)
         return {
             "client_id": client_id,
@@ -357,7 +358,7 @@ def main():
 
     # Determine profiles & volume
     if args.dry_run:
-        # Dry-run: 2 clients (1 human, 1 bot) to smoke test telemetry identity propagation
+        # Dry-run: 3 clients (1 human, 1 rapid bot, 1 slow bot with gaps >= 0.5s)
         profile_matrix = {
             "normal_browser": {
                 "expected_class": "human",
@@ -365,7 +366,7 @@ def main():
                 "rate": "Interactive",
                 "client_count": 1,
                 "request_range": [25, 25],
-                "delay_seconds": [0.1, 0.1],
+                "delay_seconds": [0.15, 0.15],
             },
             "fast_scraper": {
                 "expected_class": "bot",
@@ -373,7 +374,15 @@ def main():
                 "rate": "Rapid",
                 "client_count": 1,
                 "request_range": [25, 25],
-                "delay_seconds": [0.05, 0.05],
+                "delay_seconds": [0.15, 0.15],
+            },
+            "slow_scraper": {
+                "expected_class": "bot",
+                "asset_behavior": "25 non-static requests (gaps >= 0.5s for Long_Gap_Ratio)",
+                "rate": "Slow",
+                "client_count": 1,
+                "request_range": [25, 25],
+                "delay_seconds": [0.60, 0.60],
             },
         }
     else:

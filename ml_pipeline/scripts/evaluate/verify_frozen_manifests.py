@@ -13,6 +13,7 @@ Exits 0 if all assertions hold; exits 1 with detailed failure report otherwise.
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -41,7 +42,7 @@ def get_tag_file_bytes(tag: str, rel_path: str) -> bytes:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Verify frozen model manifests against disk and git tag.")
-    parser.add_argument("--tag", default="v2-frozen-models-v4", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v5", help="Git tag containing frozen manifest")
     parser.add_argument("--local-manifest", help="Optional fallback path to local manifest if tag is not yet created")
     return parser.parse_args()
 
@@ -145,7 +146,7 @@ def verify(tag: str, local_manifest: str = None) -> bool:
     except Exception as e:
         print(f"[-] Warning: Failed to verify pip packages: {e}")
 
-    # 3. Clean-Tree Status Check
+    # 3. Clean-Tree Status Check (Dirty tracked tree = FAIL)
     print("\n[*] Checking Git working tree clean status...")
     try:
         status_res = subprocess.run(
@@ -157,38 +158,49 @@ def verify(tag: str, local_manifest: str = None) -> bool:
         )
         status_lines = [l for l in status_res.stdout.splitlines() if l.strip()]
         tracked_changes = [l for l in status_lines if not l.startswith("??")]
-        if not status_lines:
-            print("    [+] Working tree is completely clean.")
-        elif not tracked_changes:
-            print(f"    [!] Working tree clean for tracked files ({len(status_lines)} untracked files present).")
+        if tracked_changes:
+            errors.append(
+                f"DIRTY TRACKED TREE: {len(tracked_changes)} tracked files modified or staged:\n"
+                + "\n".join(f"        {l}" for l in tracked_changes)
+            )
         else:
-            print(f"    [!] Tracked changes detected in working tree ({len(tracked_changes)} files modified/staged):")
-            for tc in tracked_changes[:5]:
-                print(f"        {tc}")
+            print(f"    [+] Working tree is clean for tracked files ({len(status_lines)} untracked files present).")
     except Exception as e:
-        print(f"[-] Warning: Failed to check git status: {e}")
+        errors.append(f"Failed to check git working tree status: {e}")
 
-    # 4. Maven Dependency Check
-    print("\n[*] Checking Maven dependencies for sage-gateway...")
+    # 4. Real Maven Dependency Tree Verification
+    print("\n[*] Checking Maven dependencies via `mvn dependency:tree`...")
     try:
+        env = os.environ.copy()
+        if not env.get("JAVA_HOME") and Path("C:/Program Files/Java/jdk-21").exists():
+            env["JAVA_HOME"] = "C:/Program Files/Java/jdk-21"
+
         mvn_res = subprocess.run(
-            ["mvn", "-version"],
+            ["mvn", "dependency:tree"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
             shell=True,
+            cwd=str(REPO_ROOT / "sage-gateway"),
+            env=env,
         )
-        if mvn_res.returncode == 0:
-            first_line = mvn_res.stdout.splitlines()[0] if mvn_res.stdout.splitlines() else "Maven present"
-            print(f"    [+] Maven binary verified: {first_line}")
-            # Check gateway pom exists
-            gateway_pom = REPO_ROOT / "sage-gateway" / "pom.xml"
-            if gateway_pom.exists():
-                print(f"    [+] Gateway pom.xml verified: {gateway_pom}")
+        if mvn_res.returncode != 0:
+            errors.append(f"Maven dependency:tree failed (exit {mvn_res.returncode}): {mvn_res.stderr.strip()}")
         else:
-            print(f"    [-] Warning: Maven check failed: {mvn_res.stderr.strip()}")
+            tree_output = mvn_res.stdout
+            expected_deps = [
+                ("Spring Boot Web", "org.springframework.boot:spring-boot-starter-web:jar:3.4.2"),
+                ("Kafka Clients", "org.apache.kafka:kafka-clients:jar:3.8.1"),
+                ("Spring Data Redis", "org.springframework.data:spring-data-redis:jar:3.4.2"),
+                ("Lettuce Core", "io.lettuce:lettuce-core:jar:6.4.2.RELEASE"),
+            ]
+            for label, dep_str in expected_deps:
+                if dep_str in tree_output:
+                    print(f"    [+] {label}: {dep_str.split(':')[-2]} (OK)")
+                else:
+                    errors.append(f"Missing or mismatched Maven dependency: expected {dep_str}")
     except Exception as e:
-        print(f"[-] Warning: Maven check skipped ({e})")
+        errors.append(f"Failed to execute Maven dependency check: {e}")
 
     # 5. List Previous Tags
     print("\n[*] Listing previous repository tags...")

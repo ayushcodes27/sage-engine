@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument("--telemetry", required=True, help="Path to exported Kafka telemetry JSONL")
     parser.add_argument("--manifest", required=True, help="Path to shadow manifest JSON")
     parser.add_argument("--report", help="Optional markdown report output path")
-    parser.add_argument("--tag", default="v2-frozen-models-v4", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v5", help="Git tag containing frozen manifest")
     parser.add_argument("--frozen-manifest", help="Optional local path to frozen models manifest fallback")
     parser.add_argument("--bootstrap-samples", type=int, default=1000)
     parser.add_argument("--strict", action="store_true", help="Exit with code 1 if identity verification or gates fail")
@@ -332,6 +332,28 @@ def build_report(
     campaign_config_hash = manifest.get("campaign_config_hash", "unknown")
     seeds = manifest.get("seeds", {"random_state": 42})
 
+    # Deployed artifacts & container image IDs
+    def get_path_sha256(rel_path: str) -> str:
+        p = Path(__file__).resolve().parents[2] / rel_path
+        return hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "not_found"
+
+    def get_container_image(container_name: str) -> str:
+        try:
+            r = subprocess.run(
+                ["docker", "inspect", "--format={{.Image}}", container_name],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            return r.stdout.strip() if r.returncode == 0 else "unknown"
+        except Exception:
+            return "unknown"
+
+    main_py_sha256 = get_path_sha256("ml_pipeline/inference_service/main.py")
+    gateway_jar_sha256 = get_path_sha256("sage-gateway/target/sage-gateway-0.0.1-SNAPSHOT.jar")
+    ml_image_id = get_container_image("sage-ml")
+    gw_image_id = get_container_image("sage-gateway")
+
     lines.append("# Diverse Shadow Validation Report")
     lines.append("")
     lines.append(f"- **Run ID**: `{run_id}`")
@@ -342,6 +364,10 @@ def build_report(
     lines.append(f"- **Evaluator Hash**: `{evaluator_hash}`")
     lines.append(f"- **Campaign Config Hash**: `{campaign_config_hash}`")
     lines.append(f"- **Seeds**: `{json.dumps(seeds)}`")
+    lines.append(f"- **Deployed main.py SHA-256**: `{main_py_sha256}`")
+    lines.append(f"- **Deployed Gateway JAR SHA-256**: `{gateway_jar_sha256}`")
+    lines.append(f"- **Deployed sage-ml Container Image ID**: `{ml_image_id}`")
+    lines.append(f"- **Deployed sage-gateway Container Image ID**: `{gw_image_id}`")
     lines.append("")
     lines.append("This is run-specific controlled validation using manifest labels. It is not proof of real-world accuracy, and it must not be reported as production ground truth.")
     lines.append("Enforcement remains disabled. Threshold calibration must use a separate validation set; the ECLog holdout remains untouched.")
