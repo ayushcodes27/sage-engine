@@ -1,14 +1,10 @@
 package com.sage.gateway.service;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.HttpMediaTypeException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Enumeration;
@@ -36,7 +32,6 @@ public class ProxyService {
             "proxy-authorization", "te", "trailers", "transfer-encoding", "upgrade"
     );
 
-    @CircuitBreaker(name = "gatewayService", fallbackMethod = "forwardRequestFallback")
     public ResponseEntity<String> forwardRequest(String targetUrl, HttpMethod method, HttpServletRequest request, String body){
         var requestSpec = webClient.method(method).uri(targetUrl);
 
@@ -73,18 +68,4 @@ public class ProxyService {
                 })
                 .block();
     }
-    public ResponseEntity<String> forwardRequestFallback(String targetUrl, HttpMethod method, HttpServletRequest request, String body, Throwable throwable) {
-        System.out.println("🚨 CIRCUIT BREAKER TRIPPED! Target: " + targetUrl);
-        System.out.println("🔥 Reason: " + throwable.getMessage());
-
-        // Gracefully handles downstream failures by returning a controlled response
-        // instead of propagating the exception to the client.
-        String fallbackJson = "{\"error\": \"SAGE Gateway: Service Temporarily Unavailable.\", \"status\": 503}";
-
-        return ResponseEntity
-                .status(HttpStatus.SERVICE_UNAVAILABLE)
-                .header("Content-Type", "application/json")
-                .body(fallbackJson);
-    }
-
 }

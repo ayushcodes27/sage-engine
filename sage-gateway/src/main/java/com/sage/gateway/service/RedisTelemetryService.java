@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +18,7 @@ public class RedisTelemetryService {
 
     private final StringRedisTemplate redisTemplate;
     private static final int WINDOW_SIZE = 50;
+    private static final Duration ML_DECISION_TTL = Duration.ofMinutes(5);
 
     public RedisTelemetryService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -23,41 +27,45 @@ public class RedisTelemetryService {
     public Map<String, Double> processAndGetTelemetry(String ip, double payloadSize, String path) {
         long currentTimestamp = Instant.now().toEpochMilli();
         String timeKey = "sage:timestamps:" + ip;
-        String sizeKey = "sage:sizes:" + ip;
+        String pathKey = "sage:paths:" + ip;
         String hashKey = "sage:telemetry:" + ip;
+
+        // Migration: delete old sizeKey if it exists
+        String oldSizeKey = "sage:sizes:" + ip;
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(oldSizeKey))) {
+            redisTemplate.delete(oldSizeKey);
+        }
+
+        String canonicalPath = canonicalizePath(path);
+        boolean isStatic = isStaticAsset(canonicalPath);
+        boolean isCart = isCartPath(canonicalPath);
 
         // Request counters for e-commerce scraper-focused features.
         redisTemplate.opsForHash().increment(hashKey, "total_hits", 1);
-        String safePath = path == null ? "" : path;
-        if (safePath.matches("/api/price/.*|/api/inventory/.*|/products.*")) {
-            redisTemplate.opsForHash().increment(hashKey, "product_hits", 1);
-        }
-        if ("/cart".equals(safePath) || "/checkout".equals(safePath)) {
+        if (isCart) {
             redisTemplate.opsForHash().increment(hashKey, "cart_hits", 1);
         }
-        if (safePath.startsWith("/static/")) {
+        if (isStatic) {
             redisTemplate.opsForHash().increment(hashKey, "static_hits", 1);
         }
 
         // Only LPUSH if this is NOT a static asset
-        if (!safePath.startsWith("/static/")) {
+        if (!isStatic) {
             // LPUSH new data to the front of the lists
             redisTemplate.opsForList().leftPush(timeKey, String.valueOf(currentTimestamp));
-            // Use path length instead of payload size (often 0) to give Behavioral_Diversity variance
-            redisTemplate.opsForList().leftPush(sizeKey, String.valueOf(safePath.length()));
+            redisTemplate.opsForList().leftPush(pathKey, canonicalPath);
 
             // LTRIM to keep only the last WINDOW_SIZE elements
             redisTemplate.opsForList().trim(timeKey, 0, WINDOW_SIZE - 1);
-            redisTemplate.opsForList().trim(sizeKey, 0, WINDOW_SIZE - 1);
+            redisTemplate.opsForList().trim(pathKey, 0, WINDOW_SIZE - 1);
         }
 
         // Fetch the sliding window
         List<String> rawTimes = redisTemplate.opsForList().range(timeKey, 0, -1);
-        List<String> rawSizes = redisTemplate.opsForList().range(sizeKey, 0, -1);
+        List<String> rawPaths = redisTemplate.opsForList().range(pathKey, 0, -1);
 
         // Parse to doubles
         List<Double> times = rawTimes.stream().map(Double::parseDouble).collect(Collectors.toList());
-        List<Double> sizes = rawSizes.stream().map(Double::parseDouble).collect(Collectors.toList());
 
         // Calculate the 4 Core SAGE Features
         double sessionDepth = times.size();
@@ -67,13 +75,17 @@ public class RedisTelemetryService {
         }
         double requestVelocity = calculateVelocity(times);
         double temporalVariance = calculateTemporalVariance(times);
-        double behavioralDiversity = calculateStandardDeviation(sizes);
+        double nonStaticNavigationGap = calculateNonStaticNavigationGap(times);
+        double nonStaticLongGapRatio = calculateNonStaticLongGapRatio(times);
+        
+        // Compute Entropy and Concentration from exact paths
+        double behavioralDiversity = calculateEntropy(rawPaths);
+        double endpointConcentration = calculateEndpointConcentration(rawPaths);
+        
         double totalHits = getCounter(hashKey, "total_hits");
-        double productHits = getCounter(hashKey, "product_hits");
         double cartHits = getCounter(hashKey, "cart_hits");
         double staticHits = getCounter(hashKey, "static_hits");
 
-        double endpointConcentration = totalHits > 0 ? productHits / totalHits : 0.0;
         double cartRatio = totalHits > 0 ? cartHits / totalHits : 0.0;
         double assetSkipRatio = totalHits > 0 ? 1.0 - (staticHits / totalHits) : 1.0;
 
@@ -85,23 +97,54 @@ public class RedisTelemetryService {
         redisTemplate.opsForHash().put(hashKey, "SAGE_Endpoint_Concentration", String.valueOf(endpointConcentration));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Cart_Ratio", String.valueOf(cartRatio));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Asset_Skip_Ratio", String.valueOf(assetSkipRatio));
+        redisTemplate.opsForHash().put(hashKey, "SAGE_NonStatic_Navigation_Gap", String.valueOf(nonStaticNavigationGap));
+        redisTemplate.opsForHash().put(hashKey, "SAGE_NonStatic_Long_Gap_Ratio", String.valueOf(nonStaticLongGapRatio));
         redisTemplate.opsForHash().put(hashKey, "SAGE_Session_Duration", String.valueOf(sessionDuration));
 
-        // Set a 1-hour TTL
-        redisTemplate.expire(hashKey, Duration.ofHours(1));
-        redisTemplate.expire(timeKey, Duration.ofHours(1));
-        redisTemplate.expire(sizeKey, Duration.ofHours(1));
+        // Set a 5-minute TTL on ALL keys, refreshed on EVERY request (even static)
+        redisTemplate.expire(hashKey, Duration.ofMinutes(5));
+        redisTemplate.expire(timeKey, Duration.ofMinutes(5));
+        redisTemplate.expire(pathKey, Duration.ofMinutes(5));
 
-        return Map.of(
-                "SAGE_Session_Depth", sessionDepth,
-                "SAGE_Request_Velocity", requestVelocity,
-                "SAGE_Temporal_Variance", temporalVariance,
-                "SAGE_Behavioral_Diversity", behavioralDiversity,
-                "SAGE_Endpoint_Concentration", endpointConcentration,
-                "SAGE_Cart_Ratio", cartRatio,
-                "SAGE_Asset_Skip_Ratio", assetSkipRatio,
-                "SAGE_Session_Duration", sessionDuration
-        );
+        Map<String, Double> features = new LinkedHashMap<>();
+        features.put("SAGE_Session_Depth", sessionDepth);
+        features.put("SAGE_Request_Velocity", requestVelocity);
+        features.put("SAGE_Temporal_Variance", temporalVariance);
+        features.put("SAGE_Behavioral_Diversity", behavioralDiversity);
+        features.put("SAGE_Endpoint_Concentration", endpointConcentration);
+        features.put("SAGE_Cart_Ratio", cartRatio);
+        features.put("SAGE_Asset_Skip_Ratio", assetSkipRatio);
+        features.put("SAGE_NonStatic_Navigation_Gap", nonStaticNavigationGap);
+        features.put("SAGE_NonStatic_Long_Gap_Ratio", nonStaticLongGapRatio);
+        features.put("SAGE_Session_Duration", sessionDuration);
+        return features;
+    }
+
+    public Map<String, String> getCachedMlDecision(String ip) {
+        String key = "sage:ml-decision:" + ip;
+        Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+        if (values.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, String> result = new HashMap<>();
+        values.forEach((field, value) -> result.put(String.valueOf(field), String.valueOf(value)));
+        return result;
+    }
+
+    public void cacheMlDecision(String ip, Map<String, String> decision) {
+        if (decision.isEmpty()) {
+            return;
+        }
+        String key = "sage:ml-decision:" + ip;
+        Map<String, String> nonNullDecision = new HashMap<>();
+        decision.forEach((field, value) -> {
+            if (value != null) {
+                nonNullDecision.put(field, value);
+            }
+        });
+        redisTemplate.opsForHash().putAll(key, nonNullDecision);
+        redisTemplate.expire(key, ML_DECISION_TTL);
     }
 
     private double getCounter(String hashKey, String field) {
@@ -116,7 +159,31 @@ public class RedisTelemetryService {
         }
     }
 
-    private double calculateVelocity(List<Double> times) {
+    public static String canonicalizePath(String path) {
+        String canonicalPath = "/";
+        if (path != null && !path.isBlank()) {
+            canonicalPath = path.split("\\?")[0].split("#")[0];
+            canonicalPath = canonicalPath.replaceAll("/+", "/");
+            if (canonicalPath.length() > 1 && canonicalPath.endsWith("/")) {
+                canonicalPath = canonicalPath.substring(0, canonicalPath.length() - 1);
+            }
+            canonicalPath = canonicalPath.toLowerCase();
+        }
+        return canonicalPath;
+    }
+
+    public static boolean isStaticAsset(String canonicalPath) {
+        if (canonicalPath == null) return false;
+        return canonicalPath.startsWith("/static/") ||
+                canonicalPath.matches(".*\\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|svg|webp)$");
+    }
+
+    public static boolean isCartPath(String canonicalPath) {
+        if (canonicalPath == null) return false;
+        return canonicalPath.matches(".*(cart|checkout|koszyk|platnosc|zamowienie|payment).*");
+    }
+
+    public static double calculateVelocity(List<Double> times) {
         if (times.size() < 2) return 1.0;
         double timeSpanSeconds = (times.get(0) - times.get(times.size() - 1)) / 1000.0;
 
@@ -125,7 +192,7 @@ public class RedisTelemetryService {
         return times.size() / timeSpanSeconds;
     }
 
-    private double calculateTemporalVariance(List<Double> times) {
+    public static double calculateTemporalVariance(List<Double> times) {
         if (times.size() < 2) return 0.0;
 
         double[] iat = new double[times.size() - 1];
@@ -147,18 +214,46 @@ public class RedisTelemetryService {
         return stdIat / meanIat;
     }
 
-    private double calculateStandardDeviation(List<Double> values) {
-        if (values.size() < 2) return 100.0;
-
-        double sum = 0;
-        for (double val : values) sum += val;
-        double mean = sum / values.size();
-
-        double sumSquaredDiffs = 0;
-        for (double val : values) {
-            sumSquaredDiffs += Math.pow(val - mean, 2);
+    public static double calculateNonStaticNavigationGap(List<Double> times) {
+        if (times.size() < 2) return 0.0;
+        double[] gaps = new double[times.size() - 1];
+        for (int i = 0; i < times.size() - 1; i++) {
+            gaps[i] = (times.get(i) - times.get(i + 1)) / 1000.0; // convert to seconds
         }
-        return Math.sqrt(sumSquaredDiffs / values.size());
+        Arrays.sort(gaps);
+        int mid = gaps.length / 2;
+        return (gaps.length % 2 == 1) ? gaps[mid] : (gaps[mid - 1] + gaps[mid]) / 2.0;
+    }
+
+    public static double calculateNonStaticLongGapRatio(List<Double> times) {
+        if (times.size() < 2) return 0.0;
+        long longGaps = 0;
+        for (int i = 0; i < times.size() - 1; i++) {
+            double gapSec = (times.get(i) - times.get(i + 1)) / 1000.0;
+            if (gapSec >= 0.50) {
+                longGaps++;
+            }
+        }
+        return (double) longGaps / (times.size() - 1);
+    }
+
+    public static double calculateEntropy(List<String> paths) {
+        if (paths == null || paths.size() < 2) return 0.0;
+        Map<String, Long> counts = paths.stream().collect(Collectors.groupingBy(p -> p, Collectors.counting()));
+        double entropy = 0.0;
+        int n = paths.size();
+        for (long count : counts.values()) {
+            double p = (double) count / n;
+            entropy -= p * Math.log(p);
+        }
+        return entropy;
+    }
+
+    public static double calculateEndpointConcentration(List<String> paths) {
+        if (paths == null || paths.isEmpty()) return 0.0;
+        Map<String, Long> counts = paths.stream().collect(Collectors.groupingBy(p -> p, Collectors.counting()));
+        long maxFreq = counts.values().stream().mapToLong(Long::longValue).max().orElse(0L);
+        return (double) maxFreq / paths.size();
     }
     public boolean isIpBanned(String ip) {
         // Instantly checks if the IP is on the temporary ban list

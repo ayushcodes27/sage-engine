@@ -1,0 +1,18 @@
+{
+  "contract_name": "eclog_6feature_baseline",
+  "version": "1.0",
+  "windowing": {
+    "type": "sliding",
+    "inactivity_timeout_minutes": 5,
+    "max_history_length": 50,
+    "events_tracked": "non-static requests only for path/time history; all requests for hit counters"
+  },
+  "features": [
+    "SAGE_Session_Depth",
+    "SAGE_Temporal_Variance",
+    "SAGE_Request_Velocity",
+    "SAGE_Behavioral_Diversity",
+    "SAGE_Endpoint_Concentration",
+    "SAGE_Cart_Ratio"
+  ]
+}

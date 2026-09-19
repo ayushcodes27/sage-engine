@@ -53,11 +53,20 @@ public class GatewayController {
             HttpServletRequest request,
             @RequestBody(required = false) String body,
             @RequestHeader(value = "X-Tenant-ID", defaultValue = "unknown") String tenantId,
-            @RequestHeader(value = "X-User-ID", defaultValue = "anonymous") String userId)
+            @RequestHeader(value = "X-User-ID", defaultValue = "anonymous") String userId,
+            @RequestHeader(value = "X-SAGE-Run-Id", defaultValue = "unknown") String runId,
+            @RequestHeader(value = "X-SAGE-Client-Id", defaultValue = "unknown") String clientId)
             throws URISyntaxException {
 
         long startTime = System.currentTimeMillis();
         String path = request.getRequestURI();
+        
+        String requestId = java.util.UUID.randomUUID().toString();
+        request.setAttribute("X-Request-Id", requestId);
+        request.setAttribute("X-Start-Time", startTime);
+        request.setAttribute("X-SAGE-Run-Id", runId);
+        request.setAttribute("X-SAGE-Client-Id", clientId);
+
         int statusCode = 500;
         ResponseEntity<String> finalResponse = null;
         Exception requestException = null;

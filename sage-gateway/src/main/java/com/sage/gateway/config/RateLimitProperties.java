@@ -9,10 +9,13 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "sage.rate-limit")
 public class RateLimitProperties {
 
+    private boolean enabled = true;
     private Policy defaultPolicy = new Policy(100, 200); // Safe fallback
     private Map<String, Policy> routes = new HashMap<>();
 
     // Getters and Setters are required for Spring to inject the YAML values
+    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public Policy getDefaultPolicy() { return defaultPolicy; }
     public void setDefaultPolicy(Policy defaultPolicy) { this.defaultPolicy = defaultPolicy; }
     public Map<String, Policy> getRoutes() { return routes; }

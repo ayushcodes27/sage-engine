@@ -17,6 +17,25 @@ build/
 # Python virtual environments and caches
 **/.venv/
 **/venv/
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+*.log
+logs/
+
+# Node dependencies and build output
+node_modules/
+dist/
+build/
+
+# Java build output
+**/target/
+**/*.class
+
+# Python virtual environments and caches
+**/.venv/
+**/venv/
 **/__pycache__/
 **/*.py[cod]
 *$py.class
@@ -25,10 +44,19 @@ build/
 
 # Local datasets and model artifacts
 /data/
-/ml_pipeline/data/
+/ml_pipeline/data/*
+!/ml_pipeline/data/training_data.csv
+!/ml_pipeline/data/eclog_weak_labeled.csv
 /ml_pipeline/inference_service/models/
 /ml_pipeline/models/*.pkl
 !/ml_pipeline/models/sage_model.pkl
+!/ml_pipeline/models/sage_binary_model.pkl
+!/ml_pipeline/models/eclog_weak_binary_model.pkl
+!/ml_pipeline/models/eclog_6feature_binary_model.pkl
+!/ml_pipeline/models/eclog_timing_binary_model.pkl
+
+# Run outputs
+/load-tests/runs/
 
 # Generated evaluation artifacts
 /ml_pipeline/evaluation/
@@ -37,6 +65,7 @@ build/
 # Documentation
 SAGE_PROJECT_ANALYSIS.md
 SAGE_Architecture_Document.md
+SAGE_PHASE2_ROADMAP.md
 
 # Playwright
 /test-results/

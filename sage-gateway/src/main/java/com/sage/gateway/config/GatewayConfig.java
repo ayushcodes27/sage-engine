@@ -56,8 +56,20 @@ public class GatewayConfig {
                 proxyOnlyFilters()
         ));
         routes.add(new RouteDefinition(
+                "shop-index-route",
+                "/index.html",
+                MOCK_TARGET_BASE,
+                proxyOnlyFilters()
+        ));
+        routes.add(new RouteDefinition(
                 "shop-static-route",
                 "/static/{asset}",
+                MOCK_TARGET_BASE,
+                proxyOnlyFilters()
+        ));
+        routes.add(new RouteDefinition(
+                "shop-image-route",
+                "/images/{asset}",
                 MOCK_TARGET_BASE,
                 proxyOnlyFilters()
         ));

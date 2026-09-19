@@ -1,5 +1,6 @@
 package com.sage.gateway.filter;
 
+import com.sage.gateway.config.RateLimitProperties;
 import com.sage.gateway.service.RateLimiterService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.annotation.Order;
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class RateLimitFilter implements GatewayFilter {
 
     private final RateLimiterService rateLimiterService;
+    private final RateLimitProperties rateLimitProperties;
 
-    public RateLimitFilter(RateLimiterService rateLimiterService) {
+    public RateLimitFilter(RateLimiterService rateLimiterService, RateLimitProperties rateLimitProperties) {
         this.rateLimiterService = rateLimiterService;
+        this.rateLimitProperties = rateLimitProperties;
     }
 
     @Override
@@ -27,6 +30,10 @@ public class RateLimitFilter implements GatewayFilter {
 
     @Override
     public Optional<ResponseEntity<String>> filter(HttpServletRequest request, Map<String, String> config) {
+        if (!rateLimitProperties.isEnabled()) {
+            return Optional.empty();
+        }
+
         String ipAddress = rateLimiterService.extractClientIp(request);
         String routeId = config.getOrDefault("routeId", "default-route");
         boolean isAllowed = rateLimiterService.isAllowed(ipAddress, routeId);

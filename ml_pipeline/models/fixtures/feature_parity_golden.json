@@ -1,0 +1,630 @@
+{
+  "units": {
+    "SAGE_Session_Depth": "count [0, 50]",
+    "SAGE_Temporal_Variance": "dimensionless (population std_iat / mean_iat)",
+    "SAGE_Request_Velocity": "requests_per_second",
+    "SAGE_Behavioral_Diversity": "nats (natural-log Shannon entropy)",
+    "SAGE_Endpoint_Concentration": "ratio [0, 1]",
+    "SAGE_Cart_Ratio": "ratio [0, 1]",
+    "SAGE_Asset_Skip_Ratio": "ratio [0, 1]",
+    "SAGE_NonStatic_Navigation_Gap": "seconds",
+    "SAGE_NonStatic_Long_Gap_Ratio": "ratio [0, 1]"
+  },
+  "cases": [
+    {
+      "case_id": "empty_session",
+      "description": "Empty session defaults before any requests arrive",
+      "requests": [],
+      "eval_at_request": 0,
+      "expected_features": {
+        "SAGE_Session_Depth": 0.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 0.0,
+        "SAGE_Behavioral_Diversity": 0.0,
+        "SAGE_Endpoint_Concentration": 0.0,
+        "SAGE_Cart_Ratio": 0.0,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 0.0,
+        "SAGE_NonStatic_Long_Gap_Ratio": 0.0
+      }
+    },
+    {
+      "case_id": "single_request",
+      "description": "Single non-static request: velocity fallback 1.0, variance 0.0, gap 0.0",
+      "requests": [
+        {
+          "timestamp_ms": 1000000,
+          "path": "/items",
+          "raw_path": "/items",
+          "is_static": false,
+          "is_cart": false
+        }
+      ],
+      "eval_at_request": 1,
+      "expected_features": {
+        "SAGE_Session_Depth": 1.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 1.0,
+        "SAGE_Behavioral_Diversity": 0.0,
+        "SAGE_Endpoint_Concentration": 1.0,
+        "SAGE_Cart_Ratio": 0.0,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 0.0,
+        "SAGE_NonStatic_Long_Gap_Ratio": 0.0
+      }
+    },
+    {
+      "case_id": "hand_verified_3_requests",
+      "description": "3 non-static requests hand-verified: gaps 1.0s and 1.5s, cart path, concentration 2/3",
+      "requests": [
+        {
+          "timestamp_ms": 1000000,
+          "path": "/items",
+          "raw_path": "/items",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 1001000,
+          "path": "/cart",
+          "raw_path": "/cart?ref=1",
+          "is_static": false,
+          "is_cart": true
+        },
+        {
+          "timestamp_ms": 1002500,
+          "path": "/items",
+          "raw_path": "/ITEMS//",
+          "is_static": false,
+          "is_cart": false
+        }
+      ],
+      "eval_at_request": 3,
+      "expected_features": {
+        "SAGE_Session_Depth": 3.0,
+        "SAGE_Temporal_Variance": 0.2,
+        "SAGE_Request_Velocity": 1.2,
+        "SAGE_Behavioral_Diversity": 0.6365141682948128,
+        "SAGE_Endpoint_Concentration": 0.6666666666666666,
+        "SAGE_Cart_Ratio": 0.3333333333333333,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 1.25,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
+    },
+    {
+      "case_id": "boundary_gaps_500ms_vs_499ms",
+      "description": "Boundary gap tests: 500ms (>=0.50 true) vs 499ms (>=0.50 false)",
+      "requests": [
+        {
+          "timestamp_ms": 1000000,
+          "path": "/page",
+          "raw_path": "/page",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 1000500,
+          "path": "/page",
+          "raw_path": "/page",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 1000999,
+          "path": "/page",
+          "raw_path": "/page",
+          "is_static": false,
+          "is_cart": false
+        }
+      ],
+      "eval_at_request": 3,
+      "expected_features": {
+        "SAGE_Session_Depth": 3.0,
+        "SAGE_Temporal_Variance": 0.0010010010010010019,
+        "SAGE_Request_Velocity": 3.003003003003003,
+        "SAGE_Behavioral_Diversity": 0.0,
+        "SAGE_Endpoint_Concentration": 1.0,
+        "SAGE_Cart_Ratio": 0.0,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 0.4995,
+        "SAGE_NonStatic_Long_Gap_Ratio": 0.5
+      }
+    },
+    {
+      "case_id": "static_and_cart_mix",
+      "description": "Mix of static assets and cart endpoints checking hit counters and ratios",
+      "requests": [
+        {
+          "timestamp_ms": 2000000,
+          "path": "/static/logo.png",
+          "raw_path": "/static/logo.png",
+          "is_static": true,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 2000200,
+          "path": "/static/bundle.js",
+          "raw_path": "/static/bundle.js",
+          "is_static": true,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 2001000,
+          "path": "/checkout",
+          "raw_path": "/checkout?step=1",
+          "is_static": false,
+          "is_cart": true
+        },
+        {
+          "timestamp_ms": 2002000,
+          "path": "/home",
+          "raw_path": "/home",
+          "is_static": false,
+          "is_cart": false
+        }
+      ],
+      "eval_at_request": 4,
+      "expected_features": {
+        "SAGE_Session_Depth": 2.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 2.0,
+        "SAGE_Behavioral_Diversity": 0.6931471805599453,
+        "SAGE_Endpoint_Concentration": 0.5,
+        "SAGE_Cart_Ratio": 0.25,
+        "SAGE_Asset_Skip_Ratio": 0.5,
+        "SAGE_NonStatic_Navigation_Gap": 1.0,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
+    },
+    {
+      "case_id": "sliding_window_55_requests",
+      "description": "55 non-static requests spaced by 1000ms: truncates to last 50 requests",
+      "requests": [
+        {
+          "timestamp_ms": 3000000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3001000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3002000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3003000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3004000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3005000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3006000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3007000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3008000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3009000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3010000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3011000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3012000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3013000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3014000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3015000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3016000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3017000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3018000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3019000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3020000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3021000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3022000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3023000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3024000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3025000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3026000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3027000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3028000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3029000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3030000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3031000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3032000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3033000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3034000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3035000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3036000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3037000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3038000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3039000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3040000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3041000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3042000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3043000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3044000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3045000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3046000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3047000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3048000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3049000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3050000,
+          "path": "/page/0",
+          "raw_path": "/page/0",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3051000,
+          "path": "/page/1",
+          "raw_path": "/page/1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3052000,
+          "path": "/page/2",
+          "raw_path": "/page/2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3053000,
+          "path": "/page/3",
+          "raw_path": "/page/3",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 3054000,
+          "path": "/page/4",
+          "raw_path": "/page/4",
+          "is_static": false,
+          "is_cart": false
+        }
+      ],
+      "eval_at_request": 55,
+      "expected_features": {
+        "SAGE_Session_Depth": 50.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 1.0204081632653061,
+        "SAGE_Behavioral_Diversity": 1.6094379124341005,
+        "SAGE_Endpoint_Concentration": 0.2,
+        "SAGE_Cart_Ratio": 0.0,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 1.0,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
+    },
+    {
+      "case_id": "five_minute_expiry",
+      "description": "Two requests at t=0 and t=10s, then 301s inactivity gap, then 2 requests: first two expire",
+      "requests": [
+        {
+          "timestamp_ms": 4000000,
+          "path": "/old1",
+          "raw_path": "/old1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 4010000,
+          "path": "/old2",
+          "raw_path": "/old2",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 4311000,
+          "path": "/new1",
+          "raw_path": "/new1",
+          "is_static": false,
+          "is_cart": false
+        },
+        {
+          "timestamp_ms": 4312000,
+          "path": "/new2",
+          "raw_path": "/new2",
+          "is_static": false,
+          "is_cart": false
+        }
+      ],
+      "eval_at_request": 4,
+      "expected_features": {
+        "SAGE_Session_Depth": 2.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 2.0,
+        "SAGE_Behavioral_Diversity": 0.6931471805599453,
+        "SAGE_Endpoint_Concentration": 0.5,
+        "SAGE_Cart_Ratio": 0.0,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 1.0,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
+    }
+  ]
+}

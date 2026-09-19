@@ -1,0 +1,4 @@
+# Ensure binary and hashed text files are preserved byte-for-byte with no CRLF normalization
+*.pkl -text
+*.json -text
+*.csv -text

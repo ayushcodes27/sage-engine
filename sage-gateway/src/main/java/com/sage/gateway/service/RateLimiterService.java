@@ -84,19 +84,4 @@ public class RateLimiterService {
         return "anonymous";
     }
 
-    // Helper methods used as configuration placeholders
-    // (to be replaced with actual configuration or lookup logic).
-
-    private int[] getUserLimits(String userId) {
-        // Returns {rate, burst} values.
-        // Higher limits are assigned for VIP users.
-        if ("vip_user".equals(userId)) return new int[] { 500, 1000 };
-        return new int[] { 1, 5 }; // Default User
-    }
-
-    private int[] getTenantLimits(String tenantId) {
-        // Partner A vs Partner B
-        if ("partner_b".equals(tenantId)) return new int[] { 20_000, 40_000 };
-        return new int[] { 10_000, 20_000 }; // Default Partner
-    }
 }

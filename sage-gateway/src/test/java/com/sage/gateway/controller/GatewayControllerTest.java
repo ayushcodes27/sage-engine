@@ -51,7 +51,7 @@ class GatewayControllerTest {
         when(proxyService.forwardRequest(any(), any(), eq(request), any()))
                 .thenReturn(ResponseEntity.ok("[]"));
 
-        ResponseEntity<String> response = controller.handleRequest(request, null, "tenant", "user");
+        ResponseEntity<String> response = controller.handleRequest(request, null, "tenant", "user", "run-1", "client-1");
 
         assertEquals(200, response.getStatusCode().value());
         verify(proxyService).forwardRequest(
@@ -88,7 +88,7 @@ class GatewayControllerTest {
         when(proxyService.forwardRequest(any(), any(), eq(request), any()))
                 .thenReturn(ResponseEntity.ok("[]"));
 
-        controller.handleRequest(request, null, "tenant", "user");
+        controller.handleRequest(request, null, "tenant", "user", "run-1", "client-1");
 
         verify(proxyService).forwardRequest(
                 eq("https://jsonplaceholder.typicode.com/posts"),

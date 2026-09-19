@@ -11,14 +11,24 @@ def load_and_clean_data(csv_path="ml_pipeline/data/training_data.csv"):
     
     # Drop rows with NaN
     df = df.dropna()
+    df = df[df["label"] != "unknown"].copy()
 
-    # Drop SAGE_Sequential_Traversal if present to match the 7-feature model
-    if "SAGE_Sequential_Traversal" in df.columns:
-        df = df.drop(columns=["SAGE_Sequential_Traversal"])
-        
-    X = df.drop(columns=["label", "session_id"])
+    FEATURES = [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio",
+        "SAGE_Asset_Skip_Ratio",
+    ]
+    X = df[FEATURES]
     y = df["label"]
-    groups = df["session_id"]
+    if "IpId" in df.columns:
+        df["client_id"] = df["IpId"]
+    else:
+        df["client_id"] = df["session_id"].str.replace(r"_sess\d+$", "", regex=True)
+    groups = df["client_id"]
     return X, y, groups
 
 def plot_learning_curve(X, y, groups):
@@ -67,25 +77,23 @@ def run_noise_degradation_test(X, y, groups):
     import numpy as np
     import pandas as pd
     
-    df = pd.DataFrame({"label": y, "session_id": groups})
-    np.random.seed(42)
-    for label in df["label"].unique():
-        label_mask = df["label"] == label
-        label_sessions = df.loc[label_mask, "session_id"].unique()
-        
-        np.random.shuffle(label_sessions)
-        split_point = int(len(label_sessions) * 0.7)
-        if len(label_sessions) >= 2:
-            split_point = max(1, min(len(label_sessions) - 1, split_point))
-            
-        train_sessions = label_sessions[:split_point]
-        test_sessions = label_sessions[split_point:]
-        
-        train_idx.extend(df[label_mask & df["session_id"].isin(train_sessions)].index.tolist())
-        test_idx.extend(df[label_mask & df["session_id"].isin(test_sessions)].index.tolist())
+    df = pd.DataFrame({"label": y, "client_id": groups})
     
-    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
-    y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
+    clients = df["client_id"].drop_duplicates().to_numpy()
+    rng = np.random.default_rng(42)
+    rng.shuffle(clients)
+
+    split_point = int(len(clients) * 0.7)
+    train_clients = set(clients[:split_point])
+    test_clients = set(clients[split_point:])
+
+    assert train_clients.isdisjoint(test_clients)
+
+    train_mask = df["client_id"].isin(train_clients)
+    test_mask = df["client_id"].isin(test_clients)
+
+    X_train, X_test = X[train_mask], X[test_mask]
+    y_train, y_test = y[train_mask], y[test_mask]
     
     rf = RandomForestClassifier(
         n_estimators=100, max_depth=10, min_samples_leaf=10, max_features='sqrt',

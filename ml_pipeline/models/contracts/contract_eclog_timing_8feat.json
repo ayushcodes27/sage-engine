@@ -1,0 +1,24 @@
+{
+  "contract_name": "eclog_timing_8feature",
+  "version": "1.0",
+  "windowing": {
+    "type": "sliding",
+    "inactivity_timeout_minutes": 5,
+    "max_history_length": 50,
+    "events_tracked": "non-static requests only for path/time history; all requests for hit counters"
+  },
+  "features": [
+    "SAGE_Session_Depth",
+    "SAGE_Temporal_Variance",
+    "SAGE_Request_Velocity",
+    "SAGE_Behavioral_Diversity",
+    "SAGE_Endpoint_Concentration",
+    "SAGE_Cart_Ratio",
+    "SAGE_NonStatic_Navigation_Gap",
+    "SAGE_NonStatic_Long_Gap_Ratio"
+  ],
+  "descriptions": {
+    "SAGE_NonStatic_Navigation_Gap": "Median inter-arrival time in seconds between consecutive non-static requests in rolling window. Defaults to 0.0 if <2 non-static requests.",
+    "SAGE_NonStatic_Long_Gap_Ratio": "Fraction of consecutive non-static request intervals >= 0.50 seconds (500 ms human dwell time). Defaults to 0.0 if <2 non-static requests."
+  }
+}

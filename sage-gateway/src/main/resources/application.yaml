@@ -37,8 +37,13 @@ spring:
         compression.type: snappy
 
 sage:
+  enforcement:
+    enabled: false
+  ml:
+    expected-contract-hash: ${SAGE_EXPECTED_CONTRACT_HASH:4e8b01ac1b96952c3ad35b86e80948dafb296fb9306815c5fb807c3012a7222c}
+    shadow-threshold: ${SAGE_ML_SHADOW_THRESHOLD:0.35}
   rate-limit:
-    enabled: true
+    enabled: false
     default-policy:
       replenish-rate: 5
       burst-capacity: 10
