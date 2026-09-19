@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument("--telemetry", required=True, help="Path to exported Kafka telemetry JSONL")
     parser.add_argument("--manifest", required=True, help="Path to shadow manifest JSON")
     parser.add_argument("--report", help="Optional markdown report output path")
-    parser.add_argument("--tag", default="v2-frozen-models-v2", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v3", help="Git tag containing frozen manifest")
     parser.add_argument("--frozen-manifest", help="Optional local path to frozen models manifest fallback")
     parser.add_argument("--bootstrap-samples", type=int, default=1000)
     parser.add_argument("--strict", action="store_true", help="Exit with code 1 if identity verification or gates fail")
