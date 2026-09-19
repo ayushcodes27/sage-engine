@@ -42,12 +42,13 @@ def get_tag_file_bytes(tag: str, rel_path: str) -> bytes:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Verify frozen model manifests against disk and git tag.")
-    parser.add_argument("--tag", default="v2-frozen-models-v5", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v6", help="Git tag containing frozen manifest")
     parser.add_argument("--local-manifest", help="Optional fallback path to local manifest if tag is not yet created")
+    parser.add_argument("--allow-dirty", action="store_true", help="Allow dirty working tree, warning and listing file hashes")
     return parser.parse_args()
 
 
-def verify(tag: str, local_manifest: str = None) -> bool:
+def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> bool:
     print(f"[*] Verifying frozen files against git tag `{tag}`...")
     
     # 1. Load manifest from git tag
@@ -159,10 +160,19 @@ def verify(tag: str, local_manifest: str = None) -> bool:
         status_lines = [l for l in status_res.stdout.splitlines() if l.strip()]
         tracked_changes = [l for l in status_lines if not l.startswith("??")]
         if tracked_changes:
-            errors.append(
-                f"DIRTY TRACKED TREE: {len(tracked_changes)} tracked files modified or staged:\n"
-                + "\n".join(f"        {l}" for l in tracked_changes)
-            )
+            if not allow_dirty:
+                errors.append(
+                    f"DIRTY TRACKED TREE: {len(tracked_changes)} tracked files modified or staged:\n"
+                    + "\n".join(f"        {l}" for l in tracked_changes)
+                )
+            else:
+                print(f"    [!] working_tree_state: DIRTY ({len(tracked_changes)} modified tracked files):")
+                for tc in tracked_changes:
+                    parts = tc.strip().split(maxsplit=1)
+                    rel_f = parts[1] if len(parts) > 1 else parts[0]
+                    fpath = REPO_ROOT / rel_f
+                    sha = sha256_bytes(fpath.read_bytes()) if fpath.exists() else "deleted"
+                    print(f"        - {rel_f}: {sha}")
         else:
             print(f"    [+] Working tree is clean for tracked files ({len(status_lines)} untracked files present).")
     except Exception as e:
@@ -241,13 +251,20 @@ def verify(tag: str, local_manifest: str = None) -> bool:
     print("    [+] Active deployment tuple strictly matches model and contract table rows!")
 
     print(f"\n[+] Active Deployment Tuple:\n{json.dumps(active, indent=2)}")
+
+    if errors:
+        print("\n[-] VERIFICATION FAILED:")
+        for err in errors:
+            print(f"    - {err}")
+        return False
+
     print("\n[+] Verification SUCCESS: Frozen files and manifest are valid.")
     return True
 
 
 def main():
     args = parse_args()
-    success = verify(args.tag, args.local_manifest)
+    success = verify(args.tag, args.local_manifest, allow_dirty=args.allow_dirty)
     sys.exit(0 if success else 1)
 
 

@@ -74,6 +74,12 @@ def load_data():
 
 
 def get_frozen_holdout(df):
+    # Provenance Note on Client Cohort:
+    # ECLog dataset contains 4,004 total unique clients (4,004 x 0.7 = 2,802.8; rounded to 2,802 training
+    # clients and 1,202 holdout clients in eclog_weak_split_manifest.json).
+    # Stale legacy commentary mentioning 3,204 training clients stemmed from an uncommitted 80/20 exploratory split
+    # (4,004 x 0.8 = 3,203.2). The frozen split strictly uses 2,802 train clients and 1,202 holdout clients.
+    # Threshold 0.35 predates the timing model; the 4-candidate sweep is consistent with 0.35 but was not its origin.
     manifest_path = BASE_DIR / "models" / "eclog_weak_split_manifest.json"
     if manifest_path.exists():
         with open(manifest_path, "r") as f:

@@ -19,6 +19,8 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
 PROFILE_ORDER = [
     "normal_browser",
     "spa_client",
@@ -35,10 +37,12 @@ def parse_args():
     parser.add_argument("--telemetry", required=True, help="Path to exported Kafka telemetry JSONL")
     parser.add_argument("--manifest", required=True, help="Path to shadow manifest JSON")
     parser.add_argument("--report", help="Optional markdown report output path")
-    parser.add_argument("--tag", default="v2-frozen-models-v5", help="Git tag containing frozen manifest")
+    parser.add_argument("--tag", default="v2-frozen-models-v6", help="Git tag containing frozen manifest")
     parser.add_argument("--frozen-manifest", help="Optional local path to frozen models manifest fallback")
     parser.add_argument("--bootstrap-samples", type=int, default=1000)
     parser.add_argument("--strict", action="store_true", help="Exit with code 1 if identity verification or gates fail")
+    parser.add_argument("--allow-dirty", action="store_true", help="Allow running evaluation on dirty git working tree")
+    parser.add_argument("--run-mode", choices=["auto", "dry_run", "final"], default="auto", help="Run mode label (dry_run vs final)")
     return parser.parse_args()
 
 
@@ -130,21 +134,20 @@ def production_action(prob):
     return "Allowed"
 
 
-def bootstrap_ci(df, stat_func, samples=1000, alpha=0.05):
-    if len(df) == 0:
+from scipy.stats import beta
+
+
+def clopper_pearson_ci(k: int, n: int, alpha: float = 0.05) -> Tuple[float, float, float]:
+    """
+    Computes exact Clopper-Pearson 95% confidence interval for a binomial proportion k/n.
+    Returns (point_estimate, lower_bound, upper_bound).
+    """
+    if n <= 0:
         return 0.0, 0.0, 0.0
-
-    rng = np.random.default_rng(42)
-    stats = []
-    for _ in range(samples):
-        indices = rng.integers(0, len(df), len(df))
-        sample = df.iloc[indices]
-        stats.append(stat_func(sample))
-
-    stats = np.sort(np.array(stats, dtype=float))
-    low_idx = int((alpha / 2.0) * samples)
-    high_idx = min(samples - 1, int((1 - alpha / 2.0) * samples))
-    return stat_func(df), stats[low_idx], stats[high_idx]
+    p = float(k) / float(n)
+    lower = 0.0 if k == 0 else float(beta.ppf(alpha / 2.0, k, n - k + 1))
+    upper = 1.0 if k == n else float(beta.ppf(1.0 - alpha / 2.0, k + 1, n - k))
+    return p, lower, upper
 
 
 def ratio(numerator, denominator):
@@ -323,19 +326,31 @@ def build_report(
     frozen_manifest=None,
     frozen_manifest_sha256=None,
     manifest_source="unknown",
+    allow_dirty=False,
+    run_mode="auto",
 ):
     lines = []
     run_id = manifest.get("run_id", "unknown")
+    if run_mode == "auto":
+        run_mode = manifest.get("run_mode") or ("dry_run" if manifest.get("dry_run") or len(client_manifest) < 14 else "final")
     git_head = get_git_head()
-    evaluator_hash = get_evaluator_hash()
+    evaluator_hash = manifest.get("evaluator_hash") or get_evaluator_hash()
     harness_hash = manifest.get("harness_hash", "unknown")
     campaign_config_hash = manifest.get("campaign_config_hash", "unknown")
     seeds = manifest.get("seeds", {"random_state": 42})
 
     # Deployed artifacts & container image IDs
-    def get_path_sha256(rel_path: str) -> str:
-        p = Path(__file__).resolve().parents[2] / rel_path
-        return hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else "not_found"
+    def get_container_file_sha256(container_name: str, file_path: str) -> str:
+        try:
+            r = subprocess.run(
+                ["docker", "exec", container_name, "sha256sum", file_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            return r.stdout.strip().split()[0] if r.returncode == 0 else "unknown"
+        except Exception:
+            return "unknown"
 
     def get_container_image(container_name: str) -> str:
         try:
@@ -349,23 +364,67 @@ def build_report(
         except Exception:
             return "unknown"
 
-    main_py_sha256 = get_path_sha256("ml_pipeline/inference_service/main.py")
-    gateway_jar_sha256 = get_path_sha256("sage-gateway/target/sage-gateway-0.0.1-SNAPSHOT.jar")
+    def get_working_tree_info():
+        try:
+            status_res = subprocess.run(
+                ["git", "status", "--porcelain"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                cwd=str(REPO_ROOT),
+            )
+            status_lines = [l for l in status_res.stdout.splitlines() if l.strip()]
+            tracked = [l for l in status_lines if not l.startswith("??")]
+            if tracked:
+                file_shas = {}
+                for l in tracked:
+                    parts = l.strip().split(maxsplit=1)
+                    rf = parts[1] if len(parts) > 1 else parts[0]
+                    fp = REPO_ROOT / rf
+                    file_shas[rf] = hashlib.sha256(fp.read_bytes()).hexdigest() if fp.exists() else "deleted"
+                return "DIRTY", file_shas
+            return "CLEAN", {}
+        except Exception:
+            return "UNKNOWN", {}
+
+    container_hashes = manifest.get("container_hashes", {})
+    start_hashes = container_hashes.get("start", {})
+    end_hashes = container_hashes.get("end", {})
+    container_main_py_sha256 = (
+        start_hashes.get("sage_ml_main_py_sha256")
+        or get_container_file_sha256("sage-ml", "/app/main.py")
+    )
+    container_app_jar_sha256 = (
+        start_hashes.get("sage_gateway_app_jar_sha256")
+        or get_container_file_sha256("sage-gateway", "/app/app.jar")
+    )
     ml_image_id = get_container_image("sage-ml")
     gw_image_id = get_container_image("sage-gateway")
+    tree_state, modified_files = get_working_tree_info()
 
     lines.append("# Diverse Shadow Validation Report")
     lines.append("")
     lines.append(f"- **Run ID**: `{run_id}`")
+    lines.append(f"- **Run Mode**: `{run_mode}`")
     lines.append(f"- **Git HEAD**: `{git_head}`")
     lines.append(f"- **Git Tag**: `{tag}`")
+    lines.append(f"- **working_tree_state**: `{tree_state}`")
+    if tree_state == "DIRTY":
+        if allow_dirty:
+            lines.append("  - **allow_dirty**: `true` (Warning: evaluated with uncommitted working tree changes)")
+        else:
+            lines.append("  - **allow_dirty**: `false` (Warning: uncommitted changes present without --allow-dirty)")
+        if modified_files:
+            lines.append("  - **Modified Tracked Files SHA-256**:")
+            for rf, sha in modified_files.items():
+                lines.append(f"    - `{rf}`: `{sha}`")
     lines.append(f"- **Frozen Manifest SHA-256**: `{frozen_manifest_sha256}` (source: `{manifest_source}`)")
-    lines.append(f"- **Harness Hash**: `{harness_hash}`")
-    lines.append(f"- **Evaluator Hash**: `{evaluator_hash}`")
+    lines.append(f"- **Harness Hash**: `{harness_hash}` (read from manifest)")
+    lines.append(f"- **Evaluator Hash**: `{evaluator_hash}` (read from manifest)")
     lines.append(f"- **Campaign Config Hash**: `{campaign_config_hash}`")
     lines.append(f"- **Seeds**: `{json.dumps(seeds)}`")
-    lines.append(f"- **Deployed main.py SHA-256**: `{main_py_sha256}`")
-    lines.append(f"- **Deployed Gateway JAR SHA-256**: `{gateway_jar_sha256}`")
+    lines.append(f"- **Deployed Container main.py SHA-256**: `{container_main_py_sha256}` (docker exec sage-ml)")
+    lines.append(f"- **Deployed Container app.jar SHA-256**: `{container_app_jar_sha256}` (docker exec sage-gateway)")
     lines.append(f"- **Deployed sage-ml Container Image ID**: `{ml_image_id}`")
     lines.append(f"- **Deployed sage-gateway Container Image ID**: `{gw_image_id}`")
     lines.append("")
@@ -500,47 +559,67 @@ def build_report(
     ).reset_index()
 
     metrics = summarize_client_metrics(client_stats)
-    fpr_ci = bootstrap_ci(
-        client_stats[client_stats["true_label"] == "human"],
-        lambda d: summarize_client_metrics(d)["human_fpr"],
-        bootstrap_samples,
-    )
-    recall_ci = bootstrap_ci(
-        client_stats[client_stats["true_label"] == "bot"],
-        lambda d: summarize_client_metrics(d)["bot_recall"],
-        bootstrap_samples,
-    )
-    precision_ci = bootstrap_ci(
-        client_stats,
-        lambda d: summarize_client_metrics(d)["precision"],
-        bootstrap_samples,
-    )
+    human_k = metrics["fp"]
+    human_n = metrics["fp"] + metrics["tn"]
+    fpr_ci = clopper_pearson_ci(human_k, human_n)
+
+    bot_k = metrics["tp"]
+    bot_n = metrics["tp"] + metrics["fn"]
+    recall_ci = clopper_pearson_ci(bot_k, bot_n)
+
+    prec_k = metrics["tp"]
+    prec_n = metrics["tp"] + metrics["fp"]
+    precision_ci = clopper_pearson_ci(prec_k, prec_n)
 
     lines.append("")
     lines.append("## Aggregate Client Metrics")
     lines.append("")
-    lines.append(f"Human FPR: {pct(fpr_ci[0])} (95% CI {pct(fpr_ci[1])} - {pct(fpr_ci[2])})")
-    lines.append(f"Bot recall: {pct(recall_ci[0])} (95% CI {pct(recall_ci[1])} - {pct(recall_ci[2])})")
-    lines.append(f"Precision: {pct(precision_ci[0])} (95% CI {pct(precision_ci[1])} - {pct(precision_ci[2])})")
+    lines.append(f"Human FPR: {pct(fpr_ci[0])} (95% Clopper-Pearson CI {pct(fpr_ci[1])} - {pct(fpr_ci[2])})")
+    lines.append(f"Bot recall: {pct(recall_ci[0])} (95% Clopper-Pearson CI {pct(recall_ci[1])} - {pct(recall_ci[2])})")
+    lines.append(f"Precision: {pct(precision_ci[0])} (95% Clopper-Pearson CI {pct(precision_ci[1])} - {pct(precision_ci[2])})")
     lines.append(f"Confusion matrix: TP={metrics['tp']} FP={metrics['fp']} TN={metrics['tn']} FN={metrics['fn']}")
 
     lines.append("")
     lines.append("## Profile Metrics")
     lines.append("")
-    lines.append("| Profile | Class | Clients | Metric | Value | 95% CI |")
+    lines.append("| Profile | Class | Clients | Metric | Value | 95% Clopper-Pearson CI |")
     lines.append("|---|---|---:|---|---:|---|")
-    for profile in PROFILE_ORDER + sorted(set(client_stats["profile"]) - set(PROFILE_ORDER)):
+    bot_recalls = {}
+    all_profiles = PROFILE_ORDER + [
+        p for p in sorted(
+            set(client_manifest.get(c, {}).get("profile") for c in client_manifest)
+            | set(client_stats["profile"])
+        )
+        if p not in PROFILE_ORDER and p
+    ]
+    for profile in all_profiles:
         prof_df = client_stats[client_stats["profile"] == profile]
-        if len(prof_df) == 0:
-            continue
-        label = prof_df["true_label"].iloc[0]
+        if len(prof_df) > 0:
+            label = prof_df["true_label"].iloc[0]
+            n_clients = len(prof_df)
+        else:
+            p_meta = manifest.get("profile_matrix", {}).get(profile, {})
+            label = p_meta.get("expected_class", "bot" if "scraper" in profile or "bot" in profile else "human")
+            n_clients = 0
+
         if label == "human":
-            ci = bootstrap_ci(prof_df, lambda d: summarize_client_metrics(d)["human_fpr"], bootstrap_samples)
+            k = int(((prof_df["true_label"] == "human") & prof_df["predicted_bot"]).sum()) if n_clients > 0 else 0
+            ci = clopper_pearson_ci(k, n_clients)
             metric_name = "FPR"
         else:
-            ci = bootstrap_ci(prof_df, lambda d: summarize_client_metrics(d)["bot_recall"], bootstrap_samples)
+            k = int(((prof_df["true_label"] == "bot") & prof_df["predicted_bot"]).sum()) if n_clients > 0 else 0
+            ci = clopper_pearson_ci(k, n_clients)
             metric_name = "Recall"
-        lines.append(f"| {profile} | {label} | {len(prof_df)} | {metric_name} | {pct(ci[0])} | {pct(ci[1])} - {pct(ci[2])} |")
+            bot_recalls[profile] = ci[0]
+
+        lines.append(f"| {profile} | {label} | {n_clients} | {metric_name} | {pct(ci[0])} | {pct(ci[1])} - {pct(ci[2])} |")
+
+    # Macro-average bot recall across the 3 bot profiles
+    target_bot_profiles = ["slow_scraper", "asset_fetching_bot", "fast_scraper"]
+    active_bot_recalls = [bot_recalls.get(bp, 0.0) for bp in target_bot_profiles]
+    macro_bot_recall = sum(active_bot_recalls) / len(active_bot_recalls)
+    lines.append("")
+    lines.append(f"**Macro-Average Bot Recall across 3 bot profiles**: {pct(macro_bot_recall)} ({', '.join(f'{bp}: {pct(bot_recalls.get(bp, 0.0))}' for bp in target_bot_profiles)})")
 
     # Latency
     valid_latency = scored.dropna(subset=["prod_latency", "shadow_latency"]).copy()
@@ -567,16 +646,40 @@ def build_report(
     lines.append("")
     lines.append("## Safety Gates")
     lines.append("")
-    client_gate_ok = (len(unscored_clients) == 0) and (len(scored_clients) == len(manifest_client_ids)) and len(manifest_client_ids) > 0
-    zero_errors_ok = (error_or_timeout == 0) and (len(identity_errors) == 0 or not any("error or timeout" in e for e in identity_errors))
+
+    # Load campaign configuration gate thresholds
+    campaign_cfg = manifest.get("campaign_config") or {}
+    if not campaign_cfg:
+        cfg_file = REPO_ROOT / "final_campaign_config.json"
+        if cfg_file.exists():
+            try:
+                campaign_cfg = json.loads(cfg_file.read_text(encoding="utf-8"))
+            except Exception:
+                campaign_cfg = {}
+    gate_thresholds = campaign_cfg.get("gate_thresholds", {})
+    min_macro_recall = float(gate_thresholds.get("macro_average_bot_recall_min", 0.90))
+    max_human_fpr = float(gate_thresholds.get("human_fpr_limit", 0.10))
+    min_coverage = float(gate_thresholds.get("scoring_coverage_min", 1.0))
+    max_timeouts = int(gate_thresholds.get("timeouts_max", 0))
+    max_errors = int(gate_thresholds.get("errors_max", 0))
+    max_overhead_ms = float(gate_thresholds.get("max_p95_paired_overhead_ms", 50.0))
+
+    coverage_rate = ratio(len(scored_clients), len(manifest_client_ids))
+    coverage_ok = (coverage_rate >= min_coverage) and (len(manifest_client_ids) > 0)
+    timeouts_ok = (error_or_timeout <= max_timeouts) and not any("timeout" in e for e in identity_errors)
+    errors_ok = (error_or_timeout <= max_errors) and not any("error" in e for e in identity_errors)
+    macro_recall_ok = macro_bot_recall >= min_macro_recall
+    human_fpr_ok = fpr_ci[0] <= max_human_fpr
+    overhead_ok = over_p95 < max_overhead_ms
+
     gates = [
         ("Cryptographic Identity Verified (Tagged Manifest)", identity_ok),
-        ("Client-Level Acceptance Gate (scored_clients == manifest_clients, >=1 shadow 'ok' per client)", client_gate_ok),
-        ("Zero timeout or error records", zero_errors_ok),
+        (f"Scoring coverage >= {pct(min_coverage)} (observed: {pct(coverage_rate)})", coverage_ok),
+        (f"Timeouts <= {max_timeouts} and Errors <= {max_errors}", timeouts_ok and errors_ok),
         ("Timing Features Present & Active (8 features)", timing_features_valid),
-        ("Human FPR < 10%", fpr_ci[0] < 0.10),
-        ("Bot recall > 90%", recall_ci[0] > 0.90),
-        ("p95 paired overhead < 50 ms", over_p95 < 50),
+        (f"Human FPR <= {pct(max_human_fpr)} (observed: {pct(fpr_ci[0])})", human_fpr_ok),
+        (f"Macro-average bot recall >= {pct(min_macro_recall)} (observed: {pct(macro_bot_recall)}) [run_mode: {run_mode}]", macro_recall_ok),
+        (f"p95 paired overhead < {max_overhead_ms:.0f} ms", overhead_ok),
     ]
     all_passed = True
     for name, passed in gates:
@@ -587,9 +690,9 @@ def build_report(
 
     lines.append("")
     if all_passed:
-        lines.append("Controlled run gates passed. This supports additional diverse shadow runs and threshold calibration, not production enforcement.")
+        lines.append(f"Controlled run gates passed (run_mode: {run_mode}). This supports additional diverse shadow runs and threshold calibration, not production enforcement.")
     else:
-        lines.append("One or more controlled run gates failed. Do not enable enforcement.")
+        lines.append(f"One or more controlled run gates failed (run_mode: {run_mode}). Do not enable enforcement.")
 
     return "\n".join(lines), all_passed
 
@@ -613,6 +716,8 @@ def main():
         frozen_manifest=frozen_manifest,
         frozen_manifest_sha256=frozen_sha,
         manifest_source=source,
+        allow_dirty=args.allow_dirty,
+        run_mode=args.run_mode,
     )
 
     print(report)

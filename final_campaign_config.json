@@ -1,0 +1,30 @@
+{
+  "run_mode": "final",
+  "clients_per_profile": 50,
+  "profiles": [
+    "normal_browser",
+    "spa_client",
+    "mobile_browser",
+    "privacy_browser",
+    "slow_scraper",
+    "asset_fetching_bot",
+    "fast_scraper"
+  ],
+  "profile_seeds": {
+    "normal_browser": 9101,
+    "spa_client": 9102,
+    "mobile_browser": 9103,
+    "privacy_browser": 9104,
+    "slow_scraper": 9105,
+    "asset_fetching_bot": 9106,
+    "fast_scraper": 9107
+  },
+  "gate_thresholds": {
+    "macro_average_bot_recall_min": 0.90,
+    "human_fpr_limit": 0.01,
+    "scoring_coverage_min": 1.0,
+    "timeouts_max": 0,
+    "errors_max": 0,
+    "max_p95_paired_overhead_ms": 50.0
+  }
+}

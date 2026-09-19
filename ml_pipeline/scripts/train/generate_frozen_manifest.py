@@ -196,10 +196,10 @@ def main():
     # 5. Threshold Provenance
     threshold_provenance = {
         "value": 0.35,
-        "methodology": "Selected on out-of-fold (OOF) cross-validation on the training data using StratifiedGroupKFold grouped by IpId and stratified by label (5-fold), before holdout evaluation and before the 140-client campaign.",
+        "methodology": "0.35 inherited from earlier config; timing sweep committed after the archived campaign.",
         "split_grouping": "StratifiedGroupKFold grouped by IpId and stratified by label",
-        "verified_before_campaign": True,
-        "notes": "Verified from git commit and run timestamps prior to any shadow traffic campaign. Grouped by IpId and stratified by label, not selected on holdout.",
+        "client_split_reconciliation": "ECLog dataset contains 4,004 total unique clients (4,004 x 0.7 = 2,802.8; rounded to 2,802 training clients and 1,202 holdout clients in eclog_weak_split_manifest.json). 0.35 predates the timing model (inherited from earlier gateway configuration); the sweep of four candidates in ablation_study.py is consistent with 0.35 but was not its origin.",
+        "notes": "Threshold 0.35 predates the timing model; the 4-candidate sweep in ablation_study.py is consistent with 0.35 but was not its origin.",
     }
     
     # 6. Active Deployment Identity Tuple
@@ -220,7 +220,7 @@ def main():
     
     manifest = {
         "manifest_version": "2.0",
-        "tag": "v2-frozen-models-v5",
+        "tag": "v2-frozen-models-v6",
         "intended_shadow_model": "eclog_timing_binary_model",
         "threshold_provenance": threshold_provenance,
         "active_deployment": active_deployment,

@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import random
+import subprocess
 import sys
 import time
 import uuid
@@ -204,12 +205,14 @@ def clear_test_redis_cache():
         print(f"Note: Redis state clear skipped ({e}); fresh per-run IPs ensure clean evaluation state.")
 
 
-def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False):
+def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False, seed=None):
     run_hex = RUN_ID.replace("diverse-", "")[:4]
     run_octet = (int(run_hex, 16) % 250) + 1
     profile_idx = list(profile_matrix.keys()).index(profile_name) + 1
-    client_idx = int(client_id.split("-")[-1]) if client_id.split("-")[-1].isdigit() else random.randint(1, 200)
+    client_idx = int(client_id.split("-")[-1]) if client_id.split("-")[-1].isdigit() else 1
     assigned_ip = f"10.{run_octet}.{profile_idx}.{client_idx + 1}"
+
+    rng = random.Random(seed + client_idx) if seed is not None else random.Random()
 
     headers = {
         "X-User-ID": client_id,
@@ -258,38 +261,38 @@ def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False):
         }
 
     request_min, request_max = profile_matrix[profile_name]["request_range"]
-    num_requests = random.randint(request_min, request_max)
+    num_requests = rng.randint(request_min, request_max)
 
     if profile_name == "normal_browser":
         for _ in range(num_requests):
-            tracked_fetch(random.choice(HTML_PATHS))
+            tracked_fetch(rng.choice(HTML_PATHS))
             for asset in ASSET_PATHS:
                 tracked_fetch(asset)
-            time.sleep(random.uniform(0.5, 1.5))
+            time.sleep(rng.uniform(0.5, 1.5))
     elif profile_name == "spa_client":
         tracked_fetch("/index.html")
         for _ in range(num_requests):
-            tracked_fetch(random.choice(API_PATHS))
-            time.sleep(random.uniform(0.3, 1.0))
+            tracked_fetch(rng.choice(API_PATHS))
+            time.sleep(rng.uniform(0.3, 1.0))
     elif profile_name == "mobile_browser":
-        path = random.choice(HTML_PATHS)
+        path = rng.choice(HTML_PATHS)
         for _ in range(num_requests):
             tracked_fetch(path)
-            if random.random() > 0.5:
+            if rng.random() > 0.5:
                 tracked_fetch("/static/style.css")
-            time.sleep(random.uniform(1.0, 3.0))
+            time.sleep(rng.uniform(1.0, 3.0))
     elif profile_name == "privacy_browser":
         for _ in range(num_requests):
-            tracked_fetch(random.choice(HTML_PATHS))
+            tracked_fetch(rng.choice(HTML_PATHS))
             tracked_fetch("/static/style.css")
-            time.sleep(random.uniform(0.5, 2.0))
+            time.sleep(rng.uniform(0.5, 2.0))
     elif profile_name == "slow_scraper":
         for i in range(num_requests):
             tracked_fetch(f"/products/{(i % 50) + 1}")
-            time.sleep(random.uniform(1.5, 3.0))
+            time.sleep(rng.uniform(1.5, 3.0))
     elif profile_name == "asset_fetching_bot":
         for _ in range(num_requests):
-            tracked_fetch(random.choice(HTML_PATHS))
+            tracked_fetch(rng.choice(HTML_PATHS))
             for asset in ASSET_PATHS:
                 tracked_fetch(asset)
             time.sleep(0.1)
@@ -298,9 +301,9 @@ def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False):
         i = 0
         while (time.time() - start_time) < 3.2 or i < 22:
             tracked_fetch(f"/api/price/{(i % 50) + 1}")
-            time.sleep(random.uniform(0.02, 0.05))
+            time.sleep(rng.uniform(0.02, 0.05))
             i += 1
-        time.sleep(random.uniform(0.02, 0.05))
+        time.sleep(rng.uniform(0.02, 0.05))
         tracked_fetch(SCORING_PROBE_PATH, is_probe=True)
         return {
             "client_id": client_id,
@@ -311,7 +314,7 @@ def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False):
     else:
         raise ValueError(f"Unknown profile: {profile_name}")
 
-    time.sleep(random.uniform(0.3, 0.8))
+    time.sleep(rng.uniform(0.3, 0.8))
     tracked_fetch(SCORING_PROBE_PATH, is_probe=True)
 
     return {
@@ -328,6 +331,7 @@ def parse_args():
     parser.add_argument("--negative-test", action="store_true", help="Simulate wrong-hash manifest to assert exit 1 before traffic")
     parser.add_argument("--manifest-path", help="Custom output manifest path")
     parser.add_argument("--frozen-manifest", default=str(BASE_DIR / "ml_pipeline" / "models" / "frozen_models_manifest.json"))
+    parser.add_argument("--campaign-config", default=str(BASE_DIR / "final_campaign_config.json"), help="Path to campaign configuration JSON")
     return parser.parse_args()
 
 
@@ -352,9 +356,37 @@ def main():
     # 2. Pre-run Health & Identity Assertion
     check_service_health(expected_identity, stage="Pre-run")
 
+    # Container file hashes at run START
+    print("[*] Recording container file hashes at run START...")
+    def get_container_file_sha256(container_name: str, file_path: str) -> str:
+        res = subprocess.run(
+            ["docker", "exec", container_name, "sha256sum", file_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        if res.returncode != 0:
+            raise RuntimeError(f"Failed to hash {file_path} in {container_name}: {res.stderr.strip()}")
+        return res.stdout.strip().split()[0]
+
+    start_main_py_sha256 = get_container_file_sha256("sage-ml", "/app/main.py")
+    start_app_jar_sha256 = get_container_file_sha256("sage-gateway", "/app/app.jar")
+    print(f"    [+] sage-ml:/app/main.py    = {start_main_py_sha256}")
+    print(f"    [+] sage-gateway:/app/app.jar = {start_app_jar_sha256}")
+
     # 3. Path Validation & Redis Cache Clear
     validate_target_paths()
     clear_test_redis_cache()
+
+    # Read and hash campaign configuration bytes first
+    campaign_config_file = Path(args.campaign_config)
+    if campaign_config_file.exists():
+        cfg_bytes = campaign_config_file.read_bytes()
+        campaign_config_hash = hashlib.sha256(cfg_bytes).hexdigest()
+        campaign_config_data = json.loads(cfg_bytes.decode("utf-8"))
+    else:
+        campaign_config_hash = "unknown"
+        campaign_config_data = {}
 
     # Determine profiles & volume
     if args.dry_run:
@@ -386,36 +418,61 @@ def main():
             },
         }
     else:
-        profile_matrix = BASE_PROFILE_MATRIX
+        configured_profiles = campaign_config_data.get("profiles", list(BASE_PROFILE_MATRIX.keys()))
+        clients_per_prof = int(campaign_config_data.get("clients_per_profile", 50))
+        profile_matrix = {}
+        for p in configured_profiles:
+            if p in BASE_PROFILE_MATRIX:
+                p_dict = dict(BASE_PROFILE_MATRIX[p])
+                p_dict["client_count"] = clients_per_prof
+                profile_matrix[p] = p_dict
+            else:
+                profile_matrix[p] = {
+                    "expected_class": "bot" if ("scraper" in p or "bot" in p) else "human",
+                    "asset_behavior": "Standard behavior",
+                    "rate": "Normal",
+                    "client_count": clients_per_prof,
+                    "request_range": [22, 30],
+                    "delay_seconds": [0.5, 1.0],
+                }
 
     # Compute harness and campaign hashes
     harness_path = Path(__file__).resolve()
     harness_hash = compute_file_sha256(harness_path)
     evaluator_path = BASE_DIR / "ml_pipeline" / "scripts" / "evaluate" / "evaluate_shadow.py"
     evaluator_hash = compute_file_sha256(evaluator_path) if evaluator_path.exists() else "unknown"
-    campaign_config_hash = hashlib.sha256(
-        json.dumps(profile_matrix, sort_keys=True).encode("utf-8")
-    ).hexdigest()
+
+    run_mode_val = "dry_run" if args.dry_run else campaign_config_data.get("run_mode", "final")
 
     manifest = {
         "run_id": RUN_ID,
+        "run_mode": run_mode_val,
         "gateway_url": GATEWAY_URL,
         "enforcement": "disabled_required",
         "harness_hash": harness_hash,
         "evaluator_hash": evaluator_hash,
         "campaign_config_hash": campaign_config_hash,
-        "seeds": {"random_seed": 42},
+        "campaign_config": campaign_config_data,
+        "seeds": campaign_config_data.get("profile_seeds", {"random_seed": 42}),
         "expected_identity": expected_identity,
+        "container_hashes": {
+            "start": {
+                "sage_ml_main_py_sha256": start_main_py_sha256,
+                "sage_gateway_app_jar_sha256": start_app_jar_sha256,
+            }
+        },
         "profile_matrix": profile_matrix,
         "target_validation_paths": TARGET_VALIDATION_PATHS,
         "scoring_probe_path": SCORING_PROBE_PATH,
         "clients": {},
     }
 
+    profile_seeds = campaign_config_data.get("profile_seeds", {})
     tasks = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         for profile_name, metadata in profile_matrix.items():
             print(f"Queueing traffic for profile: {profile_name} ({metadata['client_count']} clients)")
+            p_seed = profile_seeds.get(profile_name)
             for i in range(metadata["client_count"]):
                 client_id = f"{profile_name}-{i:02d}"
                 manifest["clients"][client_id] = {
@@ -428,7 +485,7 @@ def main():
                     "scoring_probe_path": SCORING_PROBE_PATH,
                 }
                 tasks.append(
-                    executor.submit(run_profile, profile_name, client_id, profile_matrix, args.dry_run)
+                    executor.submit(run_profile, profile_name, client_id, profile_matrix, args.dry_run, p_seed)
                 )
 
         print("Waiting for all clients to finish...")
@@ -443,6 +500,28 @@ def main():
 
     # 4. Post-run Health & Identity Assertion
     check_service_health(expected_identity, stage="Post-run")
+
+    # Container file hashes at run END & verification
+    print("[*] Recording container file hashes at run END...")
+    end_main_py_sha256 = get_container_file_sha256("sage-ml", "/app/main.py")
+    end_app_jar_sha256 = get_container_file_sha256("sage-gateway", "/app/app.jar")
+    print(f"    [+] sage-ml:/app/main.py    = {end_main_py_sha256}")
+    print(f"    [+] sage-gateway:/app/app.jar = {end_app_jar_sha256}")
+
+    if start_main_py_sha256 != end_main_py_sha256:
+        raise RuntimeError(
+            f"Container file mutation detected during run! sage-ml:/app/main.py changed from {start_main_py_sha256} to {end_main_py_sha256}"
+        )
+    if start_app_jar_sha256 != end_app_jar_sha256:
+        raise RuntimeError(
+            f"Container file mutation detected during run! sage-gateway:/app/app.jar changed from {start_app_jar_sha256} to {end_app_jar_sha256}"
+        )
+    print("    [+] Container files remained immutable across the entire run.")
+
+    manifest["container_hashes"]["end"] = {
+        "sage_ml_main_py_sha256": end_main_py_sha256,
+        "sage_gateway_app_jar_sha256": end_app_jar_sha256,
+    }
 
     # Output file determination
     if args.manifest_path:
