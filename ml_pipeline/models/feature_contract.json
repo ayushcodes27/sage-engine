@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "windowing": {
+    "type": "sliding",
+    "inactivity_timeout_minutes": 5,
+    "max_history_length": 50,
+    "events_tracked": "non-static requests only for path/time history; all requests for hit counters"
+  },
+  "features": [
+    {
+      "name": "SAGE_Session_Depth",
+      "formula": "count(non_static_requests)",
+      "units": "count",
+      "description": "Total number of non-static requests within the rolling window for the current session."
+    },
+    {
+      "name": "SAGE_Temporal_Variance",
+      "formula": "std_dev(inter_arrival_times) / mean(inter_arrival_times)",
+      "units": "ratio",
+      "description": "Coefficient of variation of inter-arrival times between consecutive non-static requests. Returns 0 if <2 requests."
+    },
+    {
+      "name": "SAGE_Request_Velocity",
+      "formula": "count(non_static_requests) / session_duration_seconds",
+      "units": "requests_per_second",
+      "description": "Rate of non-static requests. Minimum duration bound at 0.001s to prevent division by zero."
+    },
+    {
+      "name": "SAGE_Behavioral_Diversity",
+      "formula": "Shannon entropy of path distribution",
+      "units": "nats",
+      "description": "Entropy calculated over the canonical paths of the non-static requests in the rolling window."
+    },
+    {
+      "name": "SAGE_Endpoint_Concentration",
+      "formula": "max(path_frequency) / count(non_static_requests)",
+      "units": "ratio",
+      "description": "Ratio of the most frequently visited canonical non-static path to the total number of non-static requests in the window."
+    },
+    {
+      "name": "SAGE_Cart_Ratio",
+      "formula": "cart_hits / total_hits",
+      "units": "ratio",
+      "description": "Ratio of requests starting with /cart or /checkout to all requests (including static) in the session."
+    },
+    {
+      "name": "SAGE_Asset_Skip_Ratio",
+      "formula": "(total_hits - static_hits) / total_hits",
+      "units": "ratio",
+      "description": "Ratio of non-static requests to all requests in the session. Defaults to 1.0 if total_hits is 0."
+    }
+  ],
+  "predicates": {
+    "isStatic": "path starts with /static/ OR matches .*\\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|svg|webp)$",
+    "canonicalPath": "strip query params (?), strip fragments (#), deduplicate slashes, remove trailing slash, lowercase"
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "access_log_path": "ml_pipeline\\data\\access.log",
+    "total_lines": 10365152,
+    "parsed_lines": 10365076,
+    "malformed_lines": 76,
+    "total_sessions": 430547,
+    "gated_sessions": 15307,
+    "timing_model_sha256": "7b29ee3b574ce43cf9984408ff2d19096a6205c6389deff907cebf67e8e7f193",
+    "sixfeat_model_sha256": "2acaafa0ec1c22e2bf73fdfc8319ad0b797273e6b701007cd53a3c1e5d6cceea",
+    "timing_threshold": 0.35,
+    "sixfeat_threshold": 0.5,
+    "inactivity_timeout_sec": 300.0,
+    "processing_time_sec": 272.044673204422
+  },
+  "timing_model_metrics": {
+    "model_name": "eclog_timing_binary_model",
+    "threshold": 0.35,
+    "total_gated_labeled": 15060,
+    "total_gated_unknown": 247,
+    "bot_sessions": 707,
+    "human_sessions": 14353,
+    "tp": 543,
+    "fp": 2039,
+    "tn": 12314,
+    "fn": 164,
+    "bot_recall": 0.768033946251768,
+    "bot_recall_ci": [
+      0.7351308044865281,
+      0.7986818370906343
+    ],
+    "human_fpr": 0.14206089319306067,
+    "human_fpr_ci": [
+      0.13638763281804275,
+      0.14787966170805175
+    ],
+    "precision": 0.21030209140201395,
+    "precision_ci": [
+      0.19472495483287544,
+      0.22653888227776903
+    ],
+    "tier1_crawler_recall": 0.763768115942029,
+    "tier1_crawler_ci": [
+      0.7302596951743141,
+      0.7950022339822924
+    ],
+    "tier1_count": 690,
+    "tier2_programmatic_recall": 0.9411764705882353,
+    "tier2_programmatic_ci": [
+      0.7131106033327793,
+      0.9985118256087334
+    ],
+    "tier2_count": 17,
+    "family_breakdown": {
+      "bingbot": {
+        "total": 217,
+        "detected": 202,
+        "recall": 0.9308755760368663,
+        "ci_low": 0.8885520968779677,
+        "ci_high": 0.9607981461329219
+      },
+      "googlebot": {
+        "total": 212,
+        "detected": 197,
+        "recall": 0.9292452830188679,
+        "ci_low": 0.8859855733473576,
+        "ci_high": 0.9598608242402616
+      },
+      "mj12bot": {
+        "total": 81,
+        "detected": 81,
+        "recall": 1.0,
+        "ci_low": 0.9554797375436782,
+        "ci_high": 1.0
+      },
+      "other_bot": {
+        "total": 170,
+        "detected": 40,
+        "recall": 0.23529411764705882,
+        "ci_low": 0.17373060145288965,
+        "ci_high": 0.3063249322831436
+      },
+      "programmatic_tool": {
+        "total": 17,
+        "detected": 16,
+        "recall": 0.9411764705882353,
+        "ci_low": 0.7131106033327793,
+        "ci_high": 0.9985118256087334
+      },
+      "semrushbot": {
+        "total": 1,
+        "detected": 0,
+        "recall": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.975
+      },
+      "yandexbot": {
+        "total": 9,
+        "detected": 7,
+        "recall": 0.7777777777777778,
+        "ci_low": 0.39990642628368783,
+        "ci_high": 0.9718550265221018
+      }
+    }
+  },
+  "sixfeat_model_metrics": {
+    "model_name": "eclog_6feature_binary_model",
+    "threshold": 0.5,
+    "total_gated_labeled": 15060,
+    "total_gated_unknown": 247,
+    "bot_sessions": 707,
+    "human_sessions": 14353,
+    "tp": 466,
+    "fp": 1057,
+    "tn": 13296,
+    "fn": 241,
+    "bot_recall": 0.6591230551626591,
+    "bot_recall_ci": [
+      0.6228677302009518,
+      0.6940436891780798
+    ],
+    "human_fpr": 0.07364314080679997,
+    "human_fpr_ci": [
+      0.06942205857170253,
+      0.07803800883477009
+    ],
+    "precision": 0.30597504924491137,
+    "precision_ci": [
+      0.28289578524796244,
+      0.32980482474388917
+    ],
+    "tier1_crawler_recall": 0.6565217391304348,
+    "tier1_crawler_ci": [
+      0.6197536878795249,
+      0.6919442834192205
+    ],
+    "tier1_count": 690,
+    "tier2_programmatic_recall": 0.7647058823529411,
+    "tier2_programmatic_ci": [
+      0.5010067267954199,
+      0.9318922595626433
+    ],
+    "tier2_count": 17,
+    "family_breakdown": {
+      "bingbot": {
+        "total": 217,
+        "detected": 160,
+        "recall": 0.7373271889400922,
+        "ci_low": 0.6734702728677537,
+        "ci_high": 0.7945752008375117
+      },
+      "googlebot": {
+        "total": 212,
+        "detected": 192,
+        "recall": 0.9056603773584906,
+        "ci_low": 0.8580625927765179,
+        "ci_high": 0.941418756268669
+      },
+      "mj12bot": {
+        "total": 81,
+        "detected": 76,
+        "recall": 0.9382716049382716,
+        "ci_low": 0.8617973947258649,
+        "ci_high": 0.9796551606775783
+      },
+      "other_bot": {
+        "total": 170,
+        "detected": 18,
+        "recall": 0.10588235294117647,
+        "ci_low": 0.0639708543758395,
+        "ci_high": 0.1621719899753144
+      },
+      "programmatic_tool": {
+        "total": 17,
+        "detected": 13,
+        "recall": 0.7647058823529411,
+        "ci_low": 0.5010067267954199,
+        "ci_high": 0.9318922595626433
+      },
+      "semrushbot": {
+        "total": 1,
+        "detected": 0,
+        "recall": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.975
+      },
+      "yandexbot": {
+        "total": 9,
+        "detected": 7,
+        "recall": 0.7777777777777778,
+        "ci_low": 0.39990642628368783,
+        "ci_high": 0.9718550265221018
+      }
+    }
+  }
+}

@@ -1,0 +1,4384 @@
+{
+  "run_id": "diverse-ba1a90e8",
+  "run_mode": "final",
+  "gateway_url": "http://localhost:8083",
+  "enforcement": "disabled_required",
+  "harness_hash": "9643c5581423272ed1f5482636a06dc0308c7a32bad5e7f8c73769a089dec11f",
+  "evaluator_hash": "367cff60867249b109ddef302bab163179e5235eea46a80bc366bc925fffdf8d",
+  "campaign_config_hash": "f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9",
+  "campaign_config": {
+    "run_mode": "final",
+    "clients_per_profile": 50,
+    "profiles": [
+      "normal_browser",
+      "spa_client",
+      "mobile_browser",
+      "privacy_browser",
+      "slow_scraper",
+      "asset_fetching_bot",
+      "fast_scraper"
+    ],
+    "profile_seeds": {
+      "normal_browser": 9101,
+      "spa_client": 9102,
+      "mobile_browser": 9103,
+      "privacy_browser": 9104,
+      "slow_scraper": 9105,
+      "asset_fetching_bot": 9106,
+      "fast_scraper": 9107
+    },
+    "gate_thresholds": {
+      "macro_average_bot_recall_min": 0.9,
+      "human_fpr_limit": 0.01,
+      "scoring_coverage_min": 1.0,
+      "timeouts_max": 0,
+      "errors_max": 0,
+      "max_p95_paired_overhead_ms": 50.0
+    }
+  },
+  "seeds": {
+    "normal_browser": 9101,
+    "spa_client": 9102,
+    "mobile_browser": 9103,
+    "privacy_browser": 9104,
+    "slow_scraper": 9105,
+    "asset_fetching_bot": 9106,
+    "fast_scraper": 9107
+  },
+  "expected_identity": {
+    "prod_model_name": "sage_binary_model",
+    "shadow_model_name": "eclog_timing_binary_model",
+    "prod_model_sha256": "a979d5c2f6d463851fbc02c6a5a4892a05bb34bc644e977e42712bba4c9bf70f",
+    "shadow_model_sha256": "7b29ee3b574ce43cf9984408ff2d19096a6205c6389deff907cebf67e8e7f193",
+    "shadow_contract_name": "contract_eclog_timing_8feat",
+    "shadow_contract_hash": "2fb47afb4dae24d3345aa0d1f270e622477da729e9f9c64a7cc001edc1260dfc",
+    "shadow_feature_list_hash": "8cd1accfb56c5e68099d89f9bfe3b84bc849da63f5a44d3dd6cb953b1cf29e2c",
+    "shadow_threshold": 0.35
+  },
+  "container_hashes": {
+    "start": {
+      "sage_ml_main_py_sha256": "a10551c6dbac6cc6c5bf894cfdef7b21bbe47ef2b6ff6cbef829c8d1a69418da",
+      "sage_gateway_app_jar_sha256": "c7ee86e64962acefb6209098fc8aae62bff313edcf2041058e3d3c9edc58e5ec"
+    },
+    "end": {
+      "sage_ml_main_py_sha256": "a10551c6dbac6cc6c5bf894cfdef7b21bbe47ef2b6ff6cbef829c8d1a69418da",
+      "sage_gateway_app_jar_sha256": "c7ee86e64962acefb6209098fc8aae62bff313edcf2041058e3d3c9edc58e5ec"
+    }
+  },
+  "profile_matrix": {
+    "normal_browser": {
+      "expected_class": "human",
+      "asset_behavior": "Loads most assets",
+      "rate": "Interactive",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.5,
+        1.5
+      ]
+    },
+    "spa_client": {
+      "expected_class": "human",
+      "asset_behavior": "Minimal assets, API-heavy",
+      "rate": "Moderate",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.3,
+        1.0
+      ]
+    },
+    "mobile_browser": {
+      "expected_class": "human",
+      "asset_behavior": "Loads assets slowly",
+      "rate": "Slow",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.5,
+        1.0
+      ]
+    },
+    "privacy_browser": {
+      "expected_class": "human",
+      "asset_behavior": "Selectively skips assets",
+      "rate": "Interactive",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.5,
+        1.0
+      ]
+    },
+    "slow_scraper": {
+      "expected_class": "bot",
+      "asset_behavior": "Mostly non-static",
+      "rate": "Slow",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.5,
+        1.0
+      ]
+    },
+    "asset_fetching_bot": {
+      "expected_class": "bot",
+      "asset_behavior": "Loads everything",
+      "rate": "Rapid",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.1,
+        0.1
+      ]
+    },
+    "fast_scraper": {
+      "expected_class": "bot",
+      "asset_behavior": "Mostly API paths",
+      "rate": "Very rapid",
+      "client_count": 50,
+      "request_range": [
+        22,
+        30
+      ],
+      "delay_seconds": [
+        0.01,
+        0.05
+      ]
+    }
+  },
+  "target_validation_paths": [
+    "/",
+    "/api/inventory/23",
+    "/api/price/23",
+    "/api/search?q=phone",
+    "/cart",
+    "/images/logo.png",
+    "/products",
+    "/products/12",
+    "/products/34",
+    "/static/app.js",
+    "/static/style.css"
+  ],
+  "scoring_probe_path": "/products/1",
+  "clients": {
+    "normal_browser-00": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-01": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "normal_browser-02": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-03": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "normal_browser-04": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-05": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-06": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-07": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-08": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-09": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "normal_browser-10": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-11": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 97,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 97
+      }
+    },
+    "normal_browser-12": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "normal_browser-13": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "normal_browser-14": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-15": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-16": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-17": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-18": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-19": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "normal_browser-20": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-21": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-22": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-23": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-24": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "normal_browser-25": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-26": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "normal_browser-27": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-28": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-29": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-30": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-31": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-32": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "normal_browser-33": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 113,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 113
+      }
+    },
+    "normal_browser-34": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "normal_browser-35": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "normal_browser-36": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-37": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-38": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "normal_browser-39": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-40": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-41": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "normal_browser-42": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "normal_browser-43": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-44": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 97,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 97
+      }
+    },
+    "normal_browser-45": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "normal_browser-46": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "normal_browser-47": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "normal_browser-48": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "normal_browser-49": {
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "normal_browser-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "spa_client-00": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "spa_client-01": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-02": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 32,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 32
+      }
+    },
+    "spa_client-03": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-04": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-05": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-06": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-07": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-08": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 32,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 32
+      }
+    },
+    "spa_client-09": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-10": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "spa_client-11": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 32,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 32
+      }
+    },
+    "spa_client-12": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 29,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 29
+      }
+    },
+    "spa_client-13": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-14": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-15": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-16": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-17": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-18": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 29,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 29
+      }
+    },
+    "spa_client-19": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-20": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-21": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-22": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-23": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 32,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 32
+      }
+    },
+    "spa_client-24": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-25": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "spa_client-26": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-27": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-28": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-29": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-30": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-31": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 29,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 29
+      }
+    },
+    "spa_client-32": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "spa_client-33": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 29,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 29
+      }
+    },
+    "spa_client-34": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "spa_client-35": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-36": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-37": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 32,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 32
+      }
+    },
+    "spa_client-38": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-39": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-40": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "spa_client-41": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "spa_client-42": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-43": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "spa_client-44": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "spa_client-45": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "spa_client-46": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-47": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 32,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 32
+      }
+    },
+    "spa_client-48": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "spa_client-49": {
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "spa_client-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "mobile_browser-00": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 35,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 35
+      }
+    },
+    "mobile_browser-01": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 42,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 42
+      }
+    },
+    "mobile_browser-02": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 39,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 39
+      }
+    },
+    "mobile_browser-03": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 38,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 38
+      }
+    },
+    "mobile_browser-04": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 34,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 34
+      }
+    },
+    "mobile_browser-05": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "mobile_browser-06": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 41,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 41
+      }
+    },
+    "mobile_browser-07": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 44,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 44
+      }
+    },
+    "mobile_browser-08": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 41,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 41
+      }
+    },
+    "mobile_browser-09": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "mobile_browser-10": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 43,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 43
+      }
+    },
+    "mobile_browser-11": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 42,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 42
+      }
+    },
+    "mobile_browser-12": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 37,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 37
+      }
+    },
+    "mobile_browser-13": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 37,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 37
+      }
+    },
+    "mobile_browser-14": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 46,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 46
+      }
+    },
+    "mobile_browser-15": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 48,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 48
+      }
+    },
+    "mobile_browser-16": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 42,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 42
+      }
+    },
+    "mobile_browser-17": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 37,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 37
+      }
+    },
+    "mobile_browser-18": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 33,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 33
+      }
+    },
+    "mobile_browser-19": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 41,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 41
+      }
+    },
+    "mobile_browser-20": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 34,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 34
+      }
+    },
+    "mobile_browser-21": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 38,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 38
+      }
+    },
+    "mobile_browser-22": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 44,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 44
+      }
+    },
+    "mobile_browser-23": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 33,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 33
+      }
+    },
+    "mobile_browser-24": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 44,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 44
+      }
+    },
+    "mobile_browser-25": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 40,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 40
+      }
+    },
+    "mobile_browser-26": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 38,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 38
+      }
+    },
+    "mobile_browser-27": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "mobile_browser-28": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 38,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 38
+      }
+    },
+    "mobile_browser-29": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 40,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 40
+      }
+    },
+    "mobile_browser-30": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 43,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 43
+      }
+    },
+    "mobile_browser-31": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 40,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 40
+      }
+    },
+    "mobile_browser-32": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 43,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 43
+      }
+    },
+    "mobile_browser-33": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 40,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 40
+      }
+    },
+    "mobile_browser-34": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 41,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 41
+      }
+    },
+    "mobile_browser-35": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 36,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 36
+      }
+    },
+    "mobile_browser-36": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 46,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 46
+      }
+    },
+    "mobile_browser-37": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 33,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 33
+      }
+    },
+    "mobile_browser-38": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 36,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 36
+      }
+    },
+    "mobile_browser-39": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 40,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 40
+      }
+    },
+    "mobile_browser-40": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 40,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 40
+      }
+    },
+    "mobile_browser-41": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "mobile_browser-42": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 35,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 35
+      }
+    },
+    "mobile_browser-43": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 46,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 46
+      }
+    },
+    "mobile_browser-44": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "mobile_browser-45": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 35,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 35
+      }
+    },
+    "mobile_browser-46": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "mobile_browser-47": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 35,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 35
+      }
+    },
+    "mobile_browser-48": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 36,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 36
+      }
+    },
+    "mobile_browser-49": {
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "mobile_browser-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 46,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 46
+      }
+    },
+    "privacy_browser-00": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "privacy_browser-01": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-02": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-03": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-04": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-05": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-06": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "privacy_browser-07": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-08": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 49,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 49
+      }
+    },
+    "privacy_browser-09": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "privacy_browser-10": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 55,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 55
+      }
+    },
+    "privacy_browser-11": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-12": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-13": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-14": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-15": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-16": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 55,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 55
+      }
+    },
+    "privacy_browser-17": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "privacy_browser-18": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-19": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-20": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-21": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "privacy_browser-22": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "privacy_browser-23": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 53,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 53
+      }
+    },
+    "privacy_browser-24": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-25": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-26": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-27": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-28": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-29": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 55,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 55
+      }
+    },
+    "privacy_browser-30": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 57,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 57
+      }
+    },
+    "privacy_browser-31": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 55,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 55
+      }
+    },
+    "privacy_browser-32": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 53,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 53
+      }
+    },
+    "privacy_browser-33": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-34": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "privacy_browser-35": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "privacy_browser-36": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "privacy_browser-37": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "privacy_browser-38": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 53,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 53
+      }
+    },
+    "privacy_browser-39": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 51,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 51
+      }
+    },
+    "privacy_browser-40": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-41": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 49,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 49
+      }
+    },
+    "privacy_browser-42": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "privacy_browser-43": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 45,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 45
+      }
+    },
+    "privacy_browser-44": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-45": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "privacy_browser-46": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 47,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 47
+      }
+    },
+    "privacy_browser-47": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 49,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 49
+      }
+    },
+    "privacy_browser-48": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 57,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 57
+      }
+    },
+    "privacy_browser-49": {
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "client_id": "privacy_browser-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "slow_scraper-00": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-01": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-02": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-03": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-04": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-05": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "slow_scraper-06": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-07": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "slow_scraper-08": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "slow_scraper-09": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "slow_scraper-10": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-11": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-12": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-13": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-14": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-15": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "slow_scraper-16": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 23,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 23
+      }
+    },
+    "slow_scraper-17": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-18": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-19": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-20": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "slow_scraper-21": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 23,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 23
+      }
+    },
+    "slow_scraper-22": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "slow_scraper-23": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-24": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-25": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-26": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-27": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-28": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "slow_scraper-29": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 29,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 29
+      }
+    },
+    "slow_scraper-30": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 28,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 28
+      }
+    },
+    "slow_scraper-31": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "slow_scraper-32": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-33": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 23,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 23
+      }
+    },
+    "slow_scraper-34": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "slow_scraper-35": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 23,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 23
+      }
+    },
+    "slow_scraper-36": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 23,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 23
+      }
+    },
+    "slow_scraper-37": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 27,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 27
+      }
+    },
+    "slow_scraper-38": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "slow_scraper-39": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-40": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "slow_scraper-41": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-42": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 23,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 23
+      }
+    },
+    "slow_scraper-43": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-44": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 31,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 31
+      }
+    },
+    "slow_scraper-45": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 24,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 24
+      }
+    },
+    "slow_scraper-46": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 25,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 25
+      }
+    },
+    "slow_scraper-47": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 29,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 29
+      }
+    },
+    "slow_scraper-48": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 30,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 30
+      }
+    },
+    "slow_scraper-49": {
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "slow_scraper-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 26,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 26
+      }
+    },
+    "asset_fetching_bot-00": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-01": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-02": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-03": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-04": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "asset_fetching_bot-05": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-06": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 97,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 97
+      }
+    },
+    "asset_fetching_bot-07": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "asset_fetching_bot-08": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "asset_fetching_bot-09": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-10": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-11": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-12": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-13": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-14": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "asset_fetching_bot-15": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "asset_fetching_bot-16": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-17": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-18": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-19": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "asset_fetching_bot-20": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "asset_fetching_bot-21": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "asset_fetching_bot-22": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-23": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-24": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-25": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-26": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-27": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "asset_fetching_bot-28": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 113,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 113
+      }
+    },
+    "asset_fetching_bot-29": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 109,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 109
+      }
+    },
+    "asset_fetching_bot-30": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "asset_fetching_bot-31": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-32": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "asset_fetching_bot-33": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "asset_fetching_bot-34": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "asset_fetching_bot-35": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "asset_fetching_bot-36": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 105,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 105
+      }
+    },
+    "asset_fetching_bot-37": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-38": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-39": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 97,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 97
+      }
+    },
+    "asset_fetching_bot-40": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-41": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "asset_fetching_bot-42": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-43": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 121,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 121
+      }
+    },
+    "asset_fetching_bot-44": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 93,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 93
+      }
+    },
+    "asset_fetching_bot-45": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 97,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 97
+      }
+    },
+    "asset_fetching_bot-46": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 113,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 113
+      }
+    },
+    "asset_fetching_bot-47": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 117,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 117
+      }
+    },
+    "asset_fetching_bot-48": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 101,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 101
+      }
+    },
+    "asset_fetching_bot-49": {
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "asset_fetching_bot-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 89,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 89
+      }
+    },
+    "fast_scraper-00": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-00",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-01": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-01",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-02": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-02",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-03": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-03",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-04": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-04",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-05": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-05",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-06": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-06",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-07": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-07",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-08": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-08",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 64,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 64
+      }
+    },
+    "fast_scraper-09": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-09",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-10": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-10",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-11": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-11",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-12": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-12",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 63,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 63
+      }
+    },
+    "fast_scraper-13": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-13",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-14": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-14",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-15": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-15",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-16": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-16",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 58,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 58
+      }
+    },
+    "fast_scraper-17": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-17",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-18": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-18",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 63,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 63
+      }
+    },
+    "fast_scraper-19": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-19",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-20": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-20",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 63,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 63
+      }
+    },
+    "fast_scraper-21": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-21",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-22": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-22",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 63,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 63
+      }
+    },
+    "fast_scraper-23": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-23",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-24": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-24",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-25": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-25",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-26": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-26",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-27": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-27",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 64,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 64
+      }
+    },
+    "fast_scraper-28": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-28",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-29": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-29",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-30": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-30",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 63,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 63
+      }
+    },
+    "fast_scraper-31": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-31",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-32": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-32",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 63,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 63
+      }
+    },
+    "fast_scraper-33": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-33",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 64,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 64
+      }
+    },
+    "fast_scraper-34": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-34",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-35": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-35",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-36": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-36",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-37": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-37",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-38": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-38",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-39": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-39",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 58,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 58
+      }
+    },
+    "fast_scraper-40": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-40",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "fast_scraper-41": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-41",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-42": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-42",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-43": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-43",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 59,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 59
+      }
+    },
+    "fast_scraper-44": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-44",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-45": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-45",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    },
+    "fast_scraper-46": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-46",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 61,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 61
+      }
+    },
+    "fast_scraper-47": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-47",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 60,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 60
+      }
+    },
+    "fast_scraper-48": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-48",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 57,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 57
+      }
+    },
+    "fast_scraper-49": {
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "client_id": "fast_scraper-49",
+      "run_id": "diverse-ba1a90e8",
+      "request_count": 62,
+      "scoring_probe_path": "/products/1",
+      "status_counts": {
+        "200": 62
+      }
+    }
+  }
+}

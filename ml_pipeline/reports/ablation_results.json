@@ -1,0 +1,89 @@
+{
+  "dataset": "eclog_weak_labeled",
+  "train_clients": 2802,
+  "test_clients": 1202,
+  "client_split_note": "Frozen split: 2,802 train clients and 1,202 holdout clients (70/30 split of 4,004 unique clients in eclog_weak_split_manifest.json). Legacy exploratory runs noted 3,204 / 800 on 80/20.",
+  "ablations": [
+    {
+      "experiment": "Baseline (All 7)",
+      "cv_roc_auc_mean": 0.9653197133115692,
+      "cv_roc_auc_std": 0.011450485610551295,
+      "holdout_metrics": {
+        "roc_auc": 0.978310865861788,
+        "pr_auc": 0.9462931172068614,
+        "macro_f1": 0.9458394312669433,
+        "bot_recall": 0.9863713798977853,
+        "human_fpr": 0.07717391304347826,
+        "fpr_mean": 0.055345407503234155,
+        "fpr_low": 0.03880983182406209,
+        "fpr_high": 0.07115135834411385,
+        "rec_mean": 1.0,
+        "rec_low": 1.0,
+        "rec_high": 1.0
+      }
+    },
+    {
+      "experiment": "Drop Asset_Skip_Ratio",
+      "cv_roc_auc_mean": 0.9663777043764712,
+      "cv_roc_auc_std": 0.010585717865273103,
+      "holdout_metrics": {
+        "roc_auc": 0.9783238278646027,
+        "pr_auc": 0.9456267236732789,
+        "macro_f1": 0.9505523351197638,
+        "bot_recall": 0.9863713798977853,
+        "human_fpr": 0.06956521739130435,
+        "fpr_mean": 0.048945666235446314,
+        "fpr_low": 0.03363518758085381,
+        "fpr_high": 0.06338939197930142,
+        "rec_mean": 1.0,
+        "rec_low": 1.0,
+        "rec_high": 1.0
+      }
+    },
+    {
+      "experiment": "Only Asset_Skip_Ratio",
+      "cv_roc_auc_mean": 0.8975236174992277,
+      "cv_roc_auc_std": 0.03182740173761506,
+      "holdout_metrics": {
+        "roc_auc": 0.909365972890897,
+        "pr_auc": 0.7915244684024414,
+        "macro_f1": 0.8799427482204464,
+        "bot_recall": 0.9437819420783645,
+        "human_fpr": 0.1565217391304348,
+        "fpr_mean": 0.08758344113842173,
+        "fpr_low": 0.0685640362225097,
+        "fpr_high": 0.1073738680465718,
+        "rec_mean": 0.8517777777777777,
+        "rec_low": 0.7037037037037037,
+        "rec_high": 0.9629629629629629
+      }
+    }
+  ],
+  "permutation_importance": [
+    {
+      "seed": 42,
+      "auc": 0.964240611806533,
+      "auc_drop": 0.014070254055254972
+    },
+    {
+      "seed": 123,
+      "auc": 0.9599177838678615,
+      "auc_drop": 0.01839308199392642
+    },
+    {
+      "seed": 999,
+      "auc": 0.9636508406784682,
+      "auc_drop": 0.01466002518331977
+    },
+    {
+      "seed": 2026,
+      "auc": 0.9645192948670469,
+      "auc_drop": 0.013791570994741043
+    },
+    {
+      "seed": 7,
+      "auc": 0.9682106880971781,
+      "auc_drop": 0.010100177764609808
+    }
+  ]
+}

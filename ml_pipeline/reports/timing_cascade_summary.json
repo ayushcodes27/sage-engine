@@ -1,0 +1,3220 @@
+{
+  "run_id": "diverse-5fc1e6d8",
+  "profile_summary": {
+    "normal_browser": {
+      "profile": "normal_browser",
+      "class": "human",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 22.2,
+          "range": [
+            21.0,
+            23.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 38.7,
+          "range": [
+            37.5,
+            40.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 326.1,
+          "range": [
+            299.82,
+            345.1
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 622.0,
+          "range": [
+            569.84,
+            673.44
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 4747.4,
+          "range": [
+            4240.0,
+            5395.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.691,
+          "range": [
+            0.681,
+            0.7143
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.7428,
+          "range": [
+            0.7404,
+            0.75
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.75,
+          "range": [
+            0.75,
+            0.75
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 0.25,
+          "range": [
+            0.25,
+            0.25
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 1304.5,
+          "range": [
+            1199.28,
+            1380.38
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 1221.1,
+          "range": [
+            1038.0,
+            1348.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 2.896,
+          "range": [
+            2.8889,
+            2.9
+          ]
+        },
+        "n_static": {
+          "mean": 84.0,
+          "range": [
+            78.0,
+            87.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 28.0,
+          "range": [
+            26.0,
+            29.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 3.0,
+          "range": [
+            3.0,
+            3.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 2.9,
+          "range": [
+            2.89,
+            2.9
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.92,
+          "range": [
+            0.9143,
+            0.9231
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 0.08,
+          "range": [
+            0.0769,
+            0.0857
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 23.77,
+          "range": [
+            21.937,
+            24.673
+          ]
+        },
+        "requests_before_score": {
+          "mean": 80.0,
+          "range": [
+            80.0,
+            80.0
+          ]
+        },
+        "pct_at_depth_21": 100.0
+      }
+    },
+    "spa_client": {
+      "profile": "spa_client",
+      "class": "human",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 108.4,
+          "range": [
+            101.0,
+            118.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 766.1,
+          "range": [
+            692.5,
+            810.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 840.5,
+          "range": [
+            767.17,
+            871.52
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 742.6,
+          "range": [
+            645.63,
+            849.36
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 4386.6,
+          "range": [
+            3999.0,
+            5010.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.0384,
+          "range": [
+            0.0333,
+            0.0435
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 0.7762,
+          "range": [
+            0.6667,
+            0.8276
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 22122.0,
+          "range": [
+            19602.0,
+            25256.0
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 22122.0,
+          "range": [
+            19602.0,
+            25256.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "n_static": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.815,
+          "range": [
+            0.7917,
+            0.8387
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 0.185,
+          "range": [
+            0.1613,
+            0.2083
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 13.76,
+          "range": [
+            12.548,
+            15.148
+          ]
+        },
+        "requests_before_score": {
+          "mean": 20.0,
+          "range": [
+            20.0,
+            20.0
+          ]
+        },
+        "pct_at_depth_21": 100.0
+      }
+    },
+    "mobile_browser": {
+      "profile": "mobile_browser",
+      "class": "human",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 26.4,
+          "range": [
+            23.0,
+            30.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 1571.1,
+          "range": [
+            1462.0,
+            1673.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 1499.5,
+          "range": [
+            1283.11,
+            1624.5
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 1223.7,
+          "range": [
+            1080.84,
+            1402.4
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 5647.4,
+          "range": [
+            4984.0,
+            6438.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.2704,
+          "range": [
+            0.1389,
+            0.3514
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.299,
+          "range": [
+            0.1944,
+            0.3784
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.3046,
+          "range": [
+            0.2222,
+            0.3784
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 0.6954,
+          "range": [
+            0.6216,
+            0.7778
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 2156.8,
+          "range": [
+            2064.13,
+            2362.91
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 2071.8,
+          "range": [
+            1807.0,
+            2540.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 0.428,
+          "range": [
+            0.2759,
+            0.5833
+          ]
+        },
+        "n_static": {
+          "mean": 10.8,
+          "range": [
+            8.0,
+            14.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 10.8,
+          "range": [
+            8.0,
+            14.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 0.43,
+          "range": [
+            0.28,
+            0.58
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.917,
+          "range": [
+            0.9091,
+            0.9231
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 0.083,
+          "range": [
+            0.0769,
+            0.0909
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 40.18,
+          "range": [
+            38.195,
+            44.356
+          ]
+        },
+        "requests_before_score": {
+          "mean": 28.4,
+          "range": [
+            26.0,
+            31.0
+          ]
+        },
+        "pct_at_depth_21": 100.0
+      }
+    },
+    "privacy_browser": {
+      "profile": "privacy_browser",
+      "class": "human",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 23.6,
+          "range": [
+            22.0,
+            25.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 348.1,
+          "range": [
+            321.5,
+            387.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 717.9,
+          "range": [
+            636.46,
+            787.57
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 883.9,
+          "range": [
+            805.61,
+            943.67
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 4885.8,
+          "range": [
+            4670.0,
+            5217.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.4504,
+          "range": [
+            0.413,
+            0.48
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.493,
+          "range": [
+            0.4821,
+            0.5
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.5,
+          "range": [
+            0.5,
+            0.5
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 0.5,
+          "range": [
+            0.5,
+            0.5
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 1435.9,
+          "range": [
+            1272.92,
+            1575.13
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 1336.7,
+          "range": [
+            1145.0,
+            1494.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 0.964,
+          "range": [
+            0.9583,
+            0.9667
+          ]
+        },
+        "n_static": {
+          "mean": 26.6,
+          "range": [
+            23.0,
+            29.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 26.6,
+          "range": [
+            23.0,
+            29.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 0.97,
+          "range": [
+            0.96,
+            0.97
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.87,
+          "range": [
+            0.8511,
+            0.8814
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 0.13,
+          "range": [
+            0.1186,
+            0.1489
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 25.87,
+          "range": [
+            21.955,
+            28.406
+          ]
+        },
+        "requests_before_score": {
+          "mean": 40.0,
+          "range": [
+            40.0,
+            40.0
+          ]
+        },
+        "pct_at_depth_21": 100.0
+      }
+    },
+    "slow_scraper": {
+      "profile": "slow_scraper",
+      "class": "bot",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 1483.4,
+          "range": [
+            1037.0,
+            1614.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 2198.1,
+          "range": [
+            1848.0,
+            2408.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 2389.0,
+          "range": [
+            2248.64,
+            2497.91
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 847.2,
+          "range": [
+            754.79,
+            1003.09
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 5908.4,
+          "range": [
+            5348.0,
+            6469.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 2389.0,
+          "range": [
+            2248.64,
+            2497.91
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 2198.1,
+          "range": [
+            1848.0,
+            2408.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "n_static": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.046,
+          "range": [
+            0.0345,
+            0.0667
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 0.954,
+          "range": [
+            0.9333,
+            0.9655
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 45.64,
+          "range": [
+            41.363,
+            47.368
+          ]
+        },
+        "requests_before_score": {
+          "mean": 20.0,
+          "range": [
+            20.0,
+            20.0
+          ]
+        },
+        "pct_at_depth_21": 100.0
+      }
+    },
+    "asset_fetching_bot": {
+      "profile": "asset_fetching_bot",
+      "class": "bot",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 27.2,
+          "range": [
+            24.0,
+            32.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 46.9,
+          "range": [
+            46.0,
+            48.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 104.9,
+          "range": [
+            99.7,
+            111.15
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 362.2,
+          "range": [
+            342.94,
+            377.89
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 3783.6,
+          "range": [
+            3415.0,
+            4119.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.5784,
+          "range": [
+            0.5455,
+            0.6379
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.75,
+          "range": [
+            0.75,
+            0.75
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.9865,
+          "range": [
+            0.9773,
+            0.9917
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 0.0096,
+          "range": [
+            0.0083,
+            0.0114
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 419.5,
+          "range": [
+            398.8,
+            444.59
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 282.0,
+          "range": [
+            277.5,
+            287.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 2.89,
+          "range": [
+            2.8696,
+            2.9032
+          ]
+        },
+        "n_static": {
+          "mean": 79.8,
+          "range": [
+            66.0,
+            90.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 26.6,
+          "range": [
+            22.0,
+            30.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 3.0,
+          "range": [
+            3.0,
+            3.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 2.89,
+          "range": [
+            2.87,
+            2.9
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.915,
+          "range": [
+            0.8989,
+            0.9256
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 0.085,
+          "range": [
+            0.0744,
+            0.1011
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 5.77,
+          "range": [
+            5.759,
+            5.789
+          ]
+        },
+        "requests_before_score": {
+          "mean": 80.0,
+          "range": [
+            80.0,
+            80.0
+          ]
+        },
+        "pct_at_depth_21": 100.0
+      }
+    },
+    "fast_scraper": {
+      "profile": "fast_scraper",
+      "class": "bot",
+      "clients": 5,
+      "timing": {
+        "min_gap_ms": {
+          "mean": 44.4,
+          "range": [
+            41.0,
+            48.0
+          ]
+        },
+        "median_gap_ms": {
+          "mean": 64.7,
+          "range": [
+            61.5,
+            69.0
+          ]
+        },
+        "mean_gap_ms": {
+          "mean": 199.9,
+          "range": [
+            183.07,
+            217.36
+          ]
+        },
+        "std_gap_ms": {
+          "mean": 674.9,
+          "range": [
+            617.78,
+            729.42
+          ]
+        },
+        "max_gap_ms": {
+          "mean": 3560.8,
+          "range": [
+            3394.0,
+            3993.0
+          ]
+        },
+        "frac_below_50ms": {
+          "mean": 0.1487,
+          "range": [
+            0.0357,
+            0.2143
+          ]
+        },
+        "frac_below_100ms": {
+          "mean": 0.961,
+          "range": [
+            0.9545,
+            0.9655
+          ]
+        },
+        "frac_below_250ms": {
+          "mean": 0.961,
+          "range": [
+            0.9545,
+            0.9655
+          ]
+        },
+        "frac_ge_500ms": {
+          "mean": 0.039,
+          "range": [
+            0.0345,
+            0.0455
+          ]
+        },
+        "mean_html_gap_ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "median_html_gap_ms": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "sequence": {
+        "static_to_non_static_ratio": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "n_static": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "static_burst_count": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "max_static_burst": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "mean_html_fanout": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "frac_assets_following_html": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "repeated_path_ratio": {
+          "mean": 0.0,
+          "range": [
+            0.0,
+            0.0
+          ]
+        },
+        "unique_path_ratio": {
+          "mean": 1.0,
+          "range": [
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "scoring": {
+        "duration_before_score_sec": {
+          "mean": 5.16,
+          "range": [
+            4.782,
+            5.688
+          ]
+        },
+        "requests_before_score": {
+          "mean": 26.0,
+          "range": [
+            22.0,
+            29.0
+          ]
+        },
+        "pct_at_depth_21": 0.0
+      }
+    }
+  },
+  "clients": [
+    {
+      "client_id": "normal_browser-00",
+      "profile": "normal_browser",
+      "true_class": "human",
+      "total_requests": 105,
+      "timing": {
+        "min_gap_ms": 22.0,
+        "median_gap_ms": 38.0,
+        "mean_gap_ms": 345.1,
+        "std_gap_ms": 656.58,
+        "max_gap_ms": 4881.0,
+        "frac_below_50ms": 0.6827,
+        "frac_below_100ms": 0.7404,
+        "frac_below_250ms": 0.75,
+        "frac_ge_500ms": 0.25,
+        "mean_html_gap_ms": 1380.38,
+        "median_html_gap_ms": 1348.0
+      },
+      "sequence": {
+        "n_static": 78,
+        "n_non_static": 27,
+        "static_to_non_static_ratio": 2.8889,
+        "static_burst_count": 26,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.89,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0857,
+        "repeated_path_ratio": 0.9143
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 24.673,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.8502712770264799,
+          "temporalVariance": 0.21961046072357307,
+          "behavioralDiversity": 1.555265503074954,
+          "endpointConcentration": 0.2857142857142857,
+          "cartRatio": 0.04938271604938271,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 27.0,
+          "requestVelocity": 0.7511475865906245,
+          "temporalVariance": 0.556065789253554,
+          "behavioralDiversity": 1.6179522643873896,
+          "endpointConcentration": 0.3333333333333333,
+          "cartRatio": 0.047619047619047616,
+          "assetSkipRatio": 0.2571428571428571,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "normal_browser-01",
+      "profile": "normal_browser",
+      "true_class": "human",
+      "total_requests": 117,
+      "timing": {
+        "min_gap_ms": 23.0,
+        "median_gap_ms": 39.0,
+        "mean_gap_ms": 299.82,
+        "std_gap_ms": 569.84,
+        "max_gap_ms": 4373.0,
+        "frac_below_50ms": 0.681,
+        "frac_below_100ms": 0.7414,
+        "frac_below_250ms": 0.75,
+        "frac_ge_500ms": 0.25,
+        "mean_html_gap_ms": 1199.28,
+        "median_html_gap_ms": 1038.0
+      },
+      "sequence": {
+        "n_static": 87,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 2.9,
+        "static_burst_count": 29,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0769,
+        "repeated_path_ratio": 0.9231
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 21.937,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.9546756375869436,
+          "temporalVariance": 0.26462843939601244,
+          "behavioralDiversity": 1.5021360860953803,
+          "endpointConcentration": 0.2857142857142857,
+          "cartRatio": 0.06172839506172839,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 0.861153371415449,
+          "temporalVariance": 0.5676091508704585,
+          "behavioralDiversity": 1.6241387702120398,
+          "endpointConcentration": 0.26666666666666666,
+          "cartRatio": 0.042735042735042736,
+          "assetSkipRatio": 0.2564102564102564,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "normal_browser-02",
+      "profile": "normal_browser",
+      "true_class": "human",
+      "total_requests": 113,
+      "timing": {
+        "min_gap_ms": 23.0,
+        "median_gap_ms": 37.5,
+        "mean_gap_ms": 323.32,
+        "std_gap_ms": 593.47,
+        "max_gap_ms": 4240.0,
+        "frac_below_50ms": 0.6875,
+        "frac_below_100ms": 0.7411,
+        "frac_below_250ms": 0.75,
+        "frac_ge_500ms": 0.25,
+        "mean_html_gap_ms": 1293.29,
+        "median_html_gap_ms": 1215.0
+      },
+      "sequence": {
+        "n_static": 84,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 2.8966,
+        "static_burst_count": 28,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0796,
+        "repeated_path_ratio": 0.9204
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 24.347,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.8603383997705765,
+          "temporalVariance": 0.2279498965875272,
+          "behavioralDiversity": 1.5432335250170635,
+          "endpointConcentration": 0.2857142857142857,
+          "cartRatio": 0.024691358024691357,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0007
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 0.7992503582846434,
+          "temporalVariance": 0.5070684809476647,
+          "behavioralDiversity": 1.6279529294525221,
+          "endpointConcentration": 0.27586206896551724,
+          "cartRatio": 0.017699115044247787,
+          "assetSkipRatio": 0.2566371681415929,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0007
+        }
+      }
+    },
+    {
+      "client_id": "normal_browser-03",
+      "profile": "normal_browser",
+      "true_class": "human",
+      "total_requests": 117,
+      "timing": {
+        "min_gap_ms": 21.0,
+        "median_gap_ms": 40.0,
+        "mean_gap_ms": 344.39,
+        "std_gap_ms": 673.44,
+        "max_gap_ms": 5395.0,
+        "frac_below_50ms": 0.6897,
+        "frac_below_100ms": 0.75,
+        "frac_below_250ms": 0.75,
+        "frac_ge_500ms": 0.25,
+        "mean_html_gap_ms": 1377.55,
+        "median_html_gap_ms": 1295.0
+      },
+      "sequence": {
+        "n_static": 87,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 2.9,
+        "static_burst_count": 29,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0769,
+        "repeated_path_ratio": 0.9231
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 24.26,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.8636999259685778,
+          "temporalVariance": 0.21700862056332193,
+          "behavioralDiversity": 1.3807588851543706,
+          "endpointConcentration": 0.38095238095238093,
+          "cartRatio": 0.037037037037037035,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0007
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 0.7498875168724691,
+          "temporalVariance": 0.5894826579215732,
+          "behavioralDiversity": 1.5214227439082721,
+          "endpointConcentration": 0.3333333333333333,
+          "cartRatio": 0.03418803418803419,
+          "assetSkipRatio": 0.2564102564102564,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0007
+        }
+      }
+    },
+    {
+      "client_id": "normal_browser-04",
+      "profile": "normal_browser",
+      "true_class": "human",
+      "total_requests": 113,
+      "timing": {
+        "min_gap_ms": 22.0,
+        "median_gap_ms": 39.0,
+        "mean_gap_ms": 317.96,
+        "std_gap_ms": 616.64,
+        "max_gap_ms": 4848.0,
+        "frac_below_50ms": 0.7143,
+        "frac_below_100ms": 0.7411,
+        "frac_below_250ms": 0.75,
+        "frac_ge_500ms": 0.25,
+        "mean_html_gap_ms": 1271.82,
+        "median_html_gap_ms": 1209.5
+      },
+      "sequence": {
+        "n_static": 84,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 2.8966,
+        "static_burst_count": 28,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0796,
+        "repeated_path_ratio": 0.9204
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 23.656,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.8855154965211891,
+          "temporalVariance": 0.2197441930926435,
+          "behavioralDiversity": 1.5432335250170632,
+          "endpointConcentration": 0.2857142857142857,
+          "cartRatio": 0.024691358024691357,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0007
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 0.8128941836019622,
+          "temporalVariance": 0.5949055005645293,
+          "behavioralDiversity": 1.5888624873178951,
+          "endpointConcentration": 0.27586206896551724,
+          "cartRatio": 0.017699115044247787,
+          "assetSkipRatio": 0.2566371681415929,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0007
+        }
+      }
+    },
+    {
+      "client_id": "spa_client-00",
+      "profile": "spa_client",
+      "true_class": "human",
+      "total_requests": 24,
+      "timing": {
+        "min_gap_ms": 105.0,
+        "median_gap_ms": 810.0,
+        "mean_gap_ms": 871.52,
+        "std_gap_ms": 751.77,
+        "max_gap_ms": 4226.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0435,
+        "frac_ge_500ms": 0.8261,
+        "mean_html_gap_ms": 20045.0,
+        "median_html_gap_ms": 20045.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.2083,
+        "repeated_path_ratio": 0.7917
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 13.797,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 1.5144958892254436,
+          "temporalVariance": 0.3300895212832408,
+          "behavioralDiversity": 1.190161976585674,
+          "endpointConcentration": 0.42857142857142855,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0571,
+          "prodBotProb": 0.9991
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 1.192665109576107,
+          "temporalVariance": 0.8602379474796282,
+          "behavioralDiversity": 1.33859761973205,
+          "endpointConcentration": 0.375,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0571,
+          "prodBotProb": 0.9991
+        }
+      }
+    },
+    {
+      "client_id": "spa_client-01",
+      "profile": "spa_client",
+      "true_class": "human",
+      "total_requests": 30,
+      "timing": {
+        "min_gap_ms": 118.0,
+        "median_gap_ms": 788.0,
+        "mean_gap_ms": 870.9,
+        "std_gap_ms": 708.13,
+        "max_gap_ms": 4459.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0345,
+        "frac_ge_500ms": 0.8276,
+        "mean_html_gap_ms": 25256.0,
+        "median_html_gap_ms": 25256.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.1667,
+        "repeated_path_ratio": 0.8333
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 15.148,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 1.3813971845809763,
+          "temporalVariance": 0.2785290349497316,
+          "behavioralDiversity": 1.15374194270109,
+          "endpointConcentration": 0.42857142857142855,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0818,
+          "prodBotProb": 0.9993
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 1.1847405418213413,
+          "temporalVariance": 0.8091212609129839,
+          "behavioralDiversity": 1.2539513103584574,
+          "endpointConcentration": 0.43333333333333335,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0818,
+          "prodBotProb": 0.9993
+        }
+      }
+    },
+    {
+      "client_id": "spa_client-02",
+      "profile": "spa_client",
+      "true_class": "human",
+      "total_requests": 28,
+      "timing": {
+        "min_gap_ms": 102.0,
+        "median_gap_ms": 753.0,
+        "mean_gap_ms": 840.44,
+        "std_gap_ms": 849.36,
+        "max_gap_ms": 5010.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.037,
+        "frac_ge_500ms": 0.7778,
+        "mean_html_gap_ms": 22692.0,
+        "median_html_gap_ms": 22692.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 28,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.1786,
+        "repeated_path_ratio": 0.8214
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 13.754,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 1.5186577957766851,
+          "temporalVariance": 0.36608464608041563,
+          "behavioralDiversity": 1.2077239818393846,
+          "endpointConcentration": 0.42857142857142855,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0723,
+          "prodBotProb": 0.9991
+        },
+        "final_features": {
+          "sessionDepth": 28.0,
+          "requestVelocity": 1.2287168685272951,
+          "temporalVariance": 1.0114257659530967,
+          "behavioralDiversity": 1.259809383653448,
+          "endpointConcentration": 0.4642857142857143,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0723,
+          "prodBotProb": 0.9991
+        }
+      }
+    },
+    {
+      "client_id": "spa_client-03",
+      "profile": "spa_client",
+      "true_class": "human",
+      "total_requests": 24,
+      "timing": {
+        "min_gap_ms": 101.0,
+        "median_gap_ms": 787.0,
+        "mean_gap_ms": 852.26,
+        "std_gap_ms": 758.02,
+        "max_gap_ms": 4239.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0435,
+        "frac_ge_500ms": 0.7826,
+        "mean_html_gap_ms": 19602.0,
+        "median_html_gap_ms": 19602.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.2083,
+        "repeated_path_ratio": 0.7917
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 13.544,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 1.544231193470108,
+          "temporalVariance": 0.3446427120011575,
+          "behavioralDiversity": 1.15374194270109,
+          "endpointConcentration": 0.42857142857142855,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0723,
+          "prodBotProb": 0.9991
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 1.2203803518763348,
+          "temporalVariance": 0.8848007819051755,
+          "behavioralDiversity": 1.2485447803385668,
+          "endpointConcentration": 0.4583333333333333,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0723,
+          "prodBotProb": 0.9991
+        }
+      }
+    },
+    {
+      "client_id": "spa_client-04",
+      "profile": "spa_client",
+      "true_class": "human",
+      "total_requests": 31,
+      "timing": {
+        "min_gap_ms": 116.0,
+        "median_gap_ms": 692.5,
+        "mean_gap_ms": 767.17,
+        "std_gap_ms": 645.63,
+        "max_gap_ms": 3999.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0333,
+        "frac_ge_500ms": 0.6667,
+        "mean_html_gap_ms": 23015.0,
+        "median_html_gap_ms": 23015.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 31,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.1613,
+        "repeated_path_ratio": 0.8387
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 12.548,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 1.6674606955693188,
+          "temporalVariance": 0.39691887050181207,
+          "behavioralDiversity": 1.2353177280975793,
+          "endpointConcentration": 0.3333333333333333,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0639,
+          "prodBotProb": 0.999
+        },
+        "final_features": {
+          "sessionDepth": 31.0,
+          "requestVelocity": 1.3432706473697895,
+          "temporalVariance": 0.8359874687831259,
+          "behavioralDiversity": 1.2928560094867156,
+          "endpointConcentration": 0.3548387096774194,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.0639,
+          "prodBotProb": 0.999
+        }
+      }
+    },
+    {
+      "client_id": "mobile_browser-00",
+      "profile": "mobile_browser",
+      "true_class": "human",
+      "total_requests": 39,
+      "timing": {
+        "min_gap_ms": 26.0,
+        "median_gap_ms": 1569.5,
+        "mean_gap_ms": 1457.47,
+        "std_gap_ms": 1161.4,
+        "max_gap_ms": 4984.0,
+        "frac_below_50ms": 0.3158,
+        "frac_below_100ms": 0.3158,
+        "frac_below_250ms": 0.3158,
+        "frac_ge_500ms": 0.6842,
+        "mean_html_gap_ms": 2130.15,
+        "median_html_gap_ms": 2007.0
+      },
+      "sequence": {
+        "n_static": 12,
+        "n_non_static": 27,
+        "static_to_non_static_ratio": 0.4444,
+        "static_burst_count": 12,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.44,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0769,
+        "repeated_path_ratio": 0.9231
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 39.233,
+        "requests_before_first_score": 28,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.534160858727171,
+          "temporalVariance": 0.24732363903007507,
+          "behavioralDiversity": 0.0,
+          "endpointConcentration": 1.0,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.7241379310344828,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.5459
+        },
+        "final_features": {
+          "sessionDepth": 27.0,
+          "requestVelocity": 0.48676714502055235,
+          "temporalVariance": 0.3630082778494764,
+          "behavioralDiversity": 0.15841057013179086,
+          "endpointConcentration": 0.9629629629629629,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.6923076923076923,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.5459
+        }
+      }
+    },
+    {
+      "client_id": "mobile_browser-01",
+      "profile": "mobile_browser",
+      "true_class": "human",
+      "total_requests": 37,
+      "timing": {
+        "min_gap_ms": 30.0,
+        "median_gap_ms": 1673.0,
+        "mean_gap_ms": 1606.61,
+        "std_gap_ms": 1080.84,
+        "max_gap_ms": 5187.0,
+        "frac_below_50ms": 0.1389,
+        "frac_below_100ms": 0.1944,
+        "frac_below_250ms": 0.2222,
+        "frac_ge_500ms": 0.7778,
+        "mean_html_gap_ms": 2065.64,
+        "median_html_gap_ms": 1968.5
+      },
+      "sequence": {
+        "n_static": 8,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 0.2759,
+        "static_burst_count": 8,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.28,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0811,
+        "repeated_path_ratio": 0.9189
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 40.024,
+        "requests_before_first_score": 28,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.5237430167597766,
+          "temporalVariance": 0.24551321646011057,
+          "behavioralDiversity": 0.0,
+          "endpointConcentration": 1.0,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.7241379310344828,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.6004
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 0.5006041774555499,
+          "temporalVariance": 0.37498535079568424,
+          "behavioralDiversity": 0.14999492361041503,
+          "endpointConcentration": 0.9655172413793104,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.7837837837837838,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.6004
+        }
+      }
+    },
+    {
+      "client_id": "mobile_browser-02",
+      "profile": "mobile_browser",
+      "true_class": "human",
+      "total_requests": 35,
+      "timing": {
+        "min_gap_ms": 28.0,
+        "median_gap_ms": 1579.5,
+        "mean_gap_ms": 1525.65,
+        "std_gap_ms": 1303.68,
+        "max_gap_ms": 6391.0,
+        "frac_below_50ms": 0.2647,
+        "frac_below_100ms": 0.2941,
+        "frac_below_250ms": 0.2941,
+        "frac_ge_500ms": 0.7059,
+        "mean_html_gap_ms": 2161.33,
+        "median_html_gap_ms": 2036.5
+      },
+      "sequence": {
+        "n_static": 10,
+        "n_non_static": 25,
+        "static_to_non_static_ratio": 0.4,
+        "static_burst_count": 10,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.4,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0857,
+        "repeated_path_ratio": 0.9143
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 38.195,
+        "requests_before_first_score": 26,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.5490052547645814,
+          "temporalVariance": 0.3159267690618628,
+          "behavioralDiversity": 0.0,
+          "endpointConcentration": 1.0,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.7777777777777778,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.8185
+        },
+        "final_features": {
+          "sessionDepth": 25.0,
+          "requestVelocity": 0.4813153385572091,
+          "temporalVariance": 0.490142132785019,
+          "behavioralDiversity": 0.167944147734173,
+          "endpointConcentration": 0.96,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.7142857142857143,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.8185
+        }
+      }
+    },
+    {
+      "client_id": "mobile_browser-03",
+      "profile": "mobile_browser",
+      "true_class": "human",
+      "total_requests": 38,
+      "timing": {
+        "min_gap_ms": 23.0,
+        "median_gap_ms": 1462.0,
+        "mean_gap_ms": 1283.11,
+        "std_gap_ms": 1170.0,
+        "max_gap_ms": 5237.0,
+        "frac_below_50ms": 0.3514,
+        "frac_below_100ms": 0.3784,
+        "frac_below_250ms": 0.3784,
+        "frac_ge_500ms": 0.6216,
+        "mean_html_gap_ms": 2064.13,
+        "median_html_gap_ms": 1807.0
+      },
+      "sequence": {
+        "n_static": 14,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 0.5833,
+        "static_burst_count": 14,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.58,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0789,
+        "repeated_path_ratio": 0.9211
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 39.081,
+        "requests_before_first_score": 31,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.5361382726135465,
+          "temporalVariance": 0.24850218343788852,
+          "behavioralDiversity": 0.0,
+          "endpointConcentration": 1.0,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.65625,
+          "shadowBotProb": 0.0017,
+          "prodBotProb": 0.4173
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 0.5045408678102926,
+          "temporalVariance": 0.40153640174286437,
+          "behavioralDiversity": 0.1732052067491771,
+          "endpointConcentration": 0.9583333333333334,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.631578947368421,
+          "shadowBotProb": 0.0017,
+          "prodBotProb": 0.4173
+        }
+      }
+    },
+    {
+      "client_id": "mobile_browser-04",
+      "profile": "mobile_browser",
+      "true_class": "human",
+      "total_requests": 33,
+      "timing": {
+        "min_gap_ms": 25.0,
+        "median_gap_ms": 1571.5,
+        "mean_gap_ms": 1624.5,
+        "std_gap_ms": 1402.4,
+        "max_gap_ms": 6438.0,
+        "frac_below_50ms": 0.2812,
+        "frac_below_100ms": 0.3125,
+        "frac_below_250ms": 0.3125,
+        "frac_ge_500ms": 0.6875,
+        "mean_html_gap_ms": 2362.91,
+        "median_html_gap_ms": 2540.0
+      },
+      "sequence": {
+        "n_static": 10,
+        "n_non_static": 23,
+        "static_to_non_static_ratio": 0.4348,
+        "static_burst_count": 10,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.43,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0909,
+        "repeated_path_ratio": 0.9091
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 44.356,
+        "requests_before_first_score": 29,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.4728132387706856,
+          "temporalVariance": 0.2829355145662415,
+          "behavioralDiversity": 0.0,
+          "endpointConcentration": 1.0,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.7,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.7304
+        },
+        "final_features": {
+          "sessionDepth": 23.0,
+          "requestVelocity": 0.4418488492719099,
+          "temporalVariance": 0.46143888011868045,
+          "behavioralDiversity": 0.17884491271684755,
+          "endpointConcentration": 0.9565217391304348,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 0.696969696969697,
+          "shadowBotProb": 0.0015,
+          "prodBotProb": 0.7304
+        }
+      }
+    },
+    {
+      "client_id": "privacy_browser-00",
+      "profile": "privacy_browser",
+      "true_class": "human",
+      "total_requests": 51,
+      "timing": {
+        "min_gap_ms": 24.0,
+        "median_gap_ms": 326.5,
+        "mean_gap_ms": 636.46,
+        "std_gap_ms": 805.61,
+        "max_gap_ms": 4670.0,
+        "frac_below_50ms": 0.48,
+        "frac_below_100ms": 0.5,
+        "frac_below_250ms": 0.5,
+        "frac_ge_500ms": 0.5,
+        "mean_html_gap_ms": 1272.92,
+        "median_html_gap_ms": 1145.0
+      },
+      "sequence": {
+        "n_static": 25,
+        "n_non_static": 26,
+        "static_to_non_static_ratio": 0.9615,
+        "static_burst_count": 25,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.96,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.1373,
+        "repeated_path_ratio": 0.8627
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 21.955,
+        "requests_before_first_score": 40,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.9542418321443177,
+          "temporalVariance": 0.26110860650936646,
+          "behavioralDiversity": 1.5256715197633528,
+          "endpointConcentration": 0.3333333333333333,
+          "cartRatio": 0.04878048780487805,
+          "assetSkipRatio": 0.5121951219512195,
+          "shadowBotProb": 0.0036,
+          "prodBotProb": 0.0003
+        },
+        "final_features": {
+          "sessionDepth": 26.0,
+          "requestVelocity": 0.815583926722921,
+          "temporalVariance": 0.5984092011699441,
+          "behavioralDiversity": 1.671168394505716,
+          "endpointConcentration": 0.2692307692307692,
+          "cartRatio": 0.058823529411764705,
+          "assetSkipRatio": 0.5098039215686274,
+          "shadowBotProb": 0.0036,
+          "prodBotProb": 0.0003
+        }
+      }
+    },
+    {
+      "client_id": "privacy_browser-01",
+      "profile": "privacy_browser",
+      "true_class": "human",
+      "total_requests": 57,
+      "timing": {
+        "min_gap_ms": 24.0,
+        "median_gap_ms": 343.5,
+        "mean_gap_ms": 747.68,
+        "std_gap_ms": 925.97,
+        "max_gap_ms": 5217.0,
+        "frac_below_50ms": 0.4464,
+        "frac_below_100ms": 0.5,
+        "frac_below_250ms": 0.5,
+        "frac_ge_500ms": 0.5,
+        "mean_html_gap_ms": 1495.36,
+        "median_html_gap_ms": 1359.5
+      },
+      "sequence": {
+        "n_static": 28,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 0.9655,
+        "static_burst_count": 28,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.97,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.1228,
+        "repeated_path_ratio": 0.8772
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 26.389,
+        "requests_before_first_score": 40,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.794461468618772,
+          "temporalVariance": 0.35960388775714086,
+          "behavioralDiversity": 1.4892514858787689,
+          "endpointConcentration": 0.38095238095238093,
+          "cartRatio": 0.07317073170731707,
+          "assetSkipRatio": 0.5121951219512195,
+          "shadowBotProb": 0.0042,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 0.6917938931297709,
+          "temporalVariance": 0.5583572167752195,
+          "behavioralDiversity": 1.620240256953261,
+          "endpointConcentration": 0.3448275862068966,
+          "cartRatio": 0.07017543859649122,
+          "assetSkipRatio": 0.5087719298245614,
+          "shadowBotProb": 0.0042,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "privacy_browser-02",
+      "profile": "privacy_browser",
+      "true_class": "human",
+      "total_requests": 59,
+      "timing": {
+        "min_gap_ms": 22.0,
+        "median_gap_ms": 321.5,
+        "mean_gap_ms": 690.45,
+        "std_gap_ms": 876.66,
+        "max_gap_ms": 4862.0,
+        "frac_below_50ms": 0.4483,
+        "frac_below_100ms": 0.4828,
+        "frac_below_250ms": 0.5,
+        "frac_ge_500ms": 0.5,
+        "mean_html_gap_ms": 1380.9,
+        "median_html_gap_ms": 1347.0
+      },
+      "sequence": {
+        "n_static": 29,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 0.9667,
+        "static_burst_count": 29,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.97,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.1186,
+        "repeated_path_ratio": 0.8814
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 25.787,
+        "requests_before_first_score": 40,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.8119393751933188,
+          "temporalVariance": 0.41345171064704367,
+          "behavioralDiversity": 1.593066681566068,
+          "endpointConcentration": 0.23809523809523808,
+          "cartRatio": 0.12195121951219512,
+          "assetSkipRatio": 0.5121951219512195,
+          "shadowBotProb": 0.0041,
+          "prodBotProb": 0.0001
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 0.7474772642332129,
+          "temporalVariance": 0.597472037808914,
+          "behavioralDiversity": 1.6816751847023959,
+          "endpointConcentration": 0.23333333333333334,
+          "cartRatio": 0.11864406779661017,
+          "assetSkipRatio": 0.5084745762711864,
+          "shadowBotProb": 0.0041,
+          "prodBotProb": 0.0001
+        }
+      }
+    },
+    {
+      "client_id": "privacy_browser-03",
+      "profile": "privacy_browser",
+      "true_class": "human",
+      "total_requests": 47,
+      "timing": {
+        "min_gap_ms": 25.0,
+        "median_gap_ms": 362.0,
+        "mean_gap_ms": 787.57,
+        "std_gap_ms": 943.67,
+        "max_gap_ms": 4858.0,
+        "frac_below_50ms": 0.413,
+        "frac_below_100ms": 0.5,
+        "frac_below_250ms": 0.5,
+        "frac_ge_500ms": 0.5,
+        "mean_html_gap_ms": 1575.13,
+        "median_html_gap_ms": 1494.0
+      },
+      "sequence": {
+        "n_static": 23,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 0.9583,
+        "static_burst_count": 23,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.96,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.1489,
+        "repeated_path_ratio": 0.8511
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 28.406,
+        "requests_before_first_score": 40,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.7379295804343243,
+          "temporalVariance": 0.3023419654270436,
+          "behavioralDiversity": 1.458895450407514,
+          "endpointConcentration": 0.42857142857142855,
+          "cartRatio": 0.21951219512195122,
+          "assetSkipRatio": 0.5121951219512195,
+          "shadowBotProb": 0.004,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 0.6611570247933884,
+          "temporalVariance": 0.5179271624087618,
+          "behavioralDiversity": 1.5926571874396014,
+          "endpointConcentration": 0.375,
+          "cartRatio": 0.19148936170212766,
+          "assetSkipRatio": 0.5106382978723405,
+          "shadowBotProb": 0.004,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "privacy_browser-04",
+      "profile": "privacy_browser",
+      "true_class": "human",
+      "total_requests": 57,
+      "timing": {
+        "min_gap_ms": 23.0,
+        "median_gap_ms": 387.0,
+        "mean_gap_ms": 727.55,
+        "std_gap_ms": 867.41,
+        "max_gap_ms": 4822.0,
+        "frac_below_50ms": 0.4643,
+        "frac_below_100ms": 0.4821,
+        "frac_below_250ms": 0.5,
+        "frac_ge_500ms": 0.5,
+        "mean_html_gap_ms": 1455.11,
+        "median_html_gap_ms": 1338.0
+      },
+      "sequence": {
+        "n_static": 28,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 0.9655,
+        "static_burst_count": 28,
+        "max_static_burst": 1,
+        "mean_static_burst": 1.0,
+        "mean_html_fanout": 0.97,
+        "max_html_fanout": 1,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.1228,
+        "repeated_path_ratio": 0.8772
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 26.803,
+        "requests_before_first_score": 40,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.7824143070044709,
+          "temporalVariance": 0.3096997999288117,
+          "behavioralDiversity": 1.4199412082520144,
+          "endpointConcentration": 0.38095238095238093,
+          "cartRatio": 0.04878048780487805,
+          "assetSkipRatio": 0.5121951219512195,
+          "shadowBotProb": 0.004,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 0.7109062829407006,
+          "temporalVariance": 0.5097171038755928,
+          "behavioralDiversity": 1.5998102703047608,
+          "endpointConcentration": 0.3448275862068966,
+          "cartRatio": 0.08771929824561403,
+          "assetSkipRatio": 0.5087719298245614,
+          "shadowBotProb": 0.004,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "slow_scraper-00",
+      "profile": "slow_scraper",
+      "true_class": "bot",
+      "total_requests": 30,
+      "timing": {
+        "min_gap_ms": 1037.0,
+        "median_gap_ms": 2233.0,
+        "mean_gap_ms": 2392.28,
+        "std_gap_ms": 863.67,
+        "max_gap_ms": 6114.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0,
+        "frac_ge_500ms": 1.0,
+        "mean_html_gap_ms": 2392.28,
+        "median_html_gap_ms": 2233.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.9333,
+        "repeated_path_ratio": 0.0667
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 47.368,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.44289781714647264,
+          "temporalVariance": 0.18983583941198806,
+          "behavioralDiversity": 3.0445224377234217,
+          "endpointConcentration": 0.047619047619047616,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9847,
+          "prodBotProb": 0.9996
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 0.4320400933206601,
+          "temporalVariance": 0.36116814239719036,
+          "behavioralDiversity": 3.308777757587495,
+          "endpointConcentration": 0.06666666666666667,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9847,
+          "prodBotProb": 0.9996
+        }
+      }
+    },
+    {
+      "client_id": "slow_scraper-01",
+      "profile": "slow_scraper",
+      "true_class": "bot",
+      "total_requests": 24,
+      "timing": {
+        "min_gap_ms": 1581.0,
+        "median_gap_ms": 2115.0,
+        "mean_gap_ms": 2395.26,
+        "std_gap_ms": 754.79,
+        "max_gap_ms": 5348.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0,
+        "frac_ge_500ms": 1.0,
+        "mean_html_gap_ms": 2395.26,
+        "median_html_gap_ms": 2115.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.9583,
+        "repeated_path_ratio": 0.0417
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 45.8,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.4579952891913112,
+          "temporalVariance": 0.18831510628871923,
+          "behavioralDiversity": 3.0445224377234217,
+          "endpointConcentration": 0.047619047619047616,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9847,
+          "prodBotProb": 0.9996
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 0.43518468149921125,
+          "temporalVariance": 0.3140433113234009,
+          "behavioralDiversity": 3.1202915653012844,
+          "endpointConcentration": 0.08333333333333333,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9847,
+          "prodBotProb": 0.9996
+        }
+      }
+    },
+    {
+      "client_id": "slow_scraper-02",
+      "profile": "slow_scraper",
+      "true_class": "bot",
+      "total_requests": 29,
+      "timing": {
+        "min_gap_ms": 1608.0,
+        "median_gap_ms": 2408.0,
+        "mean_gap_ms": 2410.71,
+        "std_gap_ms": 800.78,
+        "max_gap_ms": 6065.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0,
+        "frac_ge_500ms": 1.0,
+        "mean_html_gap_ms": 2410.71,
+        "median_html_gap_ms": 2408.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.9655,
+        "repeated_path_ratio": 0.0345
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 46.649,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.44951516578547424,
+          "temporalVariance": 0.16107761322174652,
+          "behavioralDiversity": 3.0445224377234217,
+          "endpointConcentration": 0.047619047619047616,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9885,
+          "prodBotProb": 0.9996
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 0.42913374175027375,
+          "temporalVariance": 0.3331668289474487,
+          "behavioralDiversity": 3.319492576154752,
+          "endpointConcentration": 0.06896551724137931,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9885,
+          "prodBotProb": 0.9996
+        }
+      }
+    },
+    {
+      "client_id": "slow_scraper-03",
+      "profile": "slow_scraper",
+      "true_class": "bot",
+      "total_requests": 23,
+      "timing": {
+        "min_gap_ms": 1577.0,
+        "median_gap_ms": 2386.5,
+        "mean_gap_ms": 2497.91,
+        "std_gap_ms": 813.89,
+        "max_gap_ms": 5546.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0,
+        "frac_ge_500ms": 1.0,
+        "mean_html_gap_ms": 2497.91,
+        "median_html_gap_ms": 2386.5
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 23,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.9565,
+        "repeated_path_ratio": 0.0435
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 46.997,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.44623884402889924,
+          "temporalVariance": 0.21073032926269036,
+          "behavioralDiversity": 3.0445224377234217,
+          "endpointConcentration": 0.047619047619047616,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9895,
+          "prodBotProb": 0.9996
+        },
+        "final_features": {
+          "sessionDepth": 23.0,
+          "requestVelocity": 0.41795384335816826,
+          "temporalVariance": 0.32653723434188503,
+          "behavioralDiversity": 3.0752205480543715,
+          "endpointConcentration": 0.08695652173913043,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9895,
+          "prodBotProb": 0.9996
+        }
+      }
+    },
+    {
+      "client_id": "slow_scraper-04",
+      "profile": "slow_scraper",
+      "true_class": "bot",
+      "total_requests": 23,
+      "timing": {
+        "min_gap_ms": 1614.0,
+        "median_gap_ms": 1848.0,
+        "mean_gap_ms": 2248.64,
+        "std_gap_ms": 1003.09,
+        "max_gap_ms": 6469.0,
+        "frac_below_50ms": 0.0,
+        "frac_below_100ms": 0.0,
+        "frac_below_250ms": 0.0,
+        "frac_ge_500ms": 1.0,
+        "mean_html_gap_ms": 2248.64,
+        "median_html_gap_ms": 1848.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 23,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 0.9565,
+        "repeated_path_ratio": 0.0435
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 41.363,
+        "requests_before_first_score": 20,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 0.5068423720223011,
+          "temporalVariance": 0.19553419806427388,
+          "behavioralDiversity": 3.0445224377234217,
+          "endpointConcentration": 0.047619047619047616,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9789,
+          "prodBotProb": 0.9996
+        },
+        "final_features": {
+          "sessionDepth": 23.0,
+          "requestVelocity": 0.4642244424260773,
+          "temporalVariance": 0.4453967886514658,
+          "behavioralDiversity": 3.0752205480543715,
+          "endpointConcentration": 0.08695652173913043,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.9789,
+          "prodBotProb": 0.9996
+        }
+      }
+    },
+    {
+      "client_id": "asset_fetching_bot-00",
+      "profile": "asset_fetching_bot",
+      "true_class": "bot",
+      "total_requests": 93,
+      "timing": {
+        "min_gap_ms": 32.0,
+        "median_gap_ms": 48.0,
+        "mean_gap_ms": 107.1,
+        "std_gap_ms": 349.72,
+        "max_gap_ms": 3415.0,
+        "frac_below_50ms": 0.5652,
+        "frac_below_100ms": 0.75,
+        "frac_below_250ms": 0.9891,
+        "frac_ge_500ms": 0.0109,
+        "mean_html_gap_ms": 428.39,
+        "median_html_gap_ms": 287.0
+      },
+      "sequence": {
+        "n_static": 69,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 2.875,
+        "static_burst_count": 23,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.88,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0968,
+        "repeated_path_ratio": 0.9032
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.782,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 3.630077787381158,
+          "temporalVariance": 0.11324100762746254,
+          "behavioralDiversity": 1.4805157682514472,
+          "endpointConcentration": 0.2857142857142857,
+          "cartRatio": 0.07407407407407407,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 2.419598749873979,
+          "temporalVariance": 1.5402219679569233,
+          "behavioralDiversity": 1.5772904328426047,
+          "endpointConcentration": 0.2916666666666667,
+          "cartRatio": 0.06451612903225806,
+          "assetSkipRatio": 0.25806451612903225,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "asset_fetching_bot-01",
+      "profile": "asset_fetching_bot",
+      "true_class": "bot",
+      "total_requests": 121,
+      "timing": {
+        "min_gap_ms": 27.0,
+        "median_gap_ms": 46.0,
+        "mean_gap_ms": 99.7,
+        "std_gap_ms": 342.94,
+        "max_gap_ms": 3808.0,
+        "frac_below_50ms": 0.5833,
+        "frac_below_100ms": 0.75,
+        "frac_below_250ms": 0.9917,
+        "frac_ge_500ms": 0.0083,
+        "mean_html_gap_ms": 398.8,
+        "median_html_gap_ms": 277.5
+      },
+      "sequence": {
+        "n_static": 90,
+        "n_non_static": 31,
+        "static_to_non_static_ratio": 2.9032,
+        "static_burst_count": 30,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0744,
+        "repeated_path_ratio": 0.9256
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.789,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 3.5977385643309923,
+          "temporalVariance": 0.12254066800351884,
+          "behavioralDiversity": 1.5256715197633528,
+          "endpointConcentration": 0.3333333333333333,
+          "cartRatio": 0.024691358024691357,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0017
+        },
+        "final_features": {
+          "sessionDepth": 31.0,
+          "requestVelocity": 2.5747508305647844,
+          "temporalVariance": 1.6295703076038117,
+          "behavioralDiversity": 1.5997850513005172,
+          "endpointConcentration": 0.3225806451612903,
+          "cartRatio": 0.024793388429752067,
+          "assetSkipRatio": 0.25619834710743805,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0017
+        }
+      }
+    },
+    {
+      "client_id": "asset_fetching_bot-02",
+      "profile": "asset_fetching_bot",
+      "true_class": "bot",
+      "total_requests": 117,
+      "timing": {
+        "min_gap_ms": 24.0,
+        "median_gap_ms": 46.0,
+        "mean_gap_ms": 104.01,
+        "std_gap_ms": 377.31,
+        "max_gap_ms": 4119.0,
+        "frac_below_50ms": 0.6379,
+        "frac_below_100ms": 0.75,
+        "frac_below_250ms": 0.9828,
+        "frac_ge_500ms": 0.0086,
+        "mean_html_gap_ms": 416.03,
+        "median_html_gap_ms": 278.0
+      },
+      "sequence": {
+        "n_static": 87,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 2.9,
+        "static_burst_count": 29,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0769,
+        "repeated_path_ratio": 0.9231
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.765,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 3.6726128016789086,
+          "temporalVariance": 0.1007557738650173,
+          "behavioralDiversity": 1.410352868465972,
+          "endpointConcentration": 0.38095238095238093,
+          "cartRatio": 0.04938271604938271,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 2.470152326060107,
+          "temporalVariance": 1.7261451476441982,
+          "behavioralDiversity": 1.5902223618523075,
+          "endpointConcentration": 0.3333333333333333,
+          "cartRatio": 0.05128205128205128,
+          "assetSkipRatio": 0.2564102564102564,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "asset_fetching_bot-03",
+      "profile": "asset_fetching_bot",
+      "true_class": "bot",
+      "total_requests": 89,
+      "timing": {
+        "min_gap_ms": 27.0,
+        "median_gap_ms": 47.5,
+        "mean_gap_ms": 111.15,
+        "std_gap_ms": 377.89,
+        "max_gap_ms": 3606.0,
+        "frac_below_50ms": 0.5455,
+        "frac_below_100ms": 0.75,
+        "frac_below_250ms": 0.9773,
+        "frac_ge_500ms": 0.0114,
+        "mean_html_gap_ms": 444.59,
+        "median_html_gap_ms": 281.5
+      },
+      "sequence": {
+        "n_static": 66,
+        "n_non_static": 23,
+        "static_to_non_static_ratio": 2.8696,
+        "static_burst_count": 22,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.87,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.1011,
+        "repeated_path_ratio": 0.8989
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.759,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 3.685503685503685,
+          "temporalVariance": 0.12836203290929335,
+          "behavioralDiversity": 1.593066681566068,
+          "endpointConcentration": 0.23809523809523808,
+          "cartRatio": 0.06172839506172839,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 23.0,
+          "requestVelocity": 2.3310023310023307,
+          "temporalVariance": 1.5982469732366558,
+          "behavioralDiversity": 1.7014688682336978,
+          "endpointConcentration": 0.21739130434782608,
+          "cartRatio": 0.056179775280898875,
+          "assetSkipRatio": 0.2584269662921348,
+          "shadowBotProb": 0.0011,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "asset_fetching_bot-04",
+      "profile": "asset_fetching_bot",
+      "true_class": "bot",
+      "total_requests": 117,
+      "timing": {
+        "min_gap_ms": 26.0,
+        "median_gap_ms": 47.0,
+        "mean_gap_ms": 102.48,
+        "std_gap_ms": 363.37,
+        "max_gap_ms": 3970.0,
+        "frac_below_50ms": 0.5603,
+        "frac_below_100ms": 0.75,
+        "frac_below_250ms": 0.9914,
+        "frac_ge_500ms": 0.0086,
+        "mean_html_gap_ms": 409.93,
+        "median_html_gap_ms": 286.0
+      },
+      "sequence": {
+        "n_static": 87,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 2.9,
+        "static_burst_count": 29,
+        "max_static_burst": 3,
+        "mean_static_burst": 3.0,
+        "mean_html_fanout": 2.9,
+        "max_html_fanout": 3,
+        "frac_assets_following_html": 1.0,
+        "unique_path_ratio": 0.0769,
+        "repeated_path_ratio": 0.9231
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.779,
+        "requests_before_first_score": 80,
+        "made_at_depth_21": true,
+        "first_score_features": {
+          "sessionDepth": 21.0,
+          "requestVelocity": 3.6144578313253013,
+          "temporalVariance": 0.12607852175984557,
+          "behavioralDiversity": 1.555265503074954,
+          "endpointConcentration": 0.2857142857142857,
+          "cartRatio": 0.06172839506172839,
+          "assetSkipRatio": 0.2592592592592593,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0002
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 2.509410288582183,
+          "temporalVariance": 1.68797578368864,
+          "behavioralDiversity": 1.6500661586440621,
+          "endpointConcentration": 0.3,
+          "cartRatio": 0.042735042735042736,
+          "assetSkipRatio": 0.2564102564102564,
+          "shadowBotProb": 0.0006,
+          "prodBotProb": 0.0002
+        }
+      }
+    },
+    {
+      "client_id": "fast_scraper-00",
+      "profile": "fast_scraper",
+      "true_class": "bot",
+      "total_requests": 23,
+      "timing": {
+        "min_gap_ms": 41.0,
+        "median_gap_ms": 64.0,
+        "mean_gap_ms": 217.36,
+        "std_gap_ms": 705.53,
+        "max_gap_ms": 3450.0,
+        "frac_below_50ms": 0.1818,
+        "frac_below_100ms": 0.9545,
+        "frac_below_250ms": 0.9545,
+        "frac_ge_500ms": 0.0455,
+        "mean_html_gap_ms": 0.0,
+        "median_html_gap_ms": 0.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 23,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 1.0,
+        "repeated_path_ratio": 0.0
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 4.782,
+        "requests_before_first_score": 22,
+        "made_at_depth_21": false,
+        "first_score_features": {
+          "sessionDepth": 23.0,
+          "requestVelocity": 4.805683242791476,
+          "temporalVariance": 3.240937870894591,
+          "behavioralDiversity": 3.1354942159291497,
+          "endpointConcentration": 0.043478260869565216,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        },
+        "final_features": {
+          "sessionDepth": 23.0,
+          "requestVelocity": 4.805683242791476,
+          "temporalVariance": 3.240937870894591,
+          "behavioralDiversity": 3.1354942159291497,
+          "endpointConcentration": 0.043478260869565216,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        }
+      }
+    },
+    {
+      "client_id": "fast_scraper-01",
+      "profile": "fast_scraper",
+      "true_class": "bot",
+      "total_requests": 29,
+      "timing": {
+        "min_gap_ms": 42.0,
+        "median_gap_ms": 69.0,
+        "mean_gap_ms": 184.71,
+        "std_gap_ms": 617.78,
+        "max_gap_ms": 3394.0,
+        "frac_below_50ms": 0.2143,
+        "frac_below_100ms": 0.9643,
+        "frac_below_250ms": 0.9643,
+        "frac_ge_500ms": 0.0357,
+        "mean_html_gap_ms": 0.0,
+        "median_html_gap_ms": 0.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 1.0,
+        "repeated_path_ratio": 0.0
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.172,
+        "requests_before_first_score": 28,
+        "made_at_depth_21": false,
+        "first_score_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 5.608199574550377,
+          "temporalVariance": 3.3461077819688962,
+          "behavioralDiversity": 3.367295829986472,
+          "endpointConcentration": 0.034482758620689655,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 5.608199574550377,
+          "temporalVariance": 3.3461077819688962,
+          "behavioralDiversity": 3.367295829986472,
+          "endpointConcentration": 0.034482758620689655,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        }
+      }
+    },
+    {
+      "client_id": "fast_scraper-02",
+      "profile": "fast_scraper",
+      "true_class": "bot",
+      "total_requests": 24,
+      "timing": {
+        "min_gap_ms": 44.0,
+        "median_gap_ms": 62.0,
+        "mean_gap_ms": 211.39,
+        "std_gap_ms": 698.5,
+        "max_gap_ms": 3487.0,
+        "frac_below_50ms": 0.1739,
+        "frac_below_100ms": 0.9565,
+        "frac_below_250ms": 0.9565,
+        "frac_ge_500ms": 0.0435,
+        "mean_html_gap_ms": 0.0,
+        "median_html_gap_ms": 0.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 24,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 1.0,
+        "repeated_path_ratio": 0.0
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 4.862,
+        "requests_before_first_score": 23,
+        "made_at_depth_21": false,
+        "first_score_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 4.95458298926507,
+          "temporalVariance": 3.311339451636302,
+          "behavioralDiversity": 3.178053830347946,
+          "endpointConcentration": 0.041666666666666664,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        },
+        "final_features": {
+          "sessionDepth": 24.0,
+          "requestVelocity": 4.95458298926507,
+          "temporalVariance": 3.311339451636302,
+          "behavioralDiversity": 3.178053830347946,
+          "endpointConcentration": 0.041666666666666664,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        }
+      }
+    },
+    {
+      "client_id": "fast_scraper-03",
+      "profile": "fast_scraper",
+      "true_class": "bot",
+      "total_requests": 29,
+      "timing": {
+        "min_gap_ms": 47.0,
+        "median_gap_ms": 61.5,
+        "mean_gap_ms": 203.14,
+        "std_gap_ms": 729.42,
+        "max_gap_ms": 3993.0,
+        "frac_below_50ms": 0.0357,
+        "frac_below_100ms": 0.9643,
+        "frac_below_250ms": 0.9643,
+        "frac_ge_500ms": 0.0357,
+        "mean_html_gap_ms": 0.0,
+        "median_html_gap_ms": 0.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 29,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 1.0,
+        "repeated_path_ratio": 0.0
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.688,
+        "requests_before_first_score": 28,
+        "made_at_depth_21": false,
+        "first_score_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 5.1336519738006725,
+          "temporalVariance": 3.587440269314512,
+          "behavioralDiversity": 3.367295829986472,
+          "endpointConcentration": 0.034482758620689655,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        },
+        "final_features": {
+          "sessionDepth": 29.0,
+          "requestVelocity": 5.1336519738006725,
+          "temporalVariance": 3.587440269314512,
+          "behavioralDiversity": 3.367295829986472,
+          "endpointConcentration": 0.034482758620689655,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        }
+      }
+    },
+    {
+      "client_id": "fast_scraper-04",
+      "profile": "fast_scraper",
+      "true_class": "bot",
+      "total_requests": 30,
+      "timing": {
+        "min_gap_ms": 48.0,
+        "median_gap_ms": 67.0,
+        "mean_gap_ms": 183.07,
+        "std_gap_ms": 623.17,
+        "max_gap_ms": 3480.0,
+        "frac_below_50ms": 0.1379,
+        "frac_below_100ms": 0.9655,
+        "frac_below_250ms": 0.9655,
+        "frac_ge_500ms": 0.0345,
+        "mean_html_gap_ms": 0.0,
+        "median_html_gap_ms": 0.0
+      },
+      "sequence": {
+        "n_static": 0,
+        "n_non_static": 30,
+        "static_to_non_static_ratio": 0.0,
+        "static_burst_count": 0,
+        "max_static_burst": 0,
+        "mean_static_burst": 0.0,
+        "mean_html_fanout": 0.0,
+        "max_html_fanout": 0,
+        "frac_assets_following_html": 0.0,
+        "unique_path_ratio": 1.0,
+        "repeated_path_ratio": 0.0
+      },
+      "session_scoring": {
+        "has_scored_event": true,
+        "duration_before_first_score_sec": 5.309,
+        "requests_before_first_score": 29,
+        "made_at_depth_21": false,
+        "first_score_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 5.679666792881484,
+          "temporalVariance": 3.3914112835882957,
+          "behavioralDiversity": 3.401197381662154,
+          "endpointConcentration": 0.03333333333333333,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        },
+        "final_features": {
+          "sessionDepth": 30.0,
+          "requestVelocity": 5.679666792881484,
+          "temporalVariance": 3.3914112835882957,
+          "behavioralDiversity": 3.401197381662154,
+          "endpointConcentration": 0.03333333333333333,
+          "cartRatio": 0.0,
+          "assetSkipRatio": 1.0,
+          "shadowBotProb": 0.4053,
+          "prodBotProb": 0.9995
+        }
+      }
+    }
+  ]
+}

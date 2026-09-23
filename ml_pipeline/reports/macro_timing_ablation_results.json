@@ -1,0 +1,243 @@
+{
+  "dataset": "eclog_weak_labeled",
+  "dataset_hash": "76e8e9e740ae3604eca6e2c4f46179fa3943c9f208ea9ae9bd191b8e40803523",
+  "split_manifest_hash": "663ac09ea82a2d177394fe42f465956a14ce70c8a523dd10864828fa27ff8a42",
+  "train_clients": 2802,
+  "test_clients": 1202,
+  "train_sessions": 5644,
+  "test_sessions": 2636,
+  "timing_model_hash": "7b29ee3b574ce43cf9984408ff2d19096a6205c6389deff907cebf67e8e7f193",
+  "variants": [
+    {
+      "variant_name": "1. 7-Feature Baseline (with Asset_Skip_Ratio)",
+      "contract_name": "production_7feature",
+      "contract_hash": "4e8b01ac1b96952c3ad35b86e80948dafb296fb9306815c5fb807c3012a7222c",
+      "threshold": 0.5,
+      "feature_count": 7,
+      "features": [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio",
+        "SAGE_Asset_Skip_Ratio"
+      ],
+      "cv_roc_auc_mean": 0.9723,
+      "cv_roc_auc_std": 0.0126,
+      "cv_fold_scores": [
+        0.9722,
+        0.9496,
+        0.9863,
+        0.9817,
+        0.9718
+      ],
+      "holdout_metrics": {
+        "roc_auc": 0.9713650023116043,
+        "pr_auc": 0.9509492407943931,
+        "macro_f1": 0.9399522949409107,
+        "bot_recall": 0.9571197411003236,
+        "human_fpr": 0.075
+      },
+      "client_level_ci": {
+        "fpr_mean": 0.06330216450216451,
+        "fpr_low": 0.050216450216450215,
+        "fpr_high": 0.07792207792207792,
+        "rec_mean": 0.8709148936170212,
+        "rec_low": 0.7659574468085106,
+        "rec_high": 0.9574468085106383
+      },
+      "feature_importances": {
+        "SAGE_Session_Depth": 0.0652,
+        "SAGE_Temporal_Variance": 0.0155,
+        "SAGE_Request_Velocity": 0.0445,
+        "SAGE_Behavioral_Diversity": 0.0246,
+        "SAGE_Endpoint_Concentration": 0.0781,
+        "SAGE_Cart_Ratio": 0.0391,
+        "SAGE_Asset_Skip_Ratio": 0.7331
+      }
+    },
+    {
+      "variant_name": "2. 6-Feature Baseline (without Asset_Skip_Ratio)",
+      "contract_name": "eclog_6feature_baseline",
+      "contract_hash": "40f3b0dd6b44127ca0f8b3f2636a5645da896b234e2b6a051d70c9e80439a69d",
+      "threshold": 0.5,
+      "feature_count": 6,
+      "features": [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio"
+      ],
+      "cv_roc_auc_mean": 0.9715,
+      "cv_roc_auc_std": 0.0144,
+      "cv_fold_scores": [
+        0.9728,
+        0.9447,
+        0.9868,
+        0.9804,
+        0.9727
+      ],
+      "holdout_metrics": {
+        "roc_auc": 0.9707353791030976,
+        "pr_auc": 0.9516535900934053,
+        "macro_f1": 0.9433816723455961,
+        "bot_recall": 0.9627831715210357,
+        "human_fpr": 0.07357142857142857
+      },
+      "client_level_ci": {
+        "fpr_mean": 0.0614995670995671,
+        "fpr_low": 0.048463203463203465,
+        "fpr_high": 0.07532467532467532,
+        "rec_mean": 0.8915957446808511,
+        "rec_low": 0.8085106382978723,
+        "rec_high": 0.9787234042553191
+      },
+      "feature_importances": {
+        "SAGE_Session_Depth": 0.2678,
+        "SAGE_Temporal_Variance": 0.0155,
+        "SAGE_Request_Velocity": 0.0991,
+        "SAGE_Behavioral_Diversity": 0.0325,
+        "SAGE_Endpoint_Concentration": 0.4697,
+        "SAGE_Cart_Ratio": 0.1154
+      }
+    },
+    {
+      "variant_name": "3. 7-Feature Timing (6-Feature + NonStatic_Navigation_Gap)",
+      "contract_name": "eclog_timing_7feature",
+      "contract_hash": "timing_7feat_internal",
+      "threshold": 0.35,
+      "feature_count": 7,
+      "features": [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio",
+        "SAGE_NonStatic_Navigation_Gap"
+      ],
+      "cv_roc_auc_mean": 0.9722,
+      "cv_roc_auc_std": 0.0128,
+      "cv_fold_scores": [
+        0.9721,
+        0.9489,
+        0.9869,
+        0.9801,
+        0.9728
+      ],
+      "holdout_metrics": {
+        "roc_auc": 0.9710124826629682,
+        "pr_auc": 0.9514533413425821,
+        "macro_f1": 0.9437633878505347,
+        "bot_recall": 0.9635922330097088,
+        "human_fpr": 0.07357142857142857
+      },
+      "client_level_ci": {
+        "fpr_mean": 0.0614995670995671,
+        "fpr_low": 0.048463203463203465,
+        "fpr_high": 0.07532467532467532,
+        "rec_mean": 0.8915957446808511,
+        "rec_low": 0.8085106382978723,
+        "rec_high": 0.9787234042553191
+      },
+      "feature_importances": {
+        "SAGE_Session_Depth": 0.2685,
+        "SAGE_Temporal_Variance": 0.0092,
+        "SAGE_Request_Velocity": 0.0653,
+        "SAGE_Behavioral_Diversity": 0.0329,
+        "SAGE_Endpoint_Concentration": 0.4335,
+        "SAGE_Cart_Ratio": 0.0897,
+        "SAGE_NonStatic_Navigation_Gap": 0.1009
+      }
+    },
+    {
+      "variant_name": "4. 8-Feature Timing Candidate (6-Feature + Gap + LongGapRatio)",
+      "contract_name": "eclog_timing_8feature",
+      "contract_hash": "2fb47afb4dae24d3345aa0d1f270e622477da729e9f9c64a7cc001edc1260dfc",
+      "threshold": 0.35,
+      "feature_count": 8,
+      "features": [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio",
+        "SAGE_NonStatic_Navigation_Gap",
+        "SAGE_NonStatic_Long_Gap_Ratio"
+      ],
+      "cv_roc_auc_mean": 0.9719,
+      "cv_roc_auc_std": 0.0139,
+      "cv_fold_scores": [
+        0.9724,
+        0.9461,
+        0.9869,
+        0.9804,
+        0.9737
+      ],
+      "holdout_metrics": {
+        "roc_auc": 0.9699326745261212,
+        "pr_auc": 0.9499641688120729,
+        "macro_f1": 0.9449082984487929,
+        "bot_recall": 0.9660194174757282,
+        "human_fpr": 0.07357142857142857
+      },
+      "client_level_ci": {
+        "fpr_mean": 0.062380952380952384,
+        "fpr_low": 0.048484848484848485,
+        "fpr_high": 0.0762121212121212,
+        "rec_mean": 0.8915957446808511,
+        "rec_low": 0.8085106382978723,
+        "rec_high": 0.9787234042553191
+      },
+      "feature_importances": {
+        "SAGE_Session_Depth": 0.2243,
+        "SAGE_Temporal_Variance": 0.005,
+        "SAGE_Request_Velocity": 0.021,
+        "SAGE_Behavioral_Diversity": 0.0193,
+        "SAGE_Endpoint_Concentration": 0.2657,
+        "SAGE_Cart_Ratio": 0.0682,
+        "SAGE_NonStatic_Navigation_Gap": 0.0083,
+        "SAGE_NonStatic_Long_Gap_Ratio": 0.3882
+      }
+    }
+  ],
+  "permutation_importance": {
+    "SAGE_NonStatic_Navigation_Gap": {
+      "mean_auc_drop": 0.00034,
+      "std_auc_drop": 0.00084,
+      "seed_drops": [
+        0.00035,
+        -0.00023,
+        0.00168,
+        -0.0008,
+        0.00069
+      ]
+    },
+    "SAGE_NonStatic_Long_Gap_Ratio": {
+      "mean_auc_drop": 0.01189,
+      "std_auc_drop": 0.00129,
+      "seed_drops": [
+        0.01033,
+        0.01161,
+        0.01219,
+        0.01416,
+        0.01116
+      ]
+    },
+    "SAGE_Request_Velocity": {
+      "mean_auc_drop": 0.02261,
+      "std_auc_drop": 0.00108,
+      "seed_drops": [
+        0.02404,
+        0.02191,
+        0.02347,
+        0.02102,
+        0.02262
+      ]
+    }
+  }
+}

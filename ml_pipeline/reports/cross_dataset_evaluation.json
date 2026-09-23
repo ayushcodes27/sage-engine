@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "interpretation": "Cross-dataset agreement with ECLog User-Agent-derived proxy labels.",
+    "synthetic_model_path": "ml_pipeline\\models\\sage_binary_model.pkl",
+    "eclog_model_path": "ml_pipeline\\models\\eclog_weak_binary_model.pkl",
+    "eclog_manifest_path": "ml_pipeline\\models\\eclog_weak_split_manifest.json",
+    "features": [
+      "SAGE_Session_Depth",
+      "SAGE_Temporal_Variance",
+      "SAGE_Request_Velocity",
+      "SAGE_Behavioral_Diversity",
+      "SAGE_Endpoint_Concentration",
+      "SAGE_Cart_Ratio",
+      "SAGE_Asset_Skip_Ratio"
+    ],
+    "frozen_threshold": 0.5,
+    "eclog_unknown_excluded": 517,
+    "synthetic_unknown_excluded": 0,
+    "holdout_client_count": 1202,
+    "holdout_session_count": 2636,
+    "holdout_bot_count": 1236,
+    "holdout_human_count": 1400
+  },
+  "synthetic_model_on_eclog_holdout": {
+    "roc_auc": 0.3315,
+    "pr_auc": 0.4544,
+    "macro_f1": 0.2782,
+    "bot_recall": 0.0372,
+    "human_fpr": 0.3743,
+    "confusion_matrix": [
+      [
+        876,
+        524
+      ],
+      [
+        1190,
+        46
+      ]
+    ]
+  },
+  "eclog_model_on_eclog_holdout": {
+    "roc_auc": 0.9725,
+    "pr_auc": 0.9545,
+    "macro_f1": 0.9415,
+    "bot_recall": 0.9612,
+    "human_fpr": 0.0757,
+    "confusion_matrix": [
+      [
+        1294,
+        106
+      ],
+      [
+        48,
+        1188
+      ]
+    ]
+  }
+}
