@@ -45,6 +45,8 @@ build/
 # Scratch & Temporary Training Outputs
 scratch/
 catboost_info/
+archive/
+
 
 # Generated evaluation artifacts
 /ml_pipeline/evaluation/
