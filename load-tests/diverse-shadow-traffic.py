@@ -33,7 +33,7 @@ MAX_WORKERS = max(1, int(os.getenv("DIVERSE_MAX_WORKERS", "3")))
 HTML_PATHS = ["/", "/products", "/cart", "/products/12", "/products/34"]
 API_PATHS = ["/api/inventory/23", "/api/price/23", "/api/search?q=phone"]
 NON_STATIC_PATHS = sorted(set(HTML_PATHS + API_PATHS))
-ASSET_PATHS = ["/static/style.css", "/static/app.js", "/static/logo.png"]
+ASSET_PATHS = ["/static/style.css", "/static/app.js", "/images/logo.png"]
 SCORING_PROBE_PATH = "/products/1"
 DEFAULT_CLIENT_COUNT = max(1, int(os.getenv("DIVERSE_CLIENT_COUNT", "5")))
 
@@ -526,18 +526,26 @@ def main():
     # Output file determination
     if args.manifest_path:
         out_manifest_file = Path(args.manifest_path)
+        out_manifest_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_manifest_file, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        print(f"Traffic generation complete. Manifest saved to {out_manifest_file}")
     elif args.dry_run:
         runs_dir = BASE_DIR / "load-tests" / "runs"
         runs_dir.mkdir(parents=True, exist_ok=True)
         out_manifest_file = runs_dir / f"{RUN_ID}_manifest.json"
+        with open(out_manifest_file, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        print(f"Traffic generation complete. Manifest saved to {out_manifest_file}")
     else:
         out_manifest_file = BASE_DIR / "load-tests" / "diverse_manifest.json"
-
-    out_manifest_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_manifest_file, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
-
-    print(f"Traffic generation complete. Manifest saved to {out_manifest_file}")
+        shadow_manifest_file = BASE_DIR / "load-tests" / "shadow_manifest.json"
+        out_manifest_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_manifest_file, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        with open(shadow_manifest_file, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        print(f"Traffic generation complete. Manifest saved to {out_manifest_file} and {shadow_manifest_file}")
 
 
 if __name__ == "__main__":

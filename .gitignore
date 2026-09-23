@@ -17,25 +17,6 @@ build/
 # Python virtual environments and caches
 **/.venv/
 **/venv/
-# IDE and OS files
-.idea/
-.vscode/
-.DS_Store
-*.log
-logs/
-
-# Node dependencies and build output
-node_modules/
-dist/
-build/
-
-# Java build output
-**/target/
-**/*.class
-
-# Python virtual environments and caches
-**/.venv/
-**/venv/
 **/__pycache__/
 **/*.py[cod]
 *$py.class
@@ -55,17 +36,25 @@ build/
 !/ml_pipeline/models/eclog_6feature_binary_model.pkl
 !/ml_pipeline/models/eclog_timing_binary_model.pkl
 
-# Run outputs
+# Run outputs & Telemetry Dumps
 /load-tests/runs/
+/load-tests/*.jsonl
+/evaluation/locust-results/*.csv
+/evaluation/reports/*.json
+
+# Scratch & Temporary Training Outputs
+scratch/
+catboost_info/
 
 # Generated evaluation artifacts
 /ml_pipeline/evaluation/
 /ml_pipeline/inference_service/evaluation_report.json
 
-# Documentation
+# Internal Ledgers & Roadmaps
 SAGE_PROJECT_ANALYSIS.md
 SAGE_Architecture_Document.md
 SAGE_PHASE2_ROADMAP.md
+AUDIT_LEDGER.md
 
 # Playwright
 /test-results/
