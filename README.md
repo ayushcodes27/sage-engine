@@ -64,24 +64,35 @@ SAGE V2 is validated across **three independent evaluation axes** with exact **9
 
 ### Summary Table across Evaluation Axes
 
-| Evaluation Axis | Dataset / Target | Model Evaluated | Bot Recall (95% CI) | Human FPR (95% CI) | Key Finding |
+| Evaluation Axis | Dataset / Target | Model Evaluated | Bot Recall (95% CI) | Human FPR (95% CI) | Outcome & Safety Gates |
 |---|---|---|---|---|---|
 | **Axis 1: Offline Holdout** | `ScienceDirect.com` (ECLog 1,202 clients) | 8-Feat Timing XGBoost | **95.87%** (94.6% – 96.9%) | **1.21%** (0.7% – 1.9%) | +6.31% recall gain from macro-timing |
 | **Axis 2: Cross-Site Domain Shift** | `zanbil.ir` (10.36M real requests) | 8-Feat Timing XGBoost | **76.80%** (73.5% – 79.9%) | **14.21%** (13.6% – 14.8%) | 93–100% recall on Googlebot, Bingbot, MJ12bot |
-| **Axis 3: Live 350-Client Campaign** | Live Gateway (`diverse-ba1a90e8`) | 8-Feat Shadow Model | **50.00%** (39.8% – 60.2%) | **0.00%** (0.00% – 1.86%) | **100% Precision (197/197)**, 100% slow_scraper recall |
+| **Axis 3: Live 350-Client Shadow Campaign** | Live Gateway (`diverse-8881bc1c` / `diverse-ba1a90e8`) | 8-Feat Shadow Model | **60.67% – 66.67%** (Macro) | **0.00%** (0.00% – 1.83%) | **NEGATIVE RESULT** — Pre-registered gates **FAILED** (Coverage 97.43% < 100%, Macro Recall < 90%). Enforcement stays **DISABLED**. |
 | **Model Selection** | ECLog Holdout | XGBoost vs RF | **94.88% Acc** (XGB) vs 93.12% (RF) | N/A | XGBoost delivers **10x lower inference latency (0.18ms)** |
 
 ---
 
-## 5. Adversarial Robustness & Known Boundaries
+## 5. Adversarial Robustness & Pre-Registered Negative Result
+
+SAGE V2 enforces a strict scientific principle: **if pre-registered safety gates fail under live controlled validation, the campaign is reported as a negative result and enforcement is kept disabled**.
+
+### Pre-Registered Safety Gate Evaluation (Live 350-Client Campaign)
+- **Scoring Coverage Gate ($\ge 100.00\%$)**: **FAILED** (Observed: **97.43%**, 341/350 clients).
+- **Macro-Average Bot Recall Gate ($\ge 90.00\%$)**: **FAILED** (Observed: **60.67% – 66.67%**).
+- **Human FPR Gate ($\le 1.00\%$)**: **PASSED** (Observed: **0.00%**, 0/200 false positives).
+- **Conclusion**: Enforcement was **strictly kept disabled** (`ENFORCEMENT_ENABLED=false`).
+
+### Profile Breakdown & Behavioral Boundary
 
 | Evasion Persona / Attack Profile | Evasion Technique | Detection Result | Engineering Analysis |
 |---|---|---|---|
 | **`slow_scraper`** | Rotates residential IPs, random 3–7s jitter | **100.00% Recall** | Caught by non-static navigation gap and temporal variance anomalies. |
-| **Commercial Crawlers** | `Googlebot`, `Bingbot`, `MJ12bot` | **92.9% – 100.0% Recall** | Identified by high behavioral diversity and systematic crawl sequencing. |
-| **Programmatic Tools** | `curl`, `python-requests`, `Go-http-client` | **94.12% Recall** | Caught by low cart engagement and repetitive endpoint concentration. |
-| **`asset_fetching_bot`** | Artificially fetches all CSS/JS assets per page | **0.00% Recall (Evaded)** | **Known Gap**: Server-side asset ratios match standard browsers when assets are faithfully downloaded. |
+| **`fast_scraper`** | High-velocity API navigation | **100.00% Recall** | Identified by velocity bursts and repetitive endpoint concentration. |
+| **Commercial Crawlers** | `Googlebot`, `Bingbot`, `MJ12bot` (Zanbil.ir) | **92.9% – 100.0% Recall** | Identified by high behavioral diversity and systematic crawl sequencing. |
+| **`asset_fetching_bot`** | Artificially fetches all CSS/JS assets per page | **0.00% Recall (Evaded)** | **Architectural Gap**: Server-side asset ratios match standard browsers when assets are faithfully downloaded. |
 | **Headless Stealth Browser** | Puppeteer Stealth + randomized bezier mouse paths | **Evaded ML layer** | Automated full-browser execution generates HTTP signatures indistinguishable from humans without client-side attestation. |
+
 
 ---
 

@@ -52,11 +52,16 @@ archive/
 /ml_pipeline/evaluation/
 /ml_pipeline/inference_service/evaluation_report.json
 
-# Internal Ledgers & Roadmaps
+# Internal Ledgers, Roadmaps & Working Papers
 SAGE_PROJECT_ANALYSIS.md
 SAGE_Architecture_Document.md
 SAGE_PHASE2_ROADMAP.md
 AUDIT_LEDGER.md
+PAPER_RESULTS.md
+PROJECT_HANDOFF.md
+*HANDOFF*.md
+*handoff*.md
+
 
 # Playwright
 /test-results/
