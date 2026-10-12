@@ -164,4 +164,4 @@ python ml_pipeline/scripts/evaluate/evaluate_shadow.py \
 
 ## 8. Governance & Auditing
 
-All project development, model freezing, evaluation runs, and validation decisions are immutably logged in [`AUDIT_LEDGER.md`](AUDIT_LEDGER.md), [`PROJECT_HANDOFF.md`](PROJECT_HANDOFF.md), and tracked against [`SAGE_PHASE2_ROADMAP.md`](SAGE_PHASE2_ROADMAP.md).
+All project development, model freezing, evaluation runs, and validation decisions are immutably logged in [`AUDIT_LEDGER.md`](AUDIT_LEDGER.md) and tracked against [`SAGE_PHASE2_ROADMAP.md`](SAGE_PHASE2_ROADMAP.md).
