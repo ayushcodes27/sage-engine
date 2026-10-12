@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  gateway-tests:
+    name: Java Gateway Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Run Maven Tests (17 tests)
+        run: mvn -B test -f sage-gateway/pom.xml
+
+  ml-pipeline:
+    name: Python ML & Integrity Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (with full tags & history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ml_pipeline/requirements.txt
+          pip install pytest pytest-asyncio ruff
+
+      - name: Lint with Ruff (Critical Syntax & Error Checks)
+        run: |
+          ruff check --select E9,F63,F7,F82 ml_pipeline
+          ruff check ml_pipeline --exit-zero
+
+      - name: Verify Frozen Model & Contract Integrity
+        run: |
+          python ml_pipeline/scripts/evaluate/verify_frozen_manifests.py
+
+      - name: Run Python ML Unit & Parity Tests (13 tests)
+        env:
+          PYTHONPATH: .
+        run: |
+          pytest ml_pipeline -v

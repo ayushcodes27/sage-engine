@@ -190,7 +190,7 @@ def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> b
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            shell=True,
+            shell=(sys.platform == "win32"),
             cwd=str(REPO_ROOT / "sage-gateway"),
             env=env,
         )
