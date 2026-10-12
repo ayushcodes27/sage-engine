@@ -13,6 +13,8 @@ SAGE implements a strict **two-tier architecture** that cleanly separates infras
 1. **Infrastructure Tier (Reverse Proxy & Rate Limiter)**: Built on Java 21 Virtual Threads and Redis Lua scripts. Handles generic token-bucket rate limiting for capacity protection and maintains temporary ban lists as enforcement memory. It **never** uses signatures, IP prefixes, or User-Agent heuristics to classify bots.
 2. **Behavioral ML Tier (Decoupled Python/FastAPI)**: Serves as the sole classification authority. Extracts rolling sliding-window behavioral features and macro-scale inter-arrival timing metrics to output real-time bot probabilities.
 
+![SAGE Engine Architecture](archi_sage.png)
+
 ```text
 Incoming HTTP Request
        │
@@ -123,13 +125,22 @@ curl http://localhost:8000/health
 - **Mock Target Application**: `http://localhost:3030` (direct) / `http://localhost:8083/products` (via gateway)
 - **Kafka UI**: `http://localhost:8090`
 - **Grafana Dashboard**: `http://localhost:5050`
+- **Prometheus**: `http://localhost:9091`
+- **RedisInsight**: `http://localhost:5540`
 
 ---
 
 ## 7. Running Validations & Evaluations
 
 ```bash
-# 1. Run Zanbil.ir 10.36M Cross-Site Evaluation
+# 0. Cryptographically Verify Frozen Models & Contracts (tag v2-frozen-models-v6)
+python ml_pipeline/scripts/evaluate/verify_frozen_manifests.py
+
+# 1. Run Automated Test Suites
+pytest ml_pipeline                     # Python ML unit & parity tests (13 tests)
+cd sage-gateway && mvn test            # Java Spring Gateway test suite (17 tests)
+
+# 2. Run Zanbil.ir 10.36M Cross-Site Evaluation
 python ml_pipeline/scripts/evaluate/evaluate_zanbil_crosssite.py \
   --access-log ml_pipeline/data/access.log \
   --hostname-csv ml_pipeline/data/client_hostname.csv \
@@ -138,10 +149,10 @@ python ml_pipeline/scripts/evaluate/evaluate_zanbil_crosssite.py \
   --report ml_pipeline/reports/zanbil_crosssite_evaluation.md \
   --results-json ml_pipeline/reports/zanbil_crosssite_results.json
 
-# 2. Run 350-Client Live Shadow Traffic Campaign
+# 3. Run 350-Client Live Shadow Traffic Campaign
 python load-tests/diverse-shadow-traffic.py
 
-# 3. Collect Telemetry and Generate Statistical Report
+# 4. Collect Telemetry and Generate Statistical Report
 python ml_pipeline/scripts/data/collect_shadow_telemetry.py --output load-tests/telemetry.jsonl
 python ml_pipeline/scripts/evaluate/evaluate_shadow.py \
   --telemetry load-tests/telemetry.jsonl \
@@ -153,4 +164,4 @@ python ml_pipeline/scripts/evaluate/evaluate_shadow.py \
 
 ## 8. Governance & Auditing
 
-All project development, model freezing, evaluation runs, and validation decisions are immutably logged in [`AUDIT_LEDGER.md`](AUDIT_LEDGER.md) and tracked against [`SAGE_PHASE2_ROADMAP.md`](SAGE_PHASE2_ROADMAP.md).
+All project development, model freezing, evaluation runs, and validation decisions are immutably logged in [`AUDIT_LEDGER.md`](AUDIT_LEDGER.md), [`PROJECT_HANDOFF.md`](PROJECT_HANDOFF.md), and tracked against [`SAGE_PHASE2_ROADMAP.md`](SAGE_PHASE2_ROADMAP.md).
