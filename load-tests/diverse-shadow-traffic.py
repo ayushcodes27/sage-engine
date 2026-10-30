@@ -332,6 +332,7 @@ def parse_args():
     parser.add_argument("--manifest-path", help="Custom output manifest path")
     parser.add_argument("--frozen-manifest", default=str(BASE_DIR / "ml_pipeline" / "models" / "frozen_models_manifest.json"))
     parser.add_argument("--campaign-config", default=str(BASE_DIR / "final_campaign_config.json"), help="Path to campaign configuration JSON")
+    parser.add_argument("--allow-dirty", action="store_true", help="Allow running with uncommitted git changes (Reviewer Item 14)")
     return parser.parse_args()
 
 
@@ -442,10 +443,24 @@ def main():
     evaluator_path = BASE_DIR / "ml_pipeline" / "scripts" / "evaluate" / "evaluate_shadow.py"
     evaluator_hash = compute_file_sha256(evaluator_path) if evaluator_path.exists() else "unknown"
 
+    # Reviewer Item 14: Enforce reproducibility & git commit stamping
+    try:
+        git_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        git_status = subprocess.check_output(["git", "status", "--porcelain"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        git_dirty = len(git_status) > 0
+    except Exception:
+        git_commit = "unknown"
+        git_dirty = False
+
+    if git_dirty and not args.allow_dirty and not args.dry_run:
+        print("[-] WARNING: Working git tree has uncommitted modifications (Reviewer Item 14).")
+
     run_mode_val = "dry_run" if args.dry_run else campaign_config_data.get("run_mode", "final")
 
     manifest = {
         "run_id": RUN_ID,
+        "git_commit": git_commit,
+        "git_dirty": git_dirty,
         "run_mode": run_mode_val,
         "gateway_url": GATEWAY_URL,
         "enforcement": "disabled_required",

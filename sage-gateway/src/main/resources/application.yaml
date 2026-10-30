@@ -42,6 +42,12 @@ sage:
   ml:
     expected-contract-hash: ${SAGE_EXPECTED_CONTRACT_HASH:4e8b01ac1b96952c3ad35b86e80948dafb296fb9306815c5fb807c3012a7222c}
     shadow-threshold: ${SAGE_ML_SHADOW_THRESHOLD:0.35}
+  probe:
+    secret: ${SAGE_PROBE_SECRET:}
+  telemetry:
+    rescore-frequency: ${SAGE_RESCORE_FREQUENCY:20}
+    cart-keywords: ${SAGE_CART_KEYWORDS:cart,checkout,koszyk,platnosc,zamowienie,payment,basket}
+    static-extensions: ${SAGE_STATIC_EXTENSIONS:js,css,png,jpg,jpeg,gif,ico,woff,woff2,ttf,svg,webp}
   rate-limit:
     enabled: false
     default-policy:

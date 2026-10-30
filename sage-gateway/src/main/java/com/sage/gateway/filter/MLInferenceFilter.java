@@ -19,6 +19,8 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -34,12 +36,19 @@ public class MLInferenceFilter implements GatewayFilter {
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
     private final HttpClient httpClient;
+    private final ExecutorService asyncMlExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
     @org.springframework.beans.factory.annotation.Value("${ML_URL:http://localhost:8000/predict}")
-    private String PYTHON_ML_URL;
+    private String PYTHON_ML_URL = "http://localhost:8000/predict";
 
     @org.springframework.beans.factory.annotation.Value("${sage.ml.expected-contract-hash}")
     private String expectedContractHash;
+
+    @org.springframework.beans.factory.annotation.Value("${sage.probe.secret:}")
+    private String probeSecret;
+
+    @org.springframework.beans.factory.annotation.Value("${sage.telemetry.rescore-frequency:20}")
+    private int rescoreFrequency = 20;
 
     private volatile boolean contractVerified = false;
 
@@ -115,16 +124,41 @@ public class MLInferenceFilter implements GatewayFilter {
             double sessionDuration = features.getOrDefault("SAGE_Session_Duration", 0.0);
 
             Map<String, String> cachedDecision = redisTelemetryService.getCachedMlDecision(ipAddress);
-            boolean isProbe = "true".equalsIgnoreCase(request.getHeader("X-SAGE-Probe"));
-            boolean shouldScoreFresh = false;
 
-            if (sessionDepth > SESSION_DEPTH_THRESHOLD && sessionDuration >= 3.0) {
-                if (cachedDecision.isEmpty() || isProbe) {
-                    shouldScoreFresh = true;
+            // Reviewer Item 2: Secure X-SAGE-Probe bypass with secret authentication
+            boolean isProbeHeader = "true".equalsIgnoreCase(request.getHeader("X-SAGE-Probe"));
+            boolean isProbeAuthorized = false;
+            if (isProbeHeader) {
+                String providedSecret = request.getHeader("X-SAGE-Probe-Secret");
+                if (probeSecret != null && !probeSecret.isBlank()) {
+                    isProbeAuthorized = probeSecret.equals(providedSecret);
+                    if (!isProbeAuthorized) {
+                        logger.warn("X-SAGE-Probe unauthorized: invalid secret provided for IP {}", ipAddress);
+                    }
+                } else {
+                    logger.warn("X-SAGE-Probe ignored: sage.probe.secret not configured.");
                 }
             }
 
-            if (!cachedDecision.isEmpty() && !shouldScoreFresh) {
+            // Reviewer Item 2: Re-score clients every 20 new requests instead of trusting one decision for 5 min
+            double lastScoredDepth = 0.0;
+            if (!cachedDecision.isEmpty() && cachedDecision.containsKey("scoringDepth")) {
+                try {
+                    lastScoredDepth = Double.parseDouble(cachedDecision.get("scoringDepth"));
+                } catch (Exception ignored) {}
+            }
+
+            boolean shouldScoreFresh = false;
+            if (sessionDepth > SESSION_DEPTH_THRESHOLD && sessionDuration >= 3.0) {
+                if (cachedDecision.isEmpty() || isProbeAuthorized) {
+                    shouldScoreFresh = true;
+                } else if ((sessionDepth - lastScoredDepth) >= rescoreFrequency) {
+                    shouldScoreFresh = true; // Periodic re-scoring trigger
+                }
+            }
+
+            // Apply cached decision if present
+            if (!cachedDecision.isEmpty()) {
                 isBot = Boolean.parseBoolean(cachedDecision.getOrDefault("isBot", "false"));
                 botProbability = Double.parseDouble(cachedDecision.getOrDefault("botProbability", "0.0"));
                 threatClass = cachedDecision.getOrDefault("threatClass", "Benign");
@@ -154,126 +188,56 @@ public class MLInferenceFilter implements GatewayFilter {
                         scoringTimestampMs = Long.parseLong(cachedDecision.get("scoringTimestamp"));
                     } catch (Exception ignored) {}
                 }
-                logger.debug("Reusing cached ML decision for IP {}", ipAddress);
             }
 
+            // Reviewer Item 3: Move scoring off the request path asynchronously
             if (shouldScoreFresh) {
-                Map<String, Object> mlPayload = new HashMap<>(features);
-                mlPayload.put("session_id", requestId);
-                mlPayload.put("gateway_timestamp_ms", System.currentTimeMillis());
-
-                String jsonBody = objectMapper.writeValueAsString(mlPayload);
-
-                HttpRequest mlRequest = HttpRequest.newBuilder()
-                        .uri(URI.create(PYTHON_ML_URL))
-                        .header("Content-Type", "application/json")
-                        .header("X-Request-Id", requestId != null ? requestId : "unknown")
-                        .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                        .build();
-
-                boolean acquired = false;
-                try {
-                    acquired = ML_BACKPRESSURE.tryAcquire(5, TimeUnit.MILLISECONDS);
-                    if (!acquired) {
-                        evaluationStatus = "Timeout";
-                        logger.warn("ML Backpressure kicked in. Rejecting request to ML queue.");
+                boolean forceSync = isProbeAuthorized && "true".equalsIgnoreCase(request.getHeader("X-SAGE-Sync-Score"));
+                if (forceSync) {
+                    Map<String, String> freshResult = performMlInference(ipAddress, requestId, features, sessionDepth);
+                    if ("Scored".equals(freshResult.get("evaluationStatus"))) {
+                        evaluationStatus = "Scored";
+                        decisionSource = "fresh_sync";
+                        scoringDepth = sessionDepth;
+                        scoringTimestampMs = System.currentTimeMillis();
+                        isBot = Boolean.parseBoolean(freshResult.getOrDefault("isBot", "false"));
+                        botProbability = Double.parseDouble(freshResult.getOrDefault("botProbability", "0.0"));
+                        threatClass = freshResult.getOrDefault("threatClass", "Benign");
+                        shadowStatus = freshResult.getOrDefault("shadowStatus", "unavailable");
+                        contractHash = freshResult.getOrDefault("contractHash", "unknown");
+                        modelVersion = freshResult.getOrDefault("modelVersion", "unknown");
                     } else {
-                        HttpResponse<String> mlResponse = httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString())
-                                .get(1000, TimeUnit.MILLISECONDS);
-
-                        if (mlResponse.statusCode() == 200) {
-                            evaluationStatus = "Scored";
-                            decisionSource = "fresh";
-                            scoringDepth = sessionDepth;
-                            scoringTimestampMs = System.currentTimeMillis();
-
-                            JsonNode responseNode = objectMapper.readTree(mlResponse.body());
-                            isBot = responseNode.path("is_bot").asBoolean(false);
-                            botProbability = responseNode.path("bot_probability").asDouble(0.0);
-                            threatClass = responseNode.path("threat_class").asText("Benign");
-                            
-                            // Extract Shadow fields
-                            shadowStatus = responseNode.path("shadow_status").asText("unavailable");
-                            if (!responseNode.path("shadow_is_bot").isNull()) {
-                                shadowIsBot = responseNode.path("shadow_is_bot").asBoolean();
-                            }
-                            if (!responseNode.path("shadow_bot_probability").isNull()) {
-                                shadowBotProbability = responseNode.path("shadow_bot_probability").asDouble();
-                            }
-                            if (!responseNode.path("shadow_threat_class").isNull()) {
-                                shadowThreatClass = responseNode.path("shadow_threat_class").asText();
-                            }
-                            if (!responseNode.path("production_processing_time_ms").isNull()) {
-                                prodInferenceLatencyMs = responseNode.path("production_processing_time_ms").asDouble();
-                            }
-                            if (!responseNode.path("shadow_processing_time_ms").isNull()) {
-                                shadowInferenceLatencyMs = responseNode.path("shadow_processing_time_ms").asDouble();
-                            }
-                            
-                            contractHash = responseNode.path("contract_hash").asText("unknown");
-                            modelVersion = responseNode.path("model_version").asText("unknown");
-
-                            // Extract Cryptographic Identity
-                            if (!responseNode.path("prod_model_sha256").isNull()) {
-                                prodModelSha256 = responseNode.path("prod_model_sha256").asText();
-                            }
-                            if (!responseNode.path("shadow_model_sha256").isNull()) {
-                                shadowModelSha256 = responseNode.path("shadow_model_sha256").asText();
-                            }
-                            if (!responseNode.path("shadow_contract_hash").isNull()) {
-                                shadowContractHash = responseNode.path("shadow_contract_hash").asText();
-                            }
-                            if (!responseNode.path("shadow_feature_list_hash").isNull()) {
-                                shadowFeatureListHash = responseNode.path("shadow_feature_list_hash").asText();
-                            }
-
-                            Map<String, String> decision = new HashMap<>();
-                            decision.put("isBot", Boolean.toString(isBot));
-                            decision.put("botProbability", Double.toString(botProbability));
-                            decision.put("threatClass", threatClass);
-                            decision.put("shadowStatus", shadowStatus);
-                            decision.put("shadowThreatClass", shadowThreatClass);
-                            decision.put("contractHash", contractHash);
-                            decision.put("modelVersion", modelVersion);
-                            decision.put("scoringDepth", Double.toString(scoringDepth));
-                            decision.put("scoringTimestamp", Long.toString(scoringTimestampMs));
-                            if (shadowIsBot != null) decision.put("shadowIsBot", Boolean.toString(shadowIsBot));
-                            if (shadowBotProbability != null) decision.put("shadowBotProbability", Double.toString(shadowBotProbability));
-                            if (prodModelSha256 != null) decision.put("prodModelSha256", prodModelSha256);
-                            if (shadowModelSha256 != null) decision.put("shadowModelSha256", shadowModelSha256);
-                            if (shadowContractHash != null) decision.put("shadowContractHash", shadowContractHash);
-                            if (shadowFeatureListHash != null) decision.put("shadowFeatureListHash", shadowFeatureListHash);
-                            redisTelemetryService.cacheMlDecision(ipAddress, decision);
-                            
-                            if (!contractVerified) {
-                                if (!expectedContractHash.equals(contractHash)) {
-                                    logger.error("CRITICAL: SAGE Engine Contract Hash Mismatch! Expected {}, Got {}", expectedContractHash, contractHash);
-                                } else {
-                                    logger.info("SAGE Engine Contract Hash Verified: {}", contractHash);
-                                    contractVerified = true;
-                                }
-                            }
-                            
-                            logger.info("🎯 ML SCORED - IP: {} | Prob: {} | Bot: {} | Shadow Status: {} | Source: {}", 
-                                    ipAddress, botProbability, isBot, shadowStatus, decisionSource);
-                        } else {
-                            evaluationStatus = "Failed";
-                            logger.warn("ML Service returned non-200 status.");
-                        }
+                        evaluationStatus = freshResult.getOrDefault("evaluationStatus", "Failed");
                     }
-                } catch (java.util.concurrent.TimeoutException | InterruptedException e) {
-                    evaluationStatus = "Timeout";
-                    logger.error("SAGE ML Pipeline failed (Timeout).");
-                } catch (java.util.concurrent.ExecutionException e) {
-                    evaluationStatus = "Error";
-                    logger.error("SAGE ML Pipeline failed (Execution Error).", e);
-                } finally {
-                    if (acquired) {
-                        ML_BACKPRESSURE.release();
+                } else {
+                    // Normal async path: request proceeds immediately without blocking
+                    if (redisTelemetryService.acquireScoringLock(ipAddress)) {
+                        final Map<String, Double> asyncFeatures = new HashMap<>(features);
+                        final String asyncIp = ipAddress;
+                        final String asyncReqId = requestId;
+                        final double asyncDepth = sessionDepth;
+                        asyncMlExecutor.submit(() -> {
+                            try {
+                                performMlInference(asyncIp, asyncReqId, asyncFeatures, asyncDepth);
+                            } finally {
+                                redisTelemetryService.releaseScoringLock(asyncIp);
+                            }
+                        });
+                    }
+                    if (cachedDecision.isEmpty()) {
+                        evaluationStatus = "AsyncScheduled";
+                        decisionSource = "async_pending";
                     }
                 }
             } else if (cachedDecision.isEmpty()) {
-                logger.debug("Skipping ML inference for IP {} until depth > {}.", ipAddress, SESSION_DEPTH_THRESHOLD);
+                // Reviewer Item 3: Log every 'not scored' event with its granular reason
+                if (sessionDepth <= SESSION_DEPTH_THRESHOLD) {
+                    evaluationStatus = "GateDepthNotMet";
+                } else if (sessionDuration < 3.0) {
+                    evaluationStatus = "GateDurationNotMet";
+                } else {
+                    evaluationStatus = "Skipped";
+                }
             }
         } catch (Exception e) {
             evaluationStatus = "Error";
@@ -304,5 +268,88 @@ public class MLInferenceFilter implements GatewayFilter {
         request.setAttribute("SAGE-ShadowFeatureListHash", shadowFeatureListHash);
         
         return Optional.empty();
+    }
+
+    private Map<String, String> performMlInference(String ipAddress, String requestId, Map<String, Double> features, double sessionDepth) {
+        Map<String, String> result = new HashMap<>();
+        boolean acquired = false;
+        try {
+            acquired = ML_BACKPRESSURE.tryAcquire(5, TimeUnit.MILLISECONDS);
+            if (!acquired) {
+                logger.warn("ML Backpressure kicked in. Semaphore full.");
+                result.put("evaluationStatus", "SemaphoreFull");
+                return result;
+            }
+
+            Map<String, Object> mlPayload = new HashMap<>(features);
+            mlPayload.put("session_id", requestId);
+            mlPayload.put("gateway_timestamp_ms", System.currentTimeMillis());
+
+            String jsonBody = objectMapper.writeValueAsString(mlPayload);
+
+            HttpRequest mlRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(PYTHON_ML_URL))
+                    .header("Content-Type", "application/json")
+                    .header("X-Request-Id", requestId != null ? requestId : "unknown")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+
+            HttpResponse<String> mlResponse = httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString())
+                    .get(1000, TimeUnit.MILLISECONDS);
+
+            if (mlResponse.statusCode() == 200) {
+                JsonNode responseNode = objectMapper.readTree(mlResponse.body());
+                result.put("evaluationStatus", "Scored");
+                result.put("isBot", Boolean.toString(responseNode.path("is_bot").asBoolean(false)));
+                result.put("botProbability", Double.toString(responseNode.path("bot_probability").asDouble(0.0)));
+                result.put("threatClass", responseNode.path("threat_class").asText("Benign"));
+                result.put("shadowStatus", responseNode.path("shadow_status").asText("unavailable"));
+                if (!responseNode.path("shadow_is_bot").isNull()) result.put("shadowIsBot", Boolean.toString(responseNode.path("shadow_is_bot").asBoolean()));
+                if (!responseNode.path("shadow_bot_probability").isNull()) result.put("shadowBotProbability", Double.toString(responseNode.path("shadow_bot_probability").asDouble()));
+                if (!responseNode.path("shadow_threat_class").isNull()) result.put("shadowThreatClass", responseNode.path("shadow_threat_class").asText());
+                result.put("contractHash", responseNode.path("contract_hash").asText("unknown"));
+                result.put("modelVersion", responseNode.path("model_version").asText("unknown"));
+                result.put("scoringDepth", Double.toString(sessionDepth));
+                result.put("scoringTimestamp", Long.toString(System.currentTimeMillis()));
+                if (!responseNode.path("prod_model_sha256").isNull()) result.put("prodModelSha256", responseNode.path("prod_model_sha256").asText());
+                if (!responseNode.path("shadow_model_sha256").isNull()) result.put("shadowModelSha256", responseNode.path("shadow_model_sha256").asText());
+                if (!responseNode.path("shadow_contract_hash").isNull()) result.put("shadowContractHash", responseNode.path("shadow_contract_hash").asText());
+                if (!responseNode.path("shadow_feature_list_hash").isNull()) result.put("shadowFeatureListHash", responseNode.path("shadow_feature_list_hash").asText());
+
+                redisTelemetryService.cacheMlDecision(ipAddress, result);
+
+                if (!contractVerified) {
+                    if (!expectedContractHash.equals(result.get("contractHash"))) {
+                        logger.error("CRITICAL: SAGE Engine Contract Hash Mismatch! Expected {}, Got {}", expectedContractHash, result.get("contractHash"));
+                    } else {
+                        logger.info("SAGE Engine Contract Hash Verified: {}", result.get("contractHash"));
+                        contractVerified = true;
+                    }
+                }
+
+                logger.info("🎯 ML SCORED (Async/Sync) - IP: {} | Prob: {} | Bot: {} | Shadow Status: {}", 
+                        ipAddress, result.get("botProbability"), result.get("isBot"), result.get("shadowStatus"));
+                return result;
+            } else {
+                result.put("evaluationStatus", "Failed");
+                return result;
+            }
+        } catch (java.util.concurrent.TimeoutException | InterruptedException e) {
+            result.put("evaluationStatus", "Timeout");
+            logger.error("SAGE ML Pipeline failed (Timeout).");
+            return result;
+        } catch (java.util.concurrent.ExecutionException e) {
+            result.put("evaluationStatus", "Error");
+            logger.error("SAGE ML Pipeline failed (Execution Error).", e);
+            return result;
+        } catch (Exception e) {
+            result.put("evaluationStatus", "Error");
+            logger.error("SAGE ML Inference execution error for IP {}", ipAddress, e);
+            return result;
+        } finally {
+            if (acquired) {
+                ML_BACKPRESSURE.release();
+            }
+        }
     }
 }

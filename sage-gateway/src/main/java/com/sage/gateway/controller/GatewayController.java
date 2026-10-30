@@ -85,7 +85,7 @@ public class GatewayController {
             if (filterResult.isPresent()) {
                 finalResponse = filterResult.get();
                 statusCode = finalResponse.getStatusCode().value();
-                return finalResponse;
+                return withSessionCookie(request, finalResponse);
             }
 
             String target = buildTargetUrl(matchedRoute, request);
@@ -98,7 +98,7 @@ public class GatewayController {
             );
 
             statusCode = finalResponse.getStatusCode().value();
-            return finalResponse;
+            return withSessionCookie(request, finalResponse);
 
         } catch (Exception e) {
             statusCode = 500;
@@ -182,4 +182,15 @@ public class GatewayController {
         String query = request.getQueryString();
         return matchedRoute.backendUrl() + targetPath + (query == null || query.isBlank() ? "" : "?" + query);
     }
+    private ResponseEntity<String> withSessionCookie(HttpServletRequest request, ResponseEntity<String> response) {
+        if (response != null && request.getAttribute("SAGE-Set-Cookie") != null) {
+            String cookieVal = (String) request.getAttribute("SAGE-Set-Cookie");
+            return ResponseEntity.status(response.getStatusCode())
+                    .headers(response.getHeaders())
+                    .header("Set-Cookie", "__sage_sid=" + cookieVal + "; Path=/; HttpOnly; SameSite=Lax")
+                    .body(response.getBody());
+        }
+        return response;
+    }
+
 }

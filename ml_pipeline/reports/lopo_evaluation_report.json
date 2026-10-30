@@ -1,0 +1,167 @@
+[
+  {
+    "held_out_bot": "asset_fetching_bot",
+    "held_out_recall": 1.0,
+    "held_out_ci": [
+      0.9288782635358024,
+      1.0
+    ],
+    "held_out_caught": 50,
+    "held_out_total": 50,
+    "human_fpr": 0.010101010101010102,
+    "human_ci": [
+      0.00025570273666596153,
+      0.054996823199430216
+    ],
+    "human_fp": 1,
+    "human_total": 99,
+    "calibrated_iso_threshold": 0.5978075974678853,
+    "profile_breakdown": {
+      "normal_browser": {
+        "total": 25,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.1371851715307125
+      },
+      "spa_client": {
+        "total": 25,
+        "flagged": 1,
+        "rate": 0.04,
+        "ci_low": 0.0010121996993108446,
+        "ci_high": 0.20351691392241403
+      },
+      "mobile_browser": {
+        "total": 24,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.14247359772252563
+      },
+      "privacy_browser": {
+        "total": 25,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.1371851715307125
+      },
+      "asset_fetching_bot": {
+        "total": 50,
+        "flagged": 50,
+        "rate": 1.0,
+        "ci_low": 0.9288782635358024,
+        "ci_high": 1.0
+      }
+    }
+  },
+  {
+    "held_out_bot": "fast_scraper",
+    "held_out_recall": 1.0,
+    "held_out_ci": [
+      0.9288782635358024,
+      1.0
+    ],
+    "held_out_caught": 50,
+    "held_out_total": 50,
+    "human_fpr": 0.020202020202020204,
+    "human_ci": [
+      0.0024559907935277274,
+      0.07107612246187751
+    ],
+    "human_fp": 2,
+    "human_total": 99,
+    "calibrated_iso_threshold": 0.5978075974678853,
+    "profile_breakdown": {
+      "fast_scraper": {
+        "total": 50,
+        "flagged": 50,
+        "rate": 1.0,
+        "ci_low": 0.9288782635358024,
+        "ci_high": 1.0
+      },
+      "normal_browser": {
+        "total": 25,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.1371851715307125
+      },
+      "spa_client": {
+        "total": 25,
+        "flagged": 1,
+        "rate": 0.04,
+        "ci_low": 0.0010121996993108446,
+        "ci_high": 0.20351691392241403
+      },
+      "mobile_browser": {
+        "total": 24,
+        "flagged": 1,
+        "rate": 0.041666666666666664,
+        "ci_low": 0.0010543524454697472,
+        "ci_high": 0.21120168345697307
+      },
+      "privacy_browser": {
+        "total": 25,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.1371851715307125
+      }
+    }
+  },
+  {
+    "held_out_bot": "slow_scraper",
+    "held_out_recall": 0.48,
+    "held_out_ci": [
+      0.33660509160345986,
+      0.6258480549209056
+    ],
+    "held_out_caught": 24,
+    "held_out_total": 50,
+    "human_fpr": 0.010101010101010102,
+    "human_ci": [
+      0.00025570273666596153,
+      0.054996823199430216
+    ],
+    "human_fp": 1,
+    "human_total": 99,
+    "calibrated_iso_threshold": 0.5978075974678853,
+    "profile_breakdown": {
+      "normal_browser": {
+        "total": 25,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.1371851715307125
+      },
+      "slow_scraper": {
+        "total": 50,
+        "flagged": 24,
+        "rate": 0.48,
+        "ci_low": 0.33660509160345986,
+        "ci_high": 0.6258480549209056
+      },
+      "spa_client": {
+        "total": 25,
+        "flagged": 1,
+        "rate": 0.04,
+        "ci_low": 0.0010121996993108446,
+        "ci_high": 0.20351691392241403
+      },
+      "mobile_browser": {
+        "total": 24,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.14247359772252563
+      },
+      "privacy_browser": {
+        "total": 25,
+        "flagged": 0,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.1371851715307125
+      }
+    }
+  }
+]

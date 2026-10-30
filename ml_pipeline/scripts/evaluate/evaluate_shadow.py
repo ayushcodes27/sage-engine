@@ -664,21 +664,42 @@ def build_report(
     max_errors = int(gate_thresholds.get("errors_max", 0))
     max_overhead_ms = float(gate_thresholds.get("max_p95_paired_overhead_ms", 50.0))
 
-    coverage_rate = ratio(len(scored_clients), len(manifest_client_ids))
-    coverage_ok = (coverage_rate >= min_coverage) and (len(manifest_client_ids) > 0)
+    # Reviewer Item 15: Define coverage over scorable clients (>= 21 requests)
+    scorable_manifest_clients = set(
+        c for c, meta in client_manifest.items() 
+        if meta.get("request_count") is None or meta.get("request_count", 0) >= 21
+    )
+    if not scorable_manifest_clients:
+        scorable_manifest_clients = manifest_client_ids
+    coverage_rate = ratio(len(scored_clients.intersection(scorable_manifest_clients)), len(scorable_manifest_clients))
+    coverage_ok = (coverage_rate >= min_coverage) and (len(scorable_manifest_clients) > 0)
+
     timeouts_ok = (error_or_timeout <= max_timeouts) and not any("timeout" in e for e in identity_errors)
     errors_ok = (error_or_timeout <= max_errors) and not any("error" in e for e in identity_errors)
     macro_recall_ok = macro_bot_recall >= min_macro_recall
     human_fpr_ok = fpr_ci[0] <= max_human_fpr
     overhead_ok = over_p95 < max_overhead_ms
 
+    # Reviewer Item 15: Per-profile minimum recall gate to prevent masking
+    min_profile_recall = float(gate_thresholds.get("min_per_profile_recall", 0.80))
+    min_profile_recall_ok = True
+    failing_profiles = []
+    if "profile_metrics" in locals():
+        for p, pdata in profile_metrics.items():
+            if pdata.get("true_class") == "bot":
+                rec = pdata.get("recall", 0.0)
+                if rec < min_profile_recall:
+                    min_profile_recall_ok = False
+                    failing_profiles.append(f"{p} ({pct(rec)})")
+
     gates = [
         ("Cryptographic Identity Verified (Tagged Manifest)", identity_ok),
-        (f"Scoring coverage >= {pct(min_coverage)} (observed: {pct(coverage_rate)})", coverage_ok),
+        (f"Scoring coverage >= {pct(min_coverage)} on scorable clients (observed: {pct(coverage_rate)})", coverage_ok),
         (f"Timeouts <= {max_timeouts} and Errors <= {max_errors}", timeouts_ok and errors_ok),
         ("Timing Features Present & Active (8 features)", timing_features_valid),
         (f"Human FPR <= {pct(max_human_fpr)} (observed: {pct(fpr_ci[0])})", human_fpr_ok),
         (f"Macro-average bot recall >= {pct(min_macro_recall)} (observed: {pct(macro_bot_recall)}) [run_mode: {run_mode}]", macro_recall_ok),
+        (f"Per-profile minimum recall >= {pct(min_profile_recall)}" + (f" [Failing: {', '.join(failing_profiles)}]" if failing_profiles else ""), min_profile_recall_ok),
         (f"p95 paired overhead < {max_overhead_ms:.0f} ms", overhead_ok),
     ]
     all_passed = True
