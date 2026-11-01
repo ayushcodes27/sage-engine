@@ -1,0 +1,57 @@
+{
+  "committed_sessions": 8797,
+  "built_sessions": 8797,
+  "matched_sessions": 8797,
+  "only_committed": 0,
+  "only_built": 0,
+  "label_agree": 8797,
+  "label_confidence_agree": 8797,
+  "features": {
+    "SAGE_Session_Depth": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_Temporal_Variance": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_Request_Velocity": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_Behavioral_Diversity": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_Endpoint_Concentration": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_Cart_Ratio": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_Asset_Skip_Ratio": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_NonStatic_Navigation_Gap": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    },
+    "SAGE_NonStatic_Long_Gap_Ratio": {
+      "agree": 8797,
+      "disagree": 0,
+      "disagree_sessions": []
+    }
+  },
+  "exact_parity": true
+}
