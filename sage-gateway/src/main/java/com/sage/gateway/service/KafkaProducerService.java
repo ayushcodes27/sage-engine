@@ -44,7 +44,10 @@ public class KafkaProducerService {
                     meterRegistry.counter("sage_gateway_kafka_send_failures_total", "eventType", String.valueOf(event.eventType())).increment();
                     log.warn("Kafka broker rejected telemetry event {}", event.eventId(), ex);
                 } else {
-                    Timer.builder("sage_gateway_kafka_publish_seconds").register(meterRegistry)
+                    Timer.builder("sage_gateway_kafka_publish_seconds")
+                            .description("Time from send() to broker acknowledgement")
+                            .publishPercentileHistogram()
+                            .register(meterRegistry)
                             .record(System.nanoTime() - start, TimeUnit.NANOSECONDS);
                 }
             });

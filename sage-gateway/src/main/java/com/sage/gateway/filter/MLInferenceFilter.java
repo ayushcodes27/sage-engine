@@ -6,6 +6,7 @@ import com.sage.gateway.event.RequestEvent;
 import com.sage.gateway.service.KafkaProducerService;
 import com.sage.gateway.service.RedisTelemetryService;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,17 @@ public class MLInferenceFilter implements GatewayFilter {
     @org.springframework.beans.factory.annotation.Value("${sage.ml.shadow-threshold:0.35}")
     private double shadowThreshold = 0.35;
 
+    /**
+     * Benchmark / deployment mode (B2):
+     *   off      - proxy only: no Redis features, no telemetry, no ML
+     *   features - Redis features + telemetry, no ML scoring
+     *   sync     - ML scoring inline on the request path
+     *   async    - ML scoring off the request path (default)
+     * All modes are shadow-only; enforcement is controlled separately by sage.enforcement.enabled.
+     */
+    @org.springframework.beans.factory.annotation.Value("${sage.ml.mode:async}")
+    private String mlMode = "async";
+
     private volatile boolean contractVerified = false;
 
     public MLInferenceFilter(RedisTelemetryService redisTelemetryService, ObjectMapper objectMapper,
@@ -83,6 +95,9 @@ public class MLInferenceFilter implements GatewayFilter {
 
     @Override
     public Optional<ResponseEntity<String>> filter(HttpServletRequest request, Map<String, String> config) {
+        if ("off".equalsIgnoreCase(mlMode)) {
+            return Optional.empty();
+        }
         String ipAddress = (String) request.getAttribute("X-Client-Ip");
         if (ipAddress == null) {
             ipAddress = "anonymous";
@@ -128,7 +143,12 @@ public class MLInferenceFilter implements GatewayFilter {
         String shadowFeatureListHash = null;
 
         try {
-            features = redisTelemetryService.processAndGetTelemetry(ipAddress, payloadSize, path);
+            final String telemetryIp = ipAddress;
+            features = Timer.builder("sage_gateway_redis_telemetry_seconds")
+                    .description("Redis round trips to update and read session features for one request")
+                    .publishPercentileHistogram()
+                    .register(meterRegistry)
+                    .record(() -> redisTelemetryService.processAndGetTelemetry(telemetryIp, payloadSize, path));
             request.setAttribute("SAGE-Features", features);
             
             double sessionDepth = features.getOrDefault("SAGE_Session_Depth", 0.0);
@@ -204,15 +224,21 @@ public class MLInferenceFilter implements GatewayFilter {
                 }
             }
 
+            if ("features".equalsIgnoreCase(mlMode)) {
+                shouldScoreFresh = false;
+            }
+
             // Reviewer Item 3: Move scoring off the request path asynchronously
             if (shouldScoreFresh) {
                 boolean forceSync = isProbeAuthorized && "true".equalsIgnoreCase(request.getHeader("X-SAGE-Sync-Score"));
-                if (forceSync) {
+                boolean inlineMode = "sync".equalsIgnoreCase(mlMode);
+                if (forceSync || inlineMode) {
+                    String syncSource = forceSync ? "fresh_sync" : "inline_sync";
                     Map<String, String> freshResult = performMlInference(ipAddress, requestId, features, sessionDepth, requestCount,
-                            new ScoreContext(clientId, runId, path, "fresh_sync"));
+                            new ScoreContext(clientId, runId, path, syncSource));
                     if ("Scored".equals(freshResult.get("evaluationStatus"))) {
                         evaluationStatus = "Scored";
-                        decisionSource = "fresh_sync";
+                        decisionSource = syncSource;
                         scoringDepth = sessionDepth;
                         scoringTimestampMs = Long.parseLong(freshResult.get("scoringTimestamp"));
                         isBot = Boolean.parseBoolean(freshResult.getOrDefault("isBot", "false"));
@@ -263,7 +289,7 @@ public class MLInferenceFilter implements GatewayFilter {
                 } else if (sessionDuration < 3.0) {
                     evaluationStatus = "GateDurationNotMet";
                 } else {
-                    evaluationStatus = "Skipped";
+                    evaluationStatus = "features".equalsIgnoreCase(mlMode) ? "ScoringDisabled" : "Skipped";
                 }
             }
         } catch (Exception e) {
@@ -413,7 +439,13 @@ public class MLInferenceFilter implements GatewayFilter {
             long sentNanos = System.nanoTime();
             HttpResponse<String> mlResponse = httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString())
                     .get(1000, TimeUnit.MILLISECONDS);
-            result.put("mlRoundTripMs", Double.toString((System.nanoTime() - sentNanos) / 1_000_000.0));
+            long roundTripNanos = System.nanoTime() - sentNanos;
+            result.put("mlRoundTripMs", Double.toString(roundTripNanos / 1_000_000.0));
+            Timer.builder("sage_gateway_ml_roundtrip_seconds")
+                    .description("Gateway-measured HTTP round trip to the inference service")
+                    .publishPercentileHistogram()
+                    .register(meterRegistry)
+                    .record(roundTripNanos, TimeUnit.NANOSECONDS);
 
             if (mlResponse.statusCode() == 200) {
                 JsonNode responseNode = objectMapper.readTree(mlResponse.body());

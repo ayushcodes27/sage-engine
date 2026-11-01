@@ -142,6 +142,19 @@ class ScoreTelemetryTest {
     }
 
     @Test
+    @DisplayName("B2: mode=sync scores inline on the request path without a probe")
+    void syncModeScoresInline() {
+        ReflectionTestUtils.setField(filter, "mlMode", "sync");
+        MockHttpServletRequest r = request(false);
+        filter.filter(r, Map.of());
+
+        assertEquals("Scored", r.getAttribute("SAGE-EvaluationStatus"));
+        assertEquals("inline_sync", r.getAttribute("SAGE-DecisionSource"));
+        verify(telemetry, never()).acquireScoringLock(anyString());
+        assertEquals("inline_sync", awaitScoreEvent().mlMetadata().decisionSource());
+    }
+
+    @Test
     @DisplayName("Async scoring failure is published as score.failed so failure gates can see it")
     void asyncFailureIsPublished() {
         responseStatus = 500;

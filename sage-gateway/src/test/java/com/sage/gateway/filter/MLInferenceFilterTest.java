@@ -145,5 +145,37 @@ class MLInferenceFilterTest {
         verify(telemetryService, never()).acquireScoringLock("192.0.2.5");
         assertEquals("Cached", request.getAttribute("SAGE-EvaluationStatus"));
     }
+
+    @Test
+    @DisplayName("B2: mode=off is a pure proxy (no Redis, no features, no scoring)")
+    void offModeSkipsEverything() {
+        ReflectionTestUtils.setField(filter, "mlMode", "off");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("X-Client-Ip", "192.0.2.6");
+        request.setRequestURI("/products");
+
+        filter.filter(request, Map.of());
+
+        verifyNoInteractions(telemetryService);
+        assertNull(request.getAttribute("SAGE-Features"));
+    }
+
+    @Test
+    @DisplayName("B2: mode=features computes features but never schedules scoring")
+    void featuresModeNeverScores() {
+        ReflectionTestUtils.setField(filter, "mlMode", "features");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("X-Client-Ip", "192.0.2.7");
+        request.setRequestURI("/products");
+        when(telemetryService.processAndGetTelemetry(anyString(), anyDouble(), anyString()))
+                .thenReturn(Map.of("SAGE_Session_Depth", 30.0, "SAGE_Session_Duration", 10.0));
+        when(telemetryService.getCachedMlDecision("192.0.2.7")).thenReturn(Map.of());
+
+        filter.filter(request, Map.of());
+
+        verify(telemetryService, never()).acquireScoringLock(anyString());
+        assertEquals("ScoringDisabled", request.getAttribute("SAGE-EvaluationStatus"));
+        assertNotNull(request.getAttribute("SAGE-Features"));
+    }
 }
 
