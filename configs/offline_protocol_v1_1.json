@@ -1,0 +1,30 @@
+{
+  "name": "offline_protocol_v1_1",
+  "extends": "configs/offline_protocol_v1.json (unchanged; v1 analyses run exactly as declared there)",
+  "status": "declared after training/freezing the v7 models and before any test-split metric was computed; based only on client counts per crawler family, not on model outputs",
+  "motivation": "The v1 split groups by client (anonymised IP). EClog bots are self-declared crawlers that use many IPs: of the 942 scored bot clients, 505 are bingbot and 287 mj12bot, present in every split. Client-grouped test metrics therefore measure generalisation to new IPs of known crawlers, not to unseen bots.",
+  "family_tagging": {
+    "script": "ml_pipeline/scripts/train/tag_bot_family.py -> ml_pipeline/data/eclog6m_bot_family.csv",
+    "rule": "family of a client = most frequent label_eclog.py bot pattern among its bot-labelled requests (generic patterns resolved to the UA product token); 29 of 942 scored bot clients have purity < 0.9 and are assigned to their majority family (reported)"
+  },
+  "folds": {
+    "bingbot": ["bingbot"],
+    "mj12bot": ["mj12bot"],
+    "google": ["googlebot", "generic:adsbot-google", "generic:adsbot-google-mobile"],
+    "java": ["java"],
+    "other": "every remaining family, pooled"
+  },
+  "leave_one_family_out": {
+    "train": "prefix rows of train-split sessions, minus all sessions of the held-out fold's bot clients; human sessions unchanged",
+    "model": "same features and estimator settings as eclog6m_prefix_8feature_v1 (no tuning)",
+    "threshold": "smallest threshold with validation client-level FPR <= 1 % (validation humans only), as in v1",
+    "metrics": [
+      "recall of the held-out fold's scored bot clients from ALL splits (none were trained on), Clopper-Pearson 95 %",
+      "ROC-AUC of held-out fold bot clients vs test-split human clients, client-cluster bootstrap 95 % (2000, seed 42)",
+      "test-split human client FPR at the threshold, Clopper-Pearson 95 %",
+      "reference: eclog6m_prefix_8feature_v1 (fold seen in training) recall on the fold's test-split bot clients",
+      "reference: frozen eclog_timing_binary_model at 0.35 on the fold's validation+test bot clients (train-split clients excluded: may overlap its one-day training clients)"
+    ]
+  },
+  "v1_test_reporting_addendum": "v1 test-split recall is also broken down by crawler fold"
+}
