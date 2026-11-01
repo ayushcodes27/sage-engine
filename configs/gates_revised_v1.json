@@ -32,6 +32,8 @@
     },
     "R7_gateway_overhead": {
       "description": "p95 latency of async-ML gateway minus p95 of proxy-only gateway at the same concurrency, from the B2 benchmark; FAIL if no measurement is available",
+      "computation": "for each concurrency level: median over repetitions of client-side p95 (mode=async) minus median over repetitions of client-side p95 (mode=off); observed value = the maximum of these differences over all measured concurrency levels (worst case)",
+      "source": "results/benchmark/<benchmark_id>/summary.json -> r7_observed_ms",
       "max_p95_overhead_ms": 50.0
     }
   }
