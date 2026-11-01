@@ -1,0 +1,3223 @@
+{
+  "run_id": "diverse-8881bc1c",
+  "reconstructed": true,
+  "reconstruction_method": "Reconstructs a client manifest for a campaign run whose original manifest was not archived\n(run A, diverse-8881bc1c). Nothing is inferred from model output:\n\n- client set      = distinct userId values in the run's telemetry (filtered by runId)\n- profile         = client_id with the trailing \"-NN\" index removed (the generator's naming rule,\n                    load-tests/diverse-shadow-traffic.py: client_id = f\"{profile_name}-{i:02d}\")\n- true_class      = fixed per profile (generator BASE_PROFILE_MATRIX expected_class)\n- campaign_config = final_campaign_config.json read from the given git revision\n\nrequest_count is left null (it was never recorded); observed telemetry event counts are stored\nseparately as observed_event_count. The output is marked \"reconstructed\": true.",
+  "telemetry_sha256": "a11a8a045f8bf99d1716b7d9df09f9cb6b5412f8eeff82ce4eb18ef2db1d365d",
+  "run_mode": "final",
+  "campaign_config_rev": "v2-frozen-models-v6",
+  "campaign_config_hash": "f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9",
+  "campaign_config": {
+    "run_mode": "final",
+    "clients_per_profile": 50,
+    "profiles": [
+      "normal_browser",
+      "spa_client",
+      "mobile_browser",
+      "privacy_browser",
+      "slow_scraper",
+      "asset_fetching_bot",
+      "fast_scraper"
+    ],
+    "profile_seeds": {
+      "normal_browser": 9101,
+      "spa_client": 9102,
+      "mobile_browser": 9103,
+      "privacy_browser": 9104,
+      "slow_scraper": 9105,
+      "asset_fetching_bot": 9106,
+      "fast_scraper": 9107
+    },
+    "gate_thresholds": {
+      "macro_average_bot_recall_min": 0.9,
+      "human_fpr_limit": 0.01,
+      "scoring_coverage_min": 1.0,
+      "timeouts_max": 0,
+      "errors_max": 0,
+      "max_p95_paired_overhead_ms": 50.0
+    }
+  },
+  "seeds": {
+    "normal_browser": 9101,
+    "spa_client": 9102,
+    "mobile_browser": 9103,
+    "privacy_browser": 9104,
+    "slow_scraper": 9105,
+    "asset_fetching_bot": 9106,
+    "fast_scraper": 9107
+  },
+  "profile_matrix": {
+    "normal_browser": {
+      "expected_class": "human"
+    },
+    "spa_client": {
+      "expected_class": "human"
+    },
+    "mobile_browser": {
+      "expected_class": "human"
+    },
+    "privacy_browser": {
+      "expected_class": "human"
+    },
+    "slow_scraper": {
+      "expected_class": "bot"
+    },
+    "asset_fetching_bot": {
+      "expected_class": "bot"
+    },
+    "fast_scraper": {
+      "expected_class": "bot"
+    }
+  },
+  "clients": {
+    "asset_fetching_bot-00": {
+      "client_id": "asset_fetching_bot-00",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-01": {
+      "client_id": "asset_fetching_bot-01",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-02": {
+      "client_id": "asset_fetching_bot-02",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-03": {
+      "client_id": "asset_fetching_bot-03",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-04": {
+      "client_id": "asset_fetching_bot-04",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "asset_fetching_bot-05": {
+      "client_id": "asset_fetching_bot-05",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-06": {
+      "client_id": "asset_fetching_bot-06",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 97
+    },
+    "asset_fetching_bot-07": {
+      "client_id": "asset_fetching_bot-07",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "asset_fetching_bot-08": {
+      "client_id": "asset_fetching_bot-08",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "asset_fetching_bot-09": {
+      "client_id": "asset_fetching_bot-09",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-10": {
+      "client_id": "asset_fetching_bot-10",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-11": {
+      "client_id": "asset_fetching_bot-11",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-12": {
+      "client_id": "asset_fetching_bot-12",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-13": {
+      "client_id": "asset_fetching_bot-13",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-14": {
+      "client_id": "asset_fetching_bot-14",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "asset_fetching_bot-15": {
+      "client_id": "asset_fetching_bot-15",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "asset_fetching_bot-16": {
+      "client_id": "asset_fetching_bot-16",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-17": {
+      "client_id": "asset_fetching_bot-17",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-18": {
+      "client_id": "asset_fetching_bot-18",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-19": {
+      "client_id": "asset_fetching_bot-19",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "asset_fetching_bot-20": {
+      "client_id": "asset_fetching_bot-20",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "asset_fetching_bot-21": {
+      "client_id": "asset_fetching_bot-21",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "asset_fetching_bot-22": {
+      "client_id": "asset_fetching_bot-22",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-23": {
+      "client_id": "asset_fetching_bot-23",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-24": {
+      "client_id": "asset_fetching_bot-24",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-25": {
+      "client_id": "asset_fetching_bot-25",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-26": {
+      "client_id": "asset_fetching_bot-26",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-27": {
+      "client_id": "asset_fetching_bot-27",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "asset_fetching_bot-28": {
+      "client_id": "asset_fetching_bot-28",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 113
+    },
+    "asset_fetching_bot-29": {
+      "client_id": "asset_fetching_bot-29",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "asset_fetching_bot-30": {
+      "client_id": "asset_fetching_bot-30",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "asset_fetching_bot-31": {
+      "client_id": "asset_fetching_bot-31",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-32": {
+      "client_id": "asset_fetching_bot-32",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "asset_fetching_bot-33": {
+      "client_id": "asset_fetching_bot-33",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "asset_fetching_bot-34": {
+      "client_id": "asset_fetching_bot-34",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "asset_fetching_bot-35": {
+      "client_id": "asset_fetching_bot-35",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "asset_fetching_bot-36": {
+      "client_id": "asset_fetching_bot-36",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "asset_fetching_bot-37": {
+      "client_id": "asset_fetching_bot-37",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-38": {
+      "client_id": "asset_fetching_bot-38",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-39": {
+      "client_id": "asset_fetching_bot-39",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 97
+    },
+    "asset_fetching_bot-40": {
+      "client_id": "asset_fetching_bot-40",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-41": {
+      "client_id": "asset_fetching_bot-41",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "asset_fetching_bot-42": {
+      "client_id": "asset_fetching_bot-42",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-43": {
+      "client_id": "asset_fetching_bot-43",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "asset_fetching_bot-44": {
+      "client_id": "asset_fetching_bot-44",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "asset_fetching_bot-45": {
+      "client_id": "asset_fetching_bot-45",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 97
+    },
+    "asset_fetching_bot-46": {
+      "client_id": "asset_fetching_bot-46",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 113
+    },
+    "asset_fetching_bot-47": {
+      "client_id": "asset_fetching_bot-47",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "asset_fetching_bot-48": {
+      "client_id": "asset_fetching_bot-48",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "asset_fetching_bot-49": {
+      "client_id": "asset_fetching_bot-49",
+      "profile": "asset_fetching_bot",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "fast_scraper-00": {
+      "client_id": "fast_scraper-00",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 57
+    },
+    "fast_scraper-01": {
+      "client_id": "fast_scraper-01",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "fast_scraper-02": {
+      "client_id": "fast_scraper-02",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 54
+    },
+    "fast_scraper-03": {
+      "client_id": "fast_scraper-03",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 54
+    },
+    "fast_scraper-04": {
+      "client_id": "fast_scraper-04",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 56
+    },
+    "fast_scraper-05": {
+      "client_id": "fast_scraper-05",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 58
+    },
+    "fast_scraper-06": {
+      "client_id": "fast_scraper-06",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "fast_scraper-07": {
+      "client_id": "fast_scraper-07",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "fast_scraper-08": {
+      "client_id": "fast_scraper-08",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "fast_scraper-09": {
+      "client_id": "fast_scraper-09",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-10": {
+      "client_id": "fast_scraper-10",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-11": {
+      "client_id": "fast_scraper-11",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-12": {
+      "client_id": "fast_scraper-12",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-13": {
+      "client_id": "fast_scraper-13",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 53
+    },
+    "fast_scraper-14": {
+      "client_id": "fast_scraper-14",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-15": {
+      "client_id": "fast_scraper-15",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-16": {
+      "client_id": "fast_scraper-16",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-17": {
+      "client_id": "fast_scraper-17",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "fast_scraper-18": {
+      "client_id": "fast_scraper-18",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 48
+    },
+    "fast_scraper-19": {
+      "client_id": "fast_scraper-19",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "fast_scraper-20": {
+      "client_id": "fast_scraper-20",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-21": {
+      "client_id": "fast_scraper-21",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "fast_scraper-22": {
+      "client_id": "fast_scraper-22",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "fast_scraper-23": {
+      "client_id": "fast_scraper-23",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "fast_scraper-24": {
+      "client_id": "fast_scraper-24",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 48
+    },
+    "fast_scraper-25": {
+      "client_id": "fast_scraper-25",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-26": {
+      "client_id": "fast_scraper-26",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-27": {
+      "client_id": "fast_scraper-27",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-28": {
+      "client_id": "fast_scraper-28",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-29": {
+      "client_id": "fast_scraper-29",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 48
+    },
+    "fast_scraper-30": {
+      "client_id": "fast_scraper-30",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-31": {
+      "client_id": "fast_scraper-31",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 54
+    },
+    "fast_scraper-32": {
+      "client_id": "fast_scraper-32",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-33": {
+      "client_id": "fast_scraper-33",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-34": {
+      "client_id": "fast_scraper-34",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 48
+    },
+    "fast_scraper-35": {
+      "client_id": "fast_scraper-35",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-36": {
+      "client_id": "fast_scraper-36",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-37": {
+      "client_id": "fast_scraper-37",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 54
+    },
+    "fast_scraper-38": {
+      "client_id": "fast_scraper-38",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-39": {
+      "client_id": "fast_scraper-39",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-40": {
+      "client_id": "fast_scraper-40",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-41": {
+      "client_id": "fast_scraper-41",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-42": {
+      "client_id": "fast_scraper-42",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-43": {
+      "client_id": "fast_scraper-43",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 50
+    },
+    "fast_scraper-44": {
+      "client_id": "fast_scraper-44",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "fast_scraper-45": {
+      "client_id": "fast_scraper-45",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-46": {
+      "client_id": "fast_scraper-46",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-47": {
+      "client_id": "fast_scraper-47",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 54
+    },
+    "fast_scraper-48": {
+      "client_id": "fast_scraper-48",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "fast_scraper-49": {
+      "client_id": "fast_scraper-49",
+      "profile": "fast_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 57
+    },
+    "mobile_browser-00": {
+      "client_id": "mobile_browser-00",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 35
+    },
+    "mobile_browser-01": {
+      "client_id": "mobile_browser-01",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 42
+    },
+    "mobile_browser-02": {
+      "client_id": "mobile_browser-02",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 39
+    },
+    "mobile_browser-03": {
+      "client_id": "mobile_browser-03",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 38
+    },
+    "mobile_browser-04": {
+      "client_id": "mobile_browser-04",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 34
+    },
+    "mobile_browser-05": {
+      "client_id": "mobile_browser-05",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "mobile_browser-06": {
+      "client_id": "mobile_browser-06",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 41
+    },
+    "mobile_browser-07": {
+      "client_id": "mobile_browser-07",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 44
+    },
+    "mobile_browser-08": {
+      "client_id": "mobile_browser-08",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 41
+    },
+    "mobile_browser-09": {
+      "client_id": "mobile_browser-09",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "mobile_browser-10": {
+      "client_id": "mobile_browser-10",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 43
+    },
+    "mobile_browser-11": {
+      "client_id": "mobile_browser-11",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 42
+    },
+    "mobile_browser-12": {
+      "client_id": "mobile_browser-12",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 37
+    },
+    "mobile_browser-13": {
+      "client_id": "mobile_browser-13",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 37
+    },
+    "mobile_browser-14": {
+      "client_id": "mobile_browser-14",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 46
+    },
+    "mobile_browser-15": {
+      "client_id": "mobile_browser-15",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 48
+    },
+    "mobile_browser-16": {
+      "client_id": "mobile_browser-16",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 42
+    },
+    "mobile_browser-17": {
+      "client_id": "mobile_browser-17",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 37
+    },
+    "mobile_browser-18": {
+      "client_id": "mobile_browser-18",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 33
+    },
+    "mobile_browser-19": {
+      "client_id": "mobile_browser-19",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 41
+    },
+    "mobile_browser-20": {
+      "client_id": "mobile_browser-20",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 34
+    },
+    "mobile_browser-21": {
+      "client_id": "mobile_browser-21",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 38
+    },
+    "mobile_browser-22": {
+      "client_id": "mobile_browser-22",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 44
+    },
+    "mobile_browser-23": {
+      "client_id": "mobile_browser-23",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 33
+    },
+    "mobile_browser-24": {
+      "client_id": "mobile_browser-24",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 44
+    },
+    "mobile_browser-25": {
+      "client_id": "mobile_browser-25",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 40
+    },
+    "mobile_browser-26": {
+      "client_id": "mobile_browser-26",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 38
+    },
+    "mobile_browser-27": {
+      "client_id": "mobile_browser-27",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "mobile_browser-28": {
+      "client_id": "mobile_browser-28",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 38
+    },
+    "mobile_browser-29": {
+      "client_id": "mobile_browser-29",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 40
+    },
+    "mobile_browser-30": {
+      "client_id": "mobile_browser-30",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 43
+    },
+    "mobile_browser-31": {
+      "client_id": "mobile_browser-31",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 40
+    },
+    "mobile_browser-32": {
+      "client_id": "mobile_browser-32",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 43
+    },
+    "mobile_browser-33": {
+      "client_id": "mobile_browser-33",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 40
+    },
+    "mobile_browser-34": {
+      "client_id": "mobile_browser-34",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 41
+    },
+    "mobile_browser-35": {
+      "client_id": "mobile_browser-35",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 36
+    },
+    "mobile_browser-36": {
+      "client_id": "mobile_browser-36",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 46
+    },
+    "mobile_browser-37": {
+      "client_id": "mobile_browser-37",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 33
+    },
+    "mobile_browser-38": {
+      "client_id": "mobile_browser-38",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 36
+    },
+    "mobile_browser-39": {
+      "client_id": "mobile_browser-39",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 40
+    },
+    "mobile_browser-40": {
+      "client_id": "mobile_browser-40",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 40
+    },
+    "mobile_browser-41": {
+      "client_id": "mobile_browser-41",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "mobile_browser-42": {
+      "client_id": "mobile_browser-42",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 35
+    },
+    "mobile_browser-43": {
+      "client_id": "mobile_browser-43",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 46
+    },
+    "mobile_browser-44": {
+      "client_id": "mobile_browser-44",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "mobile_browser-45": {
+      "client_id": "mobile_browser-45",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 35
+    },
+    "mobile_browser-46": {
+      "client_id": "mobile_browser-46",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "mobile_browser-47": {
+      "client_id": "mobile_browser-47",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 35
+    },
+    "mobile_browser-48": {
+      "client_id": "mobile_browser-48",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 36
+    },
+    "mobile_browser-49": {
+      "client_id": "mobile_browser-49",
+      "profile": "mobile_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 46
+    },
+    "normal_browser-00": {
+      "client_id": "normal_browser-00",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-01": {
+      "client_id": "normal_browser-01",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "normal_browser-02": {
+      "client_id": "normal_browser-02",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-03": {
+      "client_id": "normal_browser-03",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "normal_browser-04": {
+      "client_id": "normal_browser-04",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-05": {
+      "client_id": "normal_browser-05",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-06": {
+      "client_id": "normal_browser-06",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-07": {
+      "client_id": "normal_browser-07",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-08": {
+      "client_id": "normal_browser-08",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-09": {
+      "client_id": "normal_browser-09",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "normal_browser-10": {
+      "client_id": "normal_browser-10",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-11": {
+      "client_id": "normal_browser-11",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 97
+    },
+    "normal_browser-12": {
+      "client_id": "normal_browser-12",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "normal_browser-13": {
+      "client_id": "normal_browser-13",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "normal_browser-14": {
+      "client_id": "normal_browser-14",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-15": {
+      "client_id": "normal_browser-15",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-16": {
+      "client_id": "normal_browser-16",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-17": {
+      "client_id": "normal_browser-17",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-18": {
+      "client_id": "normal_browser-18",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-19": {
+      "client_id": "normal_browser-19",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "normal_browser-20": {
+      "client_id": "normal_browser-20",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-21": {
+      "client_id": "normal_browser-21",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-22": {
+      "client_id": "normal_browser-22",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-23": {
+      "client_id": "normal_browser-23",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-24": {
+      "client_id": "normal_browser-24",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "normal_browser-25": {
+      "client_id": "normal_browser-25",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-26": {
+      "client_id": "normal_browser-26",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "normal_browser-27": {
+      "client_id": "normal_browser-27",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-28": {
+      "client_id": "normal_browser-28",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-29": {
+      "client_id": "normal_browser-29",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-30": {
+      "client_id": "normal_browser-30",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-31": {
+      "client_id": "normal_browser-31",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-32": {
+      "client_id": "normal_browser-32",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "normal_browser-33": {
+      "client_id": "normal_browser-33",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 113
+    },
+    "normal_browser-34": {
+      "client_id": "normal_browser-34",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 109
+    },
+    "normal_browser-35": {
+      "client_id": "normal_browser-35",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "normal_browser-36": {
+      "client_id": "normal_browser-36",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-37": {
+      "client_id": "normal_browser-37",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-38": {
+      "client_id": "normal_browser-38",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "normal_browser-39": {
+      "client_id": "normal_browser-39",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-40": {
+      "client_id": "normal_browser-40",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-41": {
+      "client_id": "normal_browser-41",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 105
+    },
+    "normal_browser-42": {
+      "client_id": "normal_browser-42",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 101
+    },
+    "normal_browser-43": {
+      "client_id": "normal_browser-43",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-44": {
+      "client_id": "normal_browser-44",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 97
+    },
+    "normal_browser-45": {
+      "client_id": "normal_browser-45",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 117
+    },
+    "normal_browser-46": {
+      "client_id": "normal_browser-46",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 89
+    },
+    "normal_browser-47": {
+      "client_id": "normal_browser-47",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "normal_browser-48": {
+      "client_id": "normal_browser-48",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 121
+    },
+    "normal_browser-49": {
+      "client_id": "normal_browser-49",
+      "profile": "normal_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 93
+    },
+    "privacy_browser-00": {
+      "client_id": "privacy_browser-00",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 61
+    },
+    "privacy_browser-01": {
+      "client_id": "privacy_browser-01",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-02": {
+      "client_id": "privacy_browser-02",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-03": {
+      "client_id": "privacy_browser-03",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-04": {
+      "client_id": "privacy_browser-04",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-05": {
+      "client_id": "privacy_browser-05",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-06": {
+      "client_id": "privacy_browser-06",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 61
+    },
+    "privacy_browser-07": {
+      "client_id": "privacy_browser-07",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-08": {
+      "client_id": "privacy_browser-08",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "privacy_browser-09": {
+      "client_id": "privacy_browser-09",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 61
+    },
+    "privacy_browser-10": {
+      "client_id": "privacy_browser-10",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "privacy_browser-11": {
+      "client_id": "privacy_browser-11",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-12": {
+      "client_id": "privacy_browser-12",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-13": {
+      "client_id": "privacy_browser-13",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-14": {
+      "client_id": "privacy_browser-14",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-15": {
+      "client_id": "privacy_browser-15",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-16": {
+      "client_id": "privacy_browser-16",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "privacy_browser-17": {
+      "client_id": "privacy_browser-17",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "privacy_browser-18": {
+      "client_id": "privacy_browser-18",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-19": {
+      "client_id": "privacy_browser-19",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-20": {
+      "client_id": "privacy_browser-20",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-21": {
+      "client_id": "privacy_browser-21",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 61
+    },
+    "privacy_browser-22": {
+      "client_id": "privacy_browser-22",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "privacy_browser-23": {
+      "client_id": "privacy_browser-23",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 53
+    },
+    "privacy_browser-24": {
+      "client_id": "privacy_browser-24",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-25": {
+      "client_id": "privacy_browser-25",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-26": {
+      "client_id": "privacy_browser-26",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-27": {
+      "client_id": "privacy_browser-27",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-28": {
+      "client_id": "privacy_browser-28",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-29": {
+      "client_id": "privacy_browser-29",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "privacy_browser-30": {
+      "client_id": "privacy_browser-30",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 57
+    },
+    "privacy_browser-31": {
+      "client_id": "privacy_browser-31",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 55
+    },
+    "privacy_browser-32": {
+      "client_id": "privacy_browser-32",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 53
+    },
+    "privacy_browser-33": {
+      "client_id": "privacy_browser-33",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-34": {
+      "client_id": "privacy_browser-34",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "privacy_browser-35": {
+      "client_id": "privacy_browser-35",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 61
+    },
+    "privacy_browser-36": {
+      "client_id": "privacy_browser-36",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "privacy_browser-37": {
+      "client_id": "privacy_browser-37",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "privacy_browser-38": {
+      "client_id": "privacy_browser-38",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 53
+    },
+    "privacy_browser-39": {
+      "client_id": "privacy_browser-39",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 51
+    },
+    "privacy_browser-40": {
+      "client_id": "privacy_browser-40",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-41": {
+      "client_id": "privacy_browser-41",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "privacy_browser-42": {
+      "client_id": "privacy_browser-42",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "privacy_browser-43": {
+      "client_id": "privacy_browser-43",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 45
+    },
+    "privacy_browser-44": {
+      "client_id": "privacy_browser-44",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-45": {
+      "client_id": "privacy_browser-45",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 61
+    },
+    "privacy_browser-46": {
+      "client_id": "privacy_browser-46",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 47
+    },
+    "privacy_browser-47": {
+      "client_id": "privacy_browser-47",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 49
+    },
+    "privacy_browser-48": {
+      "client_id": "privacy_browser-48",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 57
+    },
+    "privacy_browser-49": {
+      "client_id": "privacy_browser-49",
+      "profile": "privacy_browser",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 59
+    },
+    "slow_scraper-00": {
+      "client_id": "slow_scraper-00",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-01": {
+      "client_id": "slow_scraper-01",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-02": {
+      "client_id": "slow_scraper-02",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-03": {
+      "client_id": "slow_scraper-03",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-04": {
+      "client_id": "slow_scraper-04",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-05": {
+      "client_id": "slow_scraper-05",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "slow_scraper-06": {
+      "client_id": "slow_scraper-06",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-07": {
+      "client_id": "slow_scraper-07",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "slow_scraper-08": {
+      "client_id": "slow_scraper-08",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "slow_scraper-09": {
+      "client_id": "slow_scraper-09",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "slow_scraper-10": {
+      "client_id": "slow_scraper-10",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-11": {
+      "client_id": "slow_scraper-11",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-12": {
+      "client_id": "slow_scraper-12",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-13": {
+      "client_id": "slow_scraper-13",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-14": {
+      "client_id": "slow_scraper-14",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-15": {
+      "client_id": "slow_scraper-15",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "slow_scraper-16": {
+      "client_id": "slow_scraper-16",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 23
+    },
+    "slow_scraper-17": {
+      "client_id": "slow_scraper-17",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-18": {
+      "client_id": "slow_scraper-18",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-19": {
+      "client_id": "slow_scraper-19",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-20": {
+      "client_id": "slow_scraper-20",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "slow_scraper-21": {
+      "client_id": "slow_scraper-21",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 23
+    },
+    "slow_scraper-22": {
+      "client_id": "slow_scraper-22",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "slow_scraper-23": {
+      "client_id": "slow_scraper-23",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-24": {
+      "client_id": "slow_scraper-24",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-25": {
+      "client_id": "slow_scraper-25",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-26": {
+      "client_id": "slow_scraper-26",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-27": {
+      "client_id": "slow_scraper-27",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-28": {
+      "client_id": "slow_scraper-28",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "slow_scraper-29": {
+      "client_id": "slow_scraper-29",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 29
+    },
+    "slow_scraper-30": {
+      "client_id": "slow_scraper-30",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "slow_scraper-31": {
+      "client_id": "slow_scraper-31",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "slow_scraper-32": {
+      "client_id": "slow_scraper-32",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-33": {
+      "client_id": "slow_scraper-33",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 23
+    },
+    "slow_scraper-34": {
+      "client_id": "slow_scraper-34",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "slow_scraper-35": {
+      "client_id": "slow_scraper-35",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 23
+    },
+    "slow_scraper-36": {
+      "client_id": "slow_scraper-36",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 23
+    },
+    "slow_scraper-37": {
+      "client_id": "slow_scraper-37",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "slow_scraper-38": {
+      "client_id": "slow_scraper-38",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "slow_scraper-39": {
+      "client_id": "slow_scraper-39",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-40": {
+      "client_id": "slow_scraper-40",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "slow_scraper-41": {
+      "client_id": "slow_scraper-41",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-42": {
+      "client_id": "slow_scraper-42",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 23
+    },
+    "slow_scraper-43": {
+      "client_id": "slow_scraper-43",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-44": {
+      "client_id": "slow_scraper-44",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "slow_scraper-45": {
+      "client_id": "slow_scraper-45",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "slow_scraper-46": {
+      "client_id": "slow_scraper-46",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "slow_scraper-47": {
+      "client_id": "slow_scraper-47",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 29
+    },
+    "slow_scraper-48": {
+      "client_id": "slow_scraper-48",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "slow_scraper-49": {
+      "client_id": "slow_scraper-49",
+      "profile": "slow_scraper",
+      "expected_label": "bot",
+      "true_class": "bot",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "spa_client-00": {
+      "client_id": "spa_client-00",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "spa_client-01": {
+      "client_id": "spa_client-01",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-02": {
+      "client_id": "spa_client-02",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 32
+    },
+    "spa_client-03": {
+      "client_id": "spa_client-03",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-04": {
+      "client_id": "spa_client-04",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-05": {
+      "client_id": "spa_client-05",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-06": {
+      "client_id": "spa_client-06",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-07": {
+      "client_id": "spa_client-07",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-08": {
+      "client_id": "spa_client-08",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 32
+    },
+    "spa_client-09": {
+      "client_id": "spa_client-09",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-10": {
+      "client_id": "spa_client-10",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "spa_client-11": {
+      "client_id": "spa_client-11",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 32
+    },
+    "spa_client-12": {
+      "client_id": "spa_client-12",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 29
+    },
+    "spa_client-13": {
+      "client_id": "spa_client-13",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-14": {
+      "client_id": "spa_client-14",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-15": {
+      "client_id": "spa_client-15",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-16": {
+      "client_id": "spa_client-16",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-17": {
+      "client_id": "spa_client-17",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-18": {
+      "client_id": "spa_client-18",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 29
+    },
+    "spa_client-19": {
+      "client_id": "spa_client-19",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-20": {
+      "client_id": "spa_client-20",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-21": {
+      "client_id": "spa_client-21",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-22": {
+      "client_id": "spa_client-22",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-23": {
+      "client_id": "spa_client-23",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 32
+    },
+    "spa_client-24": {
+      "client_id": "spa_client-24",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-25": {
+      "client_id": "spa_client-25",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "spa_client-26": {
+      "client_id": "spa_client-26",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-27": {
+      "client_id": "spa_client-27",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-28": {
+      "client_id": "spa_client-28",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-29": {
+      "client_id": "spa_client-29",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-30": {
+      "client_id": "spa_client-30",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-31": {
+      "client_id": "spa_client-31",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 29
+    },
+    "spa_client-32": {
+      "client_id": "spa_client-32",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 30
+    },
+    "spa_client-33": {
+      "client_id": "spa_client-33",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 29
+    },
+    "spa_client-34": {
+      "client_id": "spa_client-34",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "spa_client-35": {
+      "client_id": "spa_client-35",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-36": {
+      "client_id": "spa_client-36",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-37": {
+      "client_id": "spa_client-37",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 32
+    },
+    "spa_client-38": {
+      "client_id": "spa_client-38",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-39": {
+      "client_id": "spa_client-39",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-40": {
+      "client_id": "spa_client-40",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 28
+    },
+    "spa_client-41": {
+      "client_id": "spa_client-41",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 27
+    },
+    "spa_client-42": {
+      "client_id": "spa_client-42",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-43": {
+      "client_id": "spa_client-43",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    },
+    "spa_client-44": {
+      "client_id": "spa_client-44",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 31
+    },
+    "spa_client-45": {
+      "client_id": "spa_client-45",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 24
+    },
+    "spa_client-46": {
+      "client_id": "spa_client-46",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-47": {
+      "client_id": "spa_client-47",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 32
+    },
+    "spa_client-48": {
+      "client_id": "spa_client-48",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 25
+    },
+    "spa_client-49": {
+      "client_id": "spa_client-49",
+      "profile": "spa_client",
+      "expected_label": "human",
+      "true_class": "human",
+      "run_id": "diverse-8881bc1c",
+      "request_count": null,
+      "observed_event_count": 26
+    }
+  }
+}
