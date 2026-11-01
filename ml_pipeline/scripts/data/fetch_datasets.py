@@ -9,6 +9,10 @@ The uploaded original eclog_1day.csv has no published checksum: its row count is
 verified .tab instead. SHA-256 of every file is written to <dest>/fetch_manifest.json (gitignored with
 the data) and printed, so it can be copied into a committed report.
 
+EClog downloads are gated by a Dataverse guestbook (name, email, institution, position). If the API
+refuses, the script prints where to put a browser-downloaded copy; files already present in --dest are
+verified, not re-downloaded. This script never submits guestbook data.
+
 Zanbil.ir (doi:10.7910/DVN/3QBYB5) is restricted on Dataverse and is not fetched by this script.
 """
 
@@ -17,6 +21,7 @@ import hashlib
 import json
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -68,7 +73,11 @@ def main():
         url = API.format(id=spec["file_id"]) + (f"?format={spec['download_format']}" if spec["download_format"] else "")
         if not out.exists():
             print(f"downloading {name} from {url}")
-            download(spec["file_id"], spec["download_format"], out)
+            try:
+                download(spec["file_id"], spec["download_format"], out)
+            except urllib.error.HTTPError as e:
+                sys.exit(f"{name}: HTTP {e.code} from Dataverse ({e.read()[:200].decode(errors='replace')}).\n"
+                         f"{cfg['access']}\nExpected path: {out}")
         md5, sha = digests(out)
         entry = {"doi": cfg["doi"], "url": url, "size": out.stat().st_size, "md5": md5, "sha256": sha,
                  "verified_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")}

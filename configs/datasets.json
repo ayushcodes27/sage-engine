@@ -28,7 +28,8 @@
         "size": 597837816,
         "note": "six-month log"
       }
-    }
+    },
+    "access": "Dataverse guestbook 356 (name, email, institution, position required) gates every file download; anonymous API download is refused (HTTP 400 guestbook error, or 403 for some clients). Download in a browser from https://doi.org/10.7910/DVN/Z834IK and place the files in ml_pipeline/data/raw/ under the names below; fetch_datasets.py then verifies them."
   },
   "zanbil": {
     "doi": "doi:10.7910/DVN/3QBYB5",
