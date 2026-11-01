@@ -20,8 +20,12 @@ public class RedisTelemetryService {
     private static final int WINDOW_SIZE = 50;
     private static final Duration ML_DECISION_TTL = Duration.ofMinutes(5);
 
-    @org.springframework.beans.factory.annotation.Value("${sage.telemetry.cart-keywords:cart,checkout,koszyk,platnosc,zamowienie,payment,basket}")
-    private String cartKeywordsConfig = "cart,checkout,koszyk,platnosc,zamowienie,payment,basket";
+    // Must equal CART_KEYWORDS in ml_pipeline/scripts/train/label_eclog.py (the EClog training rule).
+    // Site-specific additions (e.g. "basket" for zanbil.ir) belong in a profile config, never in this default.
+    public static final String DEFAULT_CART_KEYWORDS = "cart,checkout,koszyk,platnosc,zamowienie,payment";
+
+    @org.springframework.beans.factory.annotation.Value("${sage.telemetry.cart-keywords:" + DEFAULT_CART_KEYWORDS + "}")
+    private String cartKeywordsConfig = DEFAULT_CART_KEYWORDS;
 
     @org.springframework.beans.factory.annotation.Value("${sage.telemetry.static-extensions:js,css,png,jpg,jpeg,gif,ico,woff,woff2,ttf,svg,webp}")
     private String staticExtensionsConfig = "js,css,png,jpg,jpeg,gif,ico,woff,woff2,ttf,svg,webp";
@@ -220,7 +224,7 @@ public class RedisTelemetryService {
 
     public static boolean isCartPath(String canonicalPath) {
         if (canonicalPath == null) return false;
-        return canonicalPath.matches(".*(cart|checkout|koszyk|platnosc|zamowienie|payment|basket).*");
+        return canonicalPath.matches(".*(cart|checkout|koszyk|platnosc|zamowienie|payment).*");
     }
 
     public static double calculateVelocity(List<Double> times) {

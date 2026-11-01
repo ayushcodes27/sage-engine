@@ -46,7 +46,7 @@ sage:
     secret: ${SAGE_PROBE_SECRET:}
   telemetry:
     rescore-frequency: ${SAGE_RESCORE_FREQUENCY:20}
-    cart-keywords: ${SAGE_CART_KEYWORDS:cart,checkout,koszyk,platnosc,zamowienie,payment,basket}
+    cart-keywords: ${SAGE_CART_KEYWORDS:cart,checkout,koszyk,platnosc,zamowienie,payment}
     static-extensions: ${SAGE_STATIC_EXTENSIONS:js,css,png,jpg,jpeg,gif,ico,woff,woff2,ttf,svg,webp}
   rate-limit:
     enabled: false

@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CrossLanguageParityTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    // Default-configured instance: exercises the same checkIsStatic/checkIsCart path the gateway runs.
+    private final RedisTelemetryService defaultService = new RedisTelemetryService(null);
 
     @Test
     void shouldMatchSharedGoldenFixtureParity() throws Exception {
@@ -92,8 +94,8 @@ class CrossLanguageParityTest {
         for (JsonNode r : windowRequests) {
             String rawPath = r.has("raw_path") ? r.path("raw_path").asText() : r.path("path").asText();
             String canonical = RedisTelemetryService.canonicalizePath(rawPath);
-            boolean isStatic = RedisTelemetryService.isStaticAsset(canonical);
-            boolean isCart = RedisTelemetryService.isCartPath(canonical);
+            boolean isStatic = defaultService.checkIsStatic(canonical);
+            boolean isCart = defaultService.checkIsCart(canonical);
 
             if (isStatic) {
                 staticHits += 1.0;
