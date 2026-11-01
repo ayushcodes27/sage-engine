@@ -97,7 +97,7 @@ def flush_redis():
 
 def scrape(gateway_url):
     text = requests.get(f"{gateway_url}/actuator/prometheus", timeout=5).text
-    out = {"timers": {}, "outcomes": {}}
+    out = {"timers": {}, "outcomes": {}, "attempts": {}}
     for t in TIMERS:
         buckets = {}
         for m in re.finditer(rf'^{t}_bucket\{{[^}}]*le="([^"]+)"[^}}]*\}} ([0-9.eE+-]+)$', text, re.M):
@@ -107,6 +107,10 @@ def scrape(gateway_url):
         out["timers"][t] = {"buckets": buckets, "count": count, "sum": total}
     for m in re.finditer(r'^sage_gateway_ml_inference_outcomes_total\{[^}]*outcome="([^"]+)"[^}]*\} ([0-9.eE+-]+)$', text, re.M):
         out["outcomes"][m.group(1)] = float(m.group(2))
+    # every ML scoring attempt by result (Scored, Timeout, Error, SemaphoreFull, ...), summed over source
+    for m in re.finditer(r'^sage_gateway_ml_score_attempts_total\{([^}]*)\} ([0-9.eE+-]+)$', text, re.M):
+        st = re.search(r'status="([^"]+)"', m.group(1)).group(1)
+        out["attempts"][st] = out["attempts"].get(st, 0.0) + float(m.group(2))
     return out
 
 
@@ -117,8 +121,10 @@ def drain(gateway_url, stable_s=3.0, max_s=60.0):
     t0 = time.time()
     last, since = None, time.time()
     while time.time() - t0 < max_s:
-        timers = scrape(gateway_url)["timers"]
-        cur = (timers["sage_gateway_ml_roundtrip_seconds"]["count"], timers["sage_gateway_kafka_publish_seconds"]["count"])
+        snap = scrape(gateway_url)
+        timers = snap["timers"]
+        cur = (timers["sage_gateway_ml_roundtrip_seconds"]["count"], timers["sage_gateway_kafka_publish_seconds"]["count"],
+               sum(snap["attempts"].values()))
         if cur != last:
             last, since = cur, time.time()
         elif time.time() - since >= stable_s:
@@ -144,6 +150,9 @@ def histogram_delta(before, after):
     outcomes = {k: after["outcomes"].get(k, 0.0) - before["outcomes"].get(k, 0.0)
                 for k in set(after["outcomes"]) | set(before["outcomes"])}
     res["ml_outcomes"] = {k: v for k, v in outcomes.items() if v}
+    attempts = {k: after["attempts"].get(k, 0.0) - before["attempts"].get(k, 0.0)
+                for k in set(after["attempts"]) | set(before["attempts"])}
+    res["ml_attempts"] = {k: v for k, v in attempts.items() if v}
     return res
 
 
@@ -272,6 +281,7 @@ def summarise(reps, modes, levels):
                 # client that already has a cached decision as "Cached", so it undercounts async scoring.
                 "ml_calls_per_rep": [r["internal"]["sage_gateway_ml_roundtrip_seconds"]["count"] for r in rs],
                 "ml_outcomes_per_rep": [r["internal"]["ml_outcomes"] for r in rs],
+                "ml_attempts_per_rep": [r["internal"]["ml_attempts"] for r in rs],
             }
     overhead = {}
     for c in levels:
@@ -326,7 +336,7 @@ def main():
                 r = run_rep(args.gateway_url, mode, c, rep, args, bench_id, out_dir)
                 print(f"{mode:8s} c={c:<3d} rep={rep} p50={r['latency_ms']['p50']:.2f} p95={r['latency_ms']['p95']:.2f} "
                       f"p99={r['latency_ms']['p99']:.2f} rps={r['throughput_rps']:.1f} err={r['errors']} "
-                      f"ml_calls={r['internal']['sage_gateway_ml_roundtrip_seconds']['count']:.0f}")
+                      f"ml_calls={r['internal']['sage_gateway_ml_roundtrip_seconds']['count']:.0f} attempts={r['internal']['ml_attempts']}")
                 reps.append(r)
     restart_gateway("async", args.gateway_url, env_base)
 
