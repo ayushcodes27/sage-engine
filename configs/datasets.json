@@ -7,19 +7,12 @@
     "licence": "CC0 with additional terms (see Dataverse terms of use); derived features only are committed",
     "restricted": false,
     "files": {
-      "eclog_1day.tab": {
-        "file_id": 4003436,
-        "download_format": null,
-        "md5": "8542ef2002e49f8a9e594c075758c109",
-        "size": 100620948,
-        "note": "Dataverse-ingested tabular version; this is what the published MD5 covers"
-      },
       "eclog_1day.csv": {
         "file_id": 4003436,
         "download_format": "original",
-        "md5": null,
+        "md5": "8542ef2002e49f8a9e594c075758c109",
         "size": null,
-        "note": "uploaded original (input of label_eclog.py); Dataverse publishes no checksum for it, so its SHA-256 is recorded on first download and its rows are checked against the verified .tab"
+        "note": "uploaded original (input of label_eclog.py); for ingested tabular files Dataverse publishes the MD5 of the original upload, not of the .tab"
       },
       "eclog.zip": {
         "file_id": 4004477,
@@ -29,7 +22,7 @@
         "note": "six-month log"
       }
     },
-    "access": "Dataverse guestbook 356 (name, email, institution, position required) gates every file download; anonymous API download is refused (HTTP 400 guestbook error, or 403 for some clients). Download in a browser from https://doi.org/10.7910/DVN/Z834IK and place the files in ml_pipeline/data/raw/ under the names below; fetch_datasets.py then verifies them."
+    "access": "Dataverse guestbook 356 (name, email, institution, position required) gates every file download; anonymous API download is refused (HTTP 400 guestbook error, or 403 for some clients). Download in a browser from https://doi.org/10.7910/DVN/Z834IK and place the files in ml_pipeline/data/ under the names below; fetch_datasets.py then verifies them."
   },
   "zanbil": {
     "doi": "doi:10.7910/DVN/3QBYB5",
