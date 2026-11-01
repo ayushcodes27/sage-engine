@@ -251,7 +251,10 @@ def summarise(reps, modes, levels):
                 "kafka_publish_mean_ms": med(lambda r: r["internal"]["sage_gateway_kafka_publish_seconds"]["mean_ms"]),
                 "gateway_cpu_pct_mean": med(lambda r: r["containers"]["sage-gateway"]["cpu_pct_mean"]),
                 "gateway_mem_mib_max": med(lambda r: r["containers"]["sage-gateway"]["mem_mib_max"]),
-                "ml_scored_per_rep": [r["internal"]["ml_outcomes"] for r in rs],
+                # ML calls = ML round-trip timer count. The outcome counter labels async re-scores of a
+                # client that already has a cached decision as "Cached", so it undercounts async scoring.
+                "ml_calls_per_rep": [r["internal"]["sage_gateway_ml_roundtrip_seconds"]["count"] for r in rs],
+                "ml_outcomes_per_rep": [r["internal"]["ml_outcomes"] for r in rs],
             }
     overhead = {}
     for c in levels:
@@ -305,7 +308,8 @@ def main():
             for rep in range(args.repetitions):
                 r = run_rep(args.gateway_url, mode, c, rep, args, bench_id, out_dir)
                 print(f"{mode:8s} c={c:<3d} rep={rep} p50={r['latency_ms']['p50']:.2f} p95={r['latency_ms']['p95']:.2f} "
-                      f"p99={r['latency_ms']['p99']:.2f} rps={r['throughput_rps']:.1f} err={r['errors']} ml={r['internal']['ml_outcomes']}")
+                      f"p99={r['latency_ms']['p99']:.2f} rps={r['throughput_rps']:.1f} err={r['errors']} "
+                      f"ml_calls={r['internal']['sage_gateway_ml_roundtrip_seconds']['count']:.0f}")
                 reps.append(r)
     restart_gateway("async", args.gateway_url, env_base)
 
