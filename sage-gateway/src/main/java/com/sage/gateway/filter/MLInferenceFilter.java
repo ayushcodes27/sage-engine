@@ -55,6 +55,10 @@ public class MLInferenceFilter implements GatewayFilter {
     @org.springframework.beans.factory.annotation.Value("${sage.telemetry.rescore-frequency:20}")
     private int rescoreFrequency = 20;
 
+    /** Cooldown after a failed score before the client is scored again (0 disables). */
+    @org.springframework.beans.factory.annotation.Value("${sage.ml.failure-cooldown-ms:5000}")
+    private long failureCooldownMs = 5000;
+
     @org.springframework.beans.factory.annotation.Value("${sage.ml.shadow-threshold:0.35}")
     private double shadowThreshold = 0.35;
 
@@ -228,6 +232,13 @@ public class MLInferenceFilter implements GatewayFilter {
                 shouldScoreFresh = false;
             }
 
+            boolean inCooldown = false;
+            if (shouldScoreFresh && !isProbeAuthorized && failureCooldownMs > 0
+                    && redisTelemetryService.inScoringCooldown(ipAddress)) {
+                shouldScoreFresh = false;
+                inCooldown = true;
+            }
+
             // Reviewer Item 3: Move scoring off the request path asynchronously
             if (shouldScoreFresh) {
                 boolean forceSync = isProbeAuthorized && "true".equalsIgnoreCase(request.getHeader("X-SAGE-Sync-Score"));
@@ -288,6 +299,8 @@ public class MLInferenceFilter implements GatewayFilter {
                     evaluationStatus = "GateDepthNotMet";
                 } else if (sessionDuration < 3.0) {
                     evaluationStatus = "GateDurationNotMet";
+                } else if (inCooldown) {
+                    evaluationStatus = "ScoringCooldown";
                 } else {
                     evaluationStatus = "features".equalsIgnoreCase(mlMode) ? "ScoringDisabled" : "Skipped";
                 }
@@ -338,6 +351,11 @@ public class MLInferenceFilter implements GatewayFilter {
     private Map<String, String> performMlInference(String ipAddress, String requestId, Map<String, Double> features,
                                                    double sessionDepth, double requestCount, ScoreContext context) {
         Map<String, String> result = scoreOnce(ipAddress, requestId, features, sessionDepth, requestCount);
+        String status = result.getOrDefault("evaluationStatus", "Error");
+        meterRegistry.counter("sage_gateway_ml_score_attempts_total", "status", status, "source", context.decisionSource()).increment();
+        if (!"Scored".equals(status) && failureCooldownMs > 0) {
+            redisTelemetryService.startScoringCooldown(ipAddress, Duration.ofMillis(failureCooldownMs));
+        }
         publishScoreEvent(ipAddress, requestId, features, result, context);
         return result;
     }
@@ -437,8 +455,15 @@ public class MLInferenceFilter implements GatewayFilter {
                     .build();
 
             long sentNanos = System.nanoTime();
-            HttpResponse<String> mlResponse = httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString())
-                    .get(1000, TimeUnit.MILLISECONDS);
+            java.util.concurrent.CompletableFuture<HttpResponse<String>> pending =
+                    httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> mlResponse;
+            try {
+                mlResponse = pending.get(1000, TimeUnit.MILLISECONDS);
+            } catch (java.util.concurrent.TimeoutException | InterruptedException e) {
+                pending.cancel(true); // abort the exchange instead of leaving it queued at the inference service
+                throw e;
+            }
             long roundTripNanos = System.nanoTime() - sentNanos;
             result.put("mlRoundTripMs", Double.toString(roundTripNanos / 1_000_000.0));
             Timer.builder("sage_gateway_ml_roundtrip_seconds")

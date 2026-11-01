@@ -398,6 +398,19 @@ public class RedisTelemetryService {
         redisTemplate.delete("sage:scoring_inflight:" + ip);
     }
 
+    /**
+     * After a failed score (timeout, error, backpressure) the client is not re-scored until the cooldown
+     * expires. Without it an unscored client retried on every request, and under overload the retries kept
+     * the inference service saturated so that almost every attempt timed out.
+     */
+    public void startScoringCooldown(String ip, Duration cooldown) {
+        redisTemplate.opsForValue().set("sage:score_cooldown:" + ip, "1", cooldown);
+    }
+
+    public boolean inScoringCooldown(String ip) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("sage:score_cooldown:" + ip));
+    }
+
     public static String getSubnet24(String ip) {
         if (ip == null || ip.isBlank() || !ip.contains(".")) {
             return "unknown";

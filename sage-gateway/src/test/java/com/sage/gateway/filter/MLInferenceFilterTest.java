@@ -10,7 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.sun.net.httpserver.HttpServer;
+
+import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -177,5 +182,92 @@ class MLInferenceFilterTest {
         assertEquals("ScoringDisabled", request.getAttribute("SAGE-EvaluationStatus"));
         assertNotNull(request.getAttribute("SAGE-Features"));
     }
-}
 
+    /** Inference stub that answers only after delayMs; counts requests it receives. */
+    private static HttpServer slowInferenceStub(int delayMs, AtomicInteger hits) throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
+        server.createContext("/predict", exchange -> {
+            hits.incrementAndGet();
+            try {
+                Thread.sleep(delayMs);
+                exchange.sendResponseHeaders(500, -1);
+            } catch (Exception ignored) {
+            } finally {
+                exchange.close();
+            }
+        });
+        server.start();
+        return server;
+    }
+
+    private MockHttpServletRequest gatedRequest(String ip) {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("X-Client-Ip", ip);
+        request.setAttribute("X-Request-Id", "req-" + ip);
+        request.setRequestURI("/products");
+        when(telemetryService.processAndGetTelemetry(anyString(), anyDouble(), anyString()))
+                .thenReturn(Map.of("SAGE_Session_Depth", 25.0, "SAGE_Session_Duration", 10.0));
+        when(telemetryService.getCachedMlDecision(ip)).thenReturn(Map.of());
+        return request;
+    }
+
+    @Test
+    @DisplayName("Overload: a timed-out score starts the per-client failure cooldown")
+    void timeoutStartsCooldown() throws Exception {
+        AtomicInteger hits = new AtomicInteger();
+        HttpServer stub = slowInferenceStub(1500, hits);
+        try {
+            ReflectionTestUtils.setField(filter, "mlMode", "sync");
+            ReflectionTestUtils.setField(filter, "PYTHON_ML_URL", "http://127.0.0.1:" + stub.getAddress().getPort() + "/predict");
+            MockHttpServletRequest request = gatedRequest("192.0.2.8");
+
+            filter.filter(request, Map.of());
+
+            assertEquals("Timeout", request.getAttribute("SAGE-EvaluationStatus"));
+            verify(telemetryService).startScoringCooldown("192.0.2.8", Duration.ofMillis(5000));
+        } finally {
+            stub.stop(0);
+        }
+    }
+
+    @Test
+    @DisplayName("Overload: a client in cooldown is not re-scored (sync makes no ML call, async takes no lock)")
+    void cooldownSuppressesRetries() throws Exception {
+        AtomicInteger hits = new AtomicInteger();
+        HttpServer stub = slowInferenceStub(0, hits);
+        try {
+            ReflectionTestUtils.setField(filter, "PYTHON_ML_URL", "http://127.0.0.1:" + stub.getAddress().getPort() + "/predict");
+            when(telemetryService.inScoringCooldown("192.0.2.9")).thenReturn(true);
+
+            ReflectionTestUtils.setField(filter, "mlMode", "sync");
+            MockHttpServletRequest syncRequest = gatedRequest("192.0.2.9");
+            filter.filter(syncRequest, Map.of());
+            assertEquals("ScoringCooldown", syncRequest.getAttribute("SAGE-EvaluationStatus"));
+            assertEquals(0, hits.get(), "no ML call during cooldown");
+
+            ReflectionTestUtils.setField(filter, "mlMode", "async");
+            MockHttpServletRequest asyncRequest = gatedRequest("192.0.2.9");
+            filter.filter(asyncRequest, Map.of());
+            assertEquals("ScoringCooldown", asyncRequest.getAttribute("SAGE-EvaluationStatus"));
+            verify(telemetryService, never()).acquireScoringLock(anyString());
+        } finally {
+            stub.stop(0);
+        }
+    }
+
+    @Test
+    @DisplayName("Overload: an authorised probe is scored even during cooldown")
+    void probeOverridesCooldown() {
+        MockHttpServletRequest request = gatedRequest("192.0.2.10");
+        request.addHeader("X-SAGE-Probe", "true");
+        request.addHeader("X-SAGE-Probe-Secret", "super-secret-probe-key");
+        when(telemetryService.inScoringCooldown("192.0.2.10")).thenReturn(true);
+        when(telemetryService.acquireScoringLock("192.0.2.10")).thenReturn(false);
+
+        filter.filter(request, Map.of());
+
+        verify(telemetryService, never()).inScoringCooldown(anyString());
+        verify(telemetryService).acquireScoringLock("192.0.2.10");
+    }
+}
