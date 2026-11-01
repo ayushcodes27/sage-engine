@@ -103,5 +103,46 @@ class MLInferenceFilterTest {
         // And triggers async re-score
         verify(telemetryService).acquireScoringLock("192.0.2.3");
     }
+
+    @Test
+    @DisplayName("Defect 2: re-scoring continues past k=41 although session depth (f0) is capped at 50")
+    void shouldRescoreOnUncappedCountWhenDepthIsCapped() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("X-Client-Ip", "192.0.2.4");
+        request.setAttribute("X-Request-Id", "req-4");
+        request.setRequestURI("/products");
+
+        // Last score at non-static request 41; f0 is now capped at 50 while 61 non-static requests were seen.
+        when(telemetryService.getCachedMlDecision("192.0.2.4")).thenReturn(Map.of(
+                "isBot", "false", "botProbability", "0.05", "scoringDepth", "41.0", "scoringCount", "41.0"));
+        when(telemetryService.processAndGetTelemetry(anyString(), anyDouble(), anyString()))
+                .thenReturn(Map.of("SAGE_Session_Depth", 50.0, "SAGE_Session_Duration", 30.0,
+                        RedisTelemetryService.NON_STATIC_REQUEST_COUNT, 61.0));
+        when(telemetryService.acquireScoringLock("192.0.2.4")).thenReturn(true);
+
+        filter.filter(request, Map.of());
+
+        verify(telemetryService).acquireScoringLock("192.0.2.4");
+    }
+
+    @Test
+    @DisplayName("Re-scoring is not scheduled before rescoreFrequency new non-static requests")
+    void shouldNotRescoreBeforeFrequencyReached() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("X-Client-Ip", "192.0.2.5");
+        request.setAttribute("X-Request-Id", "req-5");
+        request.setRequestURI("/products");
+
+        when(telemetryService.getCachedMlDecision("192.0.2.5")).thenReturn(Map.of(
+                "isBot", "false", "botProbability", "0.05", "scoringDepth", "50.0", "scoringCount", "61.0"));
+        when(telemetryService.processAndGetTelemetry(anyString(), anyDouble(), anyString()))
+                .thenReturn(Map.of("SAGE_Session_Depth", 50.0, "SAGE_Session_Duration", 30.0,
+                        RedisTelemetryService.NON_STATIC_REQUEST_COUNT, 80.0));
+
+        filter.filter(request, Map.of());
+
+        verify(telemetryService, never()).acquireScoringLock("192.0.2.5");
+        assertEquals("Cached", request.getAttribute("SAGE-EvaluationStatus"));
+    }
 }
 

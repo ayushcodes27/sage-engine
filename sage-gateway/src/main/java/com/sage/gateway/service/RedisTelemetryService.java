@@ -19,6 +19,8 @@ public class RedisTelemetryService {
     private final StringRedisTemplate redisTemplate;
     private static final int WINDOW_SIZE = 50;
     private static final Duration ML_DECISION_TTL = Duration.ofMinutes(5);
+    // Not a model feature: uncapped count of non-static requests in the current Redis session.
+    public static final String NON_STATIC_REQUEST_COUNT = "SAGE_NonStatic_Request_Count";
 
     // Must equal CART_KEYWORDS in ml_pipeline/scripts/train/label_eclog.py (the EClog training rule).
     // Site-specific additions (e.g. "basket" for zanbil.ir) belong in a profile config, never in this default.
@@ -40,6 +42,7 @@ public class RedisTelemetryService {
         String pathKey = "sage:paths:" + ip;
         String hashKey = "sage:telemetry:" + ip;
         String firstSeenKey = "sage:first_seen:" + ip;
+        String requestCountKey = "sage:reqcount:" + ip;
 
         // Reviewer Item 1: SETNX for first-seen timestamp with 5-minute TTL.
         // Prevents window-span truncation when fast scrapers exceed WINDOW_SIZE (50 requests).
@@ -75,6 +78,17 @@ public class RedisTelemetryService {
             // LTRIM to keep only the last WINDOW_SIZE elements
             redisTemplate.opsForList().trim(timeKey, 0, WINDOW_SIZE - 1);
             redisTemplate.opsForList().trim(pathKey, 0, WINDOW_SIZE - 1);
+        }
+
+        // Uncapped non-static request counter. Used only to schedule re-scoring;
+        // SAGE_Session_Depth (f0) stays the capped window size exactly as in training.
+        double nonStaticRequestCount;
+        if (!isStatic) {
+            Long count = redisTemplate.opsForValue().increment(requestCountKey);
+            nonStaticRequestCount = count == null ? 0.0 : count;
+        } else {
+            String count = redisTemplate.opsForValue().get(requestCountKey);
+            nonStaticRequestCount = count == null ? 0.0 : Double.parseDouble(count);
         }
 
         // Fetch the sliding window
@@ -130,6 +144,7 @@ public class RedisTelemetryService {
         redisTemplate.expire(hashKey, Duration.ofMinutes(5));
         redisTemplate.expire(timeKey, Duration.ofMinutes(5));
         redisTemplate.expire(pathKey, Duration.ofMinutes(5));
+        redisTemplate.expire(requestCountKey, Duration.ofMinutes(5));
 
         Map<String, Double> features = new LinkedHashMap<>();
         features.put("SAGE_Session_Depth", sessionDepth);
@@ -142,6 +157,7 @@ public class RedisTelemetryService {
         features.put("SAGE_NonStatic_Navigation_Gap", nonStaticNavigationGap);
         features.put("SAGE_NonStatic_Long_Gap_Ratio", nonStaticLongGapRatio);
         features.put("SAGE_Session_Duration", sessionDuration);
+        features.put(NON_STATIC_REQUEST_COUNT, nonStaticRequestCount);
         return features;
     }
 

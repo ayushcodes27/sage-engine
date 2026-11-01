@@ -122,6 +122,8 @@ public class MLInferenceFilter implements GatewayFilter {
             
             double sessionDepth = features.getOrDefault("SAGE_Session_Depth", 0.0);
             double sessionDuration = features.getOrDefault("SAGE_Session_Duration", 0.0);
+            // f0 is capped at 50, so re-scoring is scheduled on the uncapped non-static request count.
+            double requestCount = features.getOrDefault(RedisTelemetryService.NON_STATIC_REQUEST_COUNT, sessionDepth);
 
             Map<String, String> cachedDecision = redisTelemetryService.getCachedMlDecision(ipAddress);
 
@@ -140,11 +142,12 @@ public class MLInferenceFilter implements GatewayFilter {
                 }
             }
 
-            // Reviewer Item 2: Re-score clients every 20 new requests instead of trusting one decision for 5 min
-            double lastScoredDepth = 0.0;
-            if (!cachedDecision.isEmpty() && cachedDecision.containsKey("scoringDepth")) {
+            // Reviewer Item 2: Re-score clients every 20 new non-static requests instead of trusting one decision for 5 min
+            double lastScoredCount = 0.0;
+            String lastScored = cachedDecision.getOrDefault("scoringCount", cachedDecision.get("scoringDepth"));
+            if (lastScored != null) {
                 try {
-                    lastScoredDepth = Double.parseDouble(cachedDecision.get("scoringDepth"));
+                    lastScoredCount = Double.parseDouble(lastScored);
                 } catch (Exception ignored) {}
             }
 
@@ -152,7 +155,7 @@ public class MLInferenceFilter implements GatewayFilter {
             if (sessionDepth > SESSION_DEPTH_THRESHOLD && sessionDuration >= 3.0) {
                 if (cachedDecision.isEmpty() || isProbeAuthorized) {
                     shouldScoreFresh = true;
-                } else if ((sessionDepth - lastScoredDepth) >= rescoreFrequency) {
+                } else if ((requestCount - lastScoredCount) >= rescoreFrequency) {
                     shouldScoreFresh = true; // Periodic re-scoring trigger
                 }
             }
@@ -194,7 +197,7 @@ public class MLInferenceFilter implements GatewayFilter {
             if (shouldScoreFresh) {
                 boolean forceSync = isProbeAuthorized && "true".equalsIgnoreCase(request.getHeader("X-SAGE-Sync-Score"));
                 if (forceSync) {
-                    Map<String, String> freshResult = performMlInference(ipAddress, requestId, features, sessionDepth);
+                    Map<String, String> freshResult = performMlInference(ipAddress, requestId, features, sessionDepth, requestCount);
                     if ("Scored".equals(freshResult.get("evaluationStatus"))) {
                         evaluationStatus = "Scored";
                         decisionSource = "fresh_sync";
@@ -216,9 +219,10 @@ public class MLInferenceFilter implements GatewayFilter {
                         final String asyncIp = ipAddress;
                         final String asyncReqId = requestId;
                         final double asyncDepth = sessionDepth;
+                        final double asyncCount = requestCount;
                         asyncMlExecutor.submit(() -> {
                             try {
-                                performMlInference(asyncIp, asyncReqId, asyncFeatures, asyncDepth);
+                                performMlInference(asyncIp, asyncReqId, asyncFeatures, asyncDepth, asyncCount);
                             } finally {
                                 redisTelemetryService.releaseScoringLock(asyncIp);
                             }
@@ -270,7 +274,8 @@ public class MLInferenceFilter implements GatewayFilter {
         return Optional.empty();
     }
 
-    private Map<String, String> performMlInference(String ipAddress, String requestId, Map<String, Double> features, double sessionDepth) {
+    private Map<String, String> performMlInference(String ipAddress, String requestId, Map<String, Double> features,
+                                                   double sessionDepth, double requestCount) {
         Map<String, String> result = new HashMap<>();
         boolean acquired = false;
         try {
@@ -310,6 +315,7 @@ public class MLInferenceFilter implements GatewayFilter {
                 result.put("contractHash", responseNode.path("contract_hash").asText("unknown"));
                 result.put("modelVersion", responseNode.path("model_version").asText("unknown"));
                 result.put("scoringDepth", Double.toString(sessionDepth));
+                result.put("scoringCount", Double.toString(requestCount));
                 result.put("scoringTimestamp", Long.toString(System.currentTimeMillis()));
                 if (!responseNode.path("prod_model_sha256").isNull()) result.put("prodModelSha256", responseNode.path("prod_model_sha256").asText());
                 if (!responseNode.path("shadow_model_sha256").isNull()) result.put("shadowModelSha256", responseNode.path("shadow_model_sha256").asText());
