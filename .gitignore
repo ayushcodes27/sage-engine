@@ -35,6 +35,8 @@ build/
 !/ml_pipeline/models/eclog_weak_binary_model.pkl
 !/ml_pipeline/models/eclog_6feature_binary_model.pkl
 !/ml_pipeline/models/eclog_timing_binary_model.pkl
+!/ml_pipeline/models/eclog6m_prefix_8feature_v1.pkl
+!/ml_pipeline/models/eclog6m_completed_8feature_v1.pkl
 
 # Run outputs & Telemetry Dumps
 /load-tests/runs/
