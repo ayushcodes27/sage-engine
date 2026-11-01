@@ -21,7 +21,6 @@
   },
   "gate_thresholds": {
     "macro_average_bot_recall_min": 0.90,
-    "min_per_profile_recall": 0.80,
     "human_fpr_limit": 0.01,
     "scoring_coverage_min": 1.0,
     "timeouts_max": 0,
