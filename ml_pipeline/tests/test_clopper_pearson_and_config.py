@@ -128,6 +128,19 @@ def test_campaign_config_hash_and_gate_outcome():
         for cid in client_manifest
     ]
     telemetry_df = pd.DataFrame(telemetry_rows)
+    # Same records in raw Kafka event form (campaign_metrics input used for the gate definitions)
+    raw_events = [
+        {
+            "runId": run_id, "userId": r["client_id"], "timestamp": 1, "response": {"status": 200},
+            "features": {"sessionDepth": 25.0, "nonStaticNavigationGap": 1.2, "nonStaticLongGapRatio": 0.5},
+            "mlMetadata": {
+                "evaluationStatus": "Scored", "shadowStatus": "ok",
+                "shadowBotProbability": r["shadow_prob"], "shadowIsBotFlag": int(r["shadow_is_bot"]),
+                "botProbability": r["bot_prob"], "isBotFlag": int(r["is_bot"]),
+            },
+        }
+        for r in telemetry_rows
+    ]
 
     frozen_manifest = {"active_deployment": active_tuple}
 
@@ -139,6 +152,7 @@ def test_campaign_config_hash_and_gate_outcome():
         1000,
         frozen_manifest=frozen_manifest,
         run_mode="final",
+        events=raw_events,
     )
     assert passed_orig is True
 
@@ -155,5 +169,6 @@ def test_campaign_config_hash_and_gate_outcome():
         1000,
         frozen_manifest=frozen_manifest,
         run_mode="final",
+        events=raw_events,
     )
     assert passed_mutated is False

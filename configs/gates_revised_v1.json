@@ -2,7 +2,7 @@
   "gates_version": "revised-v1",
   "supersedes": "none — evaluated alongside the original G1–G7 in final_campaign_config.json (sha256 f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9), which stay unchanged",
   "client_rule": "a client is predicted bot if any scored decision for that client is flagged; a manifest client with no scored decision counts as not flagged (bot = miss, human = negative)",
-  "scorable_rule": "a client is scorable if its telemetry shows non-static session depth > 20 and session duration >= 3.0 s at some request",
+  "scorable_rule": "a client is scorable if its telemetry shows non-static session depth (features.sessionDepth) > 20 at some request; session duration is not logged in telemetry and is therefore not part of the rule",
   "gates": {
     "R1_identity": {
       "description": "every scored record carries the full identity tuple and it equals the pinned manifest; one tuple per model across the run"
