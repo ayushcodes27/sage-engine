@@ -2,6 +2,8 @@ package com.sage.gateway.filter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sage.gateway.event.RequestEvent;
+import com.sage.gateway.service.KafkaProducerService;
 import com.sage.gateway.service.RedisTelemetryService;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -35,6 +38,7 @@ public class MLInferenceFilter implements GatewayFilter {
     private final RedisTelemetryService redisTelemetryService;
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
+    private final KafkaProducerService kafkaProducer;
     private final HttpClient httpClient;
     private final ExecutorService asyncMlExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
@@ -50,12 +54,17 @@ public class MLInferenceFilter implements GatewayFilter {
     @org.springframework.beans.factory.annotation.Value("${sage.telemetry.rescore-frequency:20}")
     private int rescoreFrequency = 20;
 
+    @org.springframework.beans.factory.annotation.Value("${sage.ml.shadow-threshold:0.35}")
+    private double shadowThreshold = 0.35;
+
     private volatile boolean contractVerified = false;
 
-    public MLInferenceFilter(RedisTelemetryService redisTelemetryService, ObjectMapper objectMapper, MeterRegistry meterRegistry) {
+    public MLInferenceFilter(RedisTelemetryService redisTelemetryService, ObjectMapper objectMapper,
+                             MeterRegistry meterRegistry, KafkaProducerService kafkaProducer) {
         this.redisTelemetryService = redisTelemetryService;
         this.objectMapper = objectMapper;
         this.meterRegistry = meterRegistry;
+        this.kafkaProducer = kafkaProducer;
         this.httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofMillis(500))
@@ -80,6 +89,8 @@ public class MLInferenceFilter implements GatewayFilter {
         }
         
         String requestId = (String) request.getAttribute("X-Request-Id");
+        String clientId = (String) request.getAttribute("X-SAGE-Client-Id");
+        String runId = (String) request.getAttribute("X-SAGE-Run-Id");
         double payloadSize = request.getContentLength() > 0 ? request.getContentLength() : 0.0;
         String path = request.getRequestURI();
 
@@ -197,18 +208,29 @@ public class MLInferenceFilter implements GatewayFilter {
             if (shouldScoreFresh) {
                 boolean forceSync = isProbeAuthorized && "true".equalsIgnoreCase(request.getHeader("X-SAGE-Sync-Score"));
                 if (forceSync) {
-                    Map<String, String> freshResult = performMlInference(ipAddress, requestId, features, sessionDepth, requestCount);
+                    Map<String, String> freshResult = performMlInference(ipAddress, requestId, features, sessionDepth, requestCount,
+                            new ScoreContext(clientId, runId, path, "fresh_sync"));
                     if ("Scored".equals(freshResult.get("evaluationStatus"))) {
                         evaluationStatus = "Scored";
                         decisionSource = "fresh_sync";
                         scoringDepth = sessionDepth;
-                        scoringTimestampMs = System.currentTimeMillis();
+                        scoringTimestampMs = Long.parseLong(freshResult.get("scoringTimestamp"));
                         isBot = Boolean.parseBoolean(freshResult.getOrDefault("isBot", "false"));
                         botProbability = Double.parseDouble(freshResult.getOrDefault("botProbability", "0.0"));
                         threatClass = freshResult.getOrDefault("threatClass", "Benign");
                         shadowStatus = freshResult.getOrDefault("shadowStatus", "unavailable");
                         contractHash = freshResult.getOrDefault("contractHash", "unknown");
                         modelVersion = freshResult.getOrDefault("modelVersion", "unknown");
+                        // N8: the synchronous result must carry the shadow decision, identity and timings too.
+                        shadowIsBot = freshResult.containsKey("shadowIsBot") ? Boolean.parseBoolean(freshResult.get("shadowIsBot")) : null;
+                        shadowBotProbability = parseDoubleOrNull(freshResult.get("shadowBotProbability"));
+                        shadowThreatClass = freshResult.get("shadowThreatClass");
+                        prodModelSha256 = freshResult.get("prodModelSha256");
+                        shadowModelSha256 = freshResult.get("shadowModelSha256");
+                        shadowContractHash = freshResult.get("shadowContractHash");
+                        shadowFeatureListHash = freshResult.get("shadowFeatureListHash");
+                        prodInferenceLatencyMs = parseDoubleOrNull(freshResult.get("prodInferenceLatencyMs"));
+                        shadowInferenceLatencyMs = parseDoubleOrNull(freshResult.get("shadowInferenceLatencyMs"));
                     } else {
                         evaluationStatus = freshResult.getOrDefault("evaluationStatus", "Failed");
                     }
@@ -220,9 +242,10 @@ public class MLInferenceFilter implements GatewayFilter {
                         final String asyncReqId = requestId;
                         final double asyncDepth = sessionDepth;
                         final double asyncCount = requestCount;
+                        final ScoreContext asyncContext = new ScoreContext(clientId, runId, path, "async");
                         asyncMlExecutor.submit(() -> {
                             try {
-                                performMlInference(asyncIp, asyncReqId, asyncFeatures, asyncDepth, asyncCount);
+                                performMlInference(asyncIp, asyncReqId, asyncFeatures, asyncDepth, asyncCount, asyncContext);
                             } finally {
                                 redisTelemetryService.releaseScoringLock(asyncIp);
                             }
@@ -274,8 +297,96 @@ public class MLInferenceFilter implements GatewayFilter {
         return Optional.empty();
     }
 
+    /** Identity of the request that triggered a score, carried into the score telemetry event. */
+    record ScoreContext(String clientId, String runId, String path, String decisionSource) {}
+
+    private static Double parseDoubleOrNull(String value) {
+        if (value == null) return null;
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     private Map<String, String> performMlInference(String ipAddress, String requestId, Map<String, Double> features,
-                                                   double sessionDepth, double requestCount) {
+                                                   double sessionDepth, double requestCount, ScoreContext context) {
+        Map<String, String> result = scoreOnce(ipAddress, requestId, features, sessionDepth, requestCount);
+        publishScoreEvent(ipAddress, requestId, features, result, context);
+        return result;
+    }
+
+    /**
+     * Every scoring attempt is logged as its own event, so a score triggered by a client's last
+     * request (async: never visible on a later request) and every async failure reach telemetry.
+     * The event carries the exact feature vector that was scored.
+     */
+    private void publishScoreEvent(String ipAddress, String requestId, Map<String, Double> features,
+                                   Map<String, String> result, ScoreContext context) {
+        if (kafkaProducer == null) return;
+        try {
+            String status = result.getOrDefault("evaluationStatus", "Error");
+            boolean scored = "Scored".equals(status);
+            Double shadowProb = parseDoubleOrNull(result.get("shadowBotProbability"));
+            String shadowAction = null;
+            if (shadowProb != null) {
+                shadowAction = shadowProb >= 0.80 ? "Blocked" : (shadowProb >= shadowThreshold ? "Challenged" : "Allowed");
+            }
+            Integer shadowIsBotFlag = result.containsKey("shadowIsBot") ? (Boolean.parseBoolean(result.get("shadowIsBot")) ? 1 : 0) : null;
+            RequestEvent.MLMetadata ml = new RequestEvent.MLMetadata(
+                    parseDoubleOrNull(result.get("botProbability")),
+                    result.containsKey("isBot") ? (Boolean.parseBoolean(result.get("isBot")) ? 1 : 0) : null,
+                    result.get("threatClass"), status,
+                    shadowProb, shadowIsBotFlag, result.get("shadowThreatClass"), shadowAction,
+                    result.getOrDefault("shadowStatus", scored ? "unavailable" : status.toLowerCase()),
+                    parseDoubleOrNull(result.get("prodInferenceLatencyMs")),
+                    parseDoubleOrNull(result.get("shadowInferenceLatencyMs")),
+                    result.get("contractHash"), result.get("modelVersion"), shadowThreshold,
+                    context.decisionSource(), sessionDepth(features),
+                    result.containsKey("scoringTimestamp") ? Long.parseLong(result.get("scoringTimestamp")) : System.currentTimeMillis(),
+                    result.get("prodModelSha256"), result.get("shadowModelSha256"),
+                    result.get("shadowContractHash"), result.get("shadowFeatureListHash"));
+            long roundTrip = result.containsKey("mlRoundTripMs") ? Math.round(Double.parseDouble(result.get("mlRoundTripMs"))) : 0L;
+            RequestEvent event = new RequestEvent(
+                    "1.1",
+                    scored ? "score.completed" : "score.failed",
+                    UUID.randomUUID().toString(),
+                    System.currentTimeMillis(),
+                    "tenant_placeholder",
+                    context.clientId() != null ? context.clientId() : ipAddress,
+                    requestId,
+                    context.runId() != null ? context.runId() : "unknown",
+                    "unknown",
+                    new RequestEvent.RequestDetails("SCORE", context.path(), "score", ipAddress),
+                    new RequestEvent.ResponseDetails(0, roundTrip),
+                    toFeatureVector(features),
+                    ml);
+            kafkaProducer.publishEvent(event);
+        } catch (Exception e) {
+            meterRegistry.counter("sage_gateway_score_event_publish_errors_total").increment();
+            logger.error("Failed to publish score event for IP {}", ipAddress, e);
+        }
+    }
+
+    private static double sessionDepth(Map<String, Double> features) {
+        return features.getOrDefault("SAGE_Session_Depth", 0.0);
+    }
+
+    private static RequestEvent.FeatureVector toFeatureVector(Map<String, Double> f) {
+        return new RequestEvent.FeatureVector(
+                f.getOrDefault("SAGE_Session_Depth", 0.0),
+                f.getOrDefault("SAGE_Temporal_Variance", 0.0),
+                f.getOrDefault("SAGE_Request_Velocity", 0.0),
+                f.getOrDefault("SAGE_Behavioral_Diversity", 0.0),
+                f.getOrDefault("SAGE_Endpoint_Concentration", 0.0),
+                f.getOrDefault("SAGE_Cart_Ratio", 0.0),
+                f.getOrDefault("SAGE_Asset_Skip_Ratio", 1.0),
+                f.getOrDefault("SAGE_NonStatic_Navigation_Gap", 0.0),
+                f.getOrDefault("SAGE_NonStatic_Long_Gap_Ratio", 0.0));
+    }
+
+    private Map<String, String> scoreOnce(String ipAddress, String requestId, Map<String, Double> features,
+                                          double sessionDepth, double requestCount) {
         Map<String, String> result = new HashMap<>();
         boolean acquired = false;
         try {
@@ -299,12 +410,17 @@ public class MLInferenceFilter implements GatewayFilter {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
+            long sentNanos = System.nanoTime();
             HttpResponse<String> mlResponse = httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString())
                     .get(1000, TimeUnit.MILLISECONDS);
+            result.put("mlRoundTripMs", Double.toString((System.nanoTime() - sentNanos) / 1_000_000.0));
 
             if (mlResponse.statusCode() == 200) {
                 JsonNode responseNode = objectMapper.readTree(mlResponse.body());
                 result.put("evaluationStatus", "Scored");
+                // Defect 3: model execution times as measured by the inference service.
+                if (responseNode.hasNonNull("production_processing_time_ms")) result.put("prodInferenceLatencyMs", responseNode.get("production_processing_time_ms").asText());
+                if (responseNode.hasNonNull("shadow_processing_time_ms")) result.put("shadowInferenceLatencyMs", responseNode.get("shadow_processing_time_ms").asText());
                 result.put("isBot", Boolean.toString(responseNode.path("is_bot").asBoolean(false)));
                 result.put("botProbability", Double.toString(responseNode.path("bot_probability").asDouble(0.0)));
                 result.put("threatClass", responseNode.path("threat_class").asText("Benign"));

@@ -184,8 +184,12 @@ public class RedisTelemetryService {
                 nonNullDecision.put(field, value);
             }
         });
-        redisTemplate.opsForHash().putAll(key, nonNullDecision);
-        redisTemplate.expire(key, ML_DECISION_TTL);
+        // N9: replace the whole decision atomically. putAll into the live key would merge, so fields
+        // absent from a newer decision (e.g. a null shadow score) would survive from the older one.
+        String stagingKey = key + ":staging:" + java.util.UUID.randomUUID();
+        redisTemplate.opsForHash().putAll(stagingKey, nonNullDecision);
+        redisTemplate.expire(stagingKey, ML_DECISION_TTL);
+        redisTemplate.rename(stagingKey, key);
     }
 
     private double getCounter(String hashKey, String field) {

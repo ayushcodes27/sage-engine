@@ -1,6 +1,7 @@
 package com.sage.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sage.gateway.service.KafkaProducerService;
 import com.sage.gateway.service.RedisTelemetryService;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,7 @@ class MLInferenceFilterTest {
         telemetryService = mock(RedisTelemetryService.class);
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleMeterRegistry meterRegistry = new SimpleMeterRegistry();
-        filter = new MLInferenceFilter(telemetryService, objectMapper, meterRegistry);
+        filter = new MLInferenceFilter(telemetryService, objectMapper, meterRegistry, mock(KafkaProducerService.class));
         ReflectionTestUtils.setField(filter, "expectedContractHash", "dummy-contract-hash");
         ReflectionTestUtils.setField(filter, "probeSecret", "super-secret-probe-key");
         ReflectionTestUtils.setField(filter, "rescoreFrequency", 20);

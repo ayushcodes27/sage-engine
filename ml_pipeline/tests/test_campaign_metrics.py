@@ -123,3 +123,15 @@ def test_load_events_orders_by_client_timestamp(tmp_path):
             f.write(json.dumps(e) + "\n")
     out = cm.load_events(p, "r")
     assert [e["timestamp"] for e in out] == [10, 20, 30]
+
+
+def test_score_completed_event_counts_as_score():
+    """Defect 3: a score triggered by the client's last request exists only as a score.completed event."""
+    events = [ev("fast_scraper-00", i, float(i + 1), status="AsyncScheduled" if i == 20 else "Skipped") for i in range(21)]
+    done = ev("fast_scraper-00", 21, 21.0, scored=True, flagged=True)
+    done["eventType"] = "score.completed"
+    failed = ev("fast_scraper-00", 22, 21.0, status="Timeout")
+    failed["eventType"] = "score.failed"
+    rows = cm.client_table(events + [done], clients({"fast_scraper-00": "bot"}), "shadow_eclog_timing_8feat")
+    assert rows[0]["scored"] and rows[0]["flagged"]
+    assert cm.failure_records(events + [done, failed]) == 1
