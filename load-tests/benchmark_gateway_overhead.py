@@ -110,6 +110,23 @@ def scrape(gateway_url):
     return out
 
 
+def drain(gateway_url, stable_s=3.0, max_s=60.0):
+    """Wait until queued async scores and Kafka sends have finished: the ML round-trip and Kafka publish
+    timer counts must be unchanged for stable_s. A fixed short sleep let backlogged async scores at high
+    concurrency finish after the scrape (undercounted ML calls) and run into the next repetition."""
+    t0 = time.time()
+    last, since = None, time.time()
+    while time.time() - t0 < max_s:
+        timers = scrape(gateway_url)["timers"]
+        cur = (timers["sage_gateway_ml_roundtrip_seconds"]["count"], timers["sage_gateway_kafka_publish_seconds"]["count"])
+        if cur != last:
+            last, since = cur, time.time()
+        elif time.time() - since >= stable_s:
+            return time.time() - t0
+        time.sleep(0.5)
+    raise SystemExit(f"timers still changing after {max_s} s; async backlog did not drain")
+
+
 def histogram_delta(before, after):
     res = {}
     for t in TIMERS:
@@ -197,7 +214,7 @@ def run_rep(gateway_url, mode, conc, rep, args, bench_id, out_dir):
     for t in threads:
         t.join()
     wall = time.time() - t0
-    time.sleep(1.0)  # let async scores and Kafka acks land in the timers
+    drain_s = drain(gateway_url)
     sampler.stop_flag.set()
     sampler.join()
     after = scrape(gateway_url)
@@ -221,7 +238,7 @@ def run_rep(gateway_url, mode, conc, rep, args, bench_id, out_dir):
                             "cpu_pct_max": max((x["cpu_pct"] for x in cs), default=None),
                             "mem_mib_max": max(mems, default=None)}
     return {"mode": mode, "concurrency": conc, "rep": rep, "requests": len(records), "errors": errors,
-            "wall_s": wall, "throughput_rps": len(records) / wall if wall else None,
+            "wall_s": wall, "drain_s": drain_s, "throughput_rps": len(records) / wall if wall else None,
             "latency_ms": {"p50": pct(lat, 0.50), "p95": pct(lat, 0.95), "p99": pct(lat, 0.99),
                            "mean": statistics.mean(lat) if lat else None},
             "internal": histogram_delta(before, after), "containers": per_container,
