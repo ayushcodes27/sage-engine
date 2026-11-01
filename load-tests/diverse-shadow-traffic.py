@@ -196,19 +196,19 @@ def fetch(session, path):
 
 
 def clear_test_redis_cache():
-    """Deletes ALL sage:* keys (first_seen, reqcount, scoring locks, subnet counters included) in the test Redis."""
-    try:
-        import redis
-        r = redis.Redis(host=os.getenv("REDIS_HOST", "localhost"), port=6379, socket_timeout=1)
-        deleted = 0
-        keys = list(r.scan_iter(match="sage:*", count=500))
-        for i in range(0, len(keys), 500):
-            deleted += r.delete(*keys[i:i + 500])
-        print(f"Cleared test Redis state ({deleted} sage:* keys).")
-        return {"cleared": True, "deleted_keys": deleted}
-    except Exception as e:
-        print(f"Note: Redis state clear skipped ({e}); fresh per-run IPs ensure clean evaluation state.")
-        return {"cleared": False, "error": str(e)}
+    """
+    Deletes ALL sage:* keys (first_seen, reqcount, scoring locks, subnet counters included) in the stack's
+    Redis container. Goes through `docker exec` so it can never hit a different Redis on localhost:6379.
+    """
+    container = os.getenv("SAGE_REDIS_CONTAINER", "sage-redis")
+    script = "redis-cli --scan --pattern 'sage:*' | xargs -r -n 500 redis-cli DEL | awk '{s+=$1} END {print s+0}'"
+    res = subprocess.run(["docker", "exec", container, "sh", "-c", script], capture_output=True, text=True)
+    if res.returncode != 0:
+        print(f"[-] ERROR: could not clear Redis in container {container}: {res.stderr.strip()}")
+        sys.exit(1)
+    deleted = int(res.stdout.strip() or 0)
+    print(f"Cleared test Redis state ({deleted} sage:* keys in {container}).")
+    return {"cleared": True, "container": container, "deleted_keys": deleted}
 
 
 def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False, seed=None):
