@@ -35,7 +35,8 @@ class ScoreTelemetryTest {
             + "\"shadow_status\":\"ok\",\"shadow_is_bot\":true,\"shadow_bot_probability\":0.61,"
             + "\"shadow_threat_class\":\"Bot\",\"shadow_processing_time_ms\":2.5,\"contract_hash\":\"ch\","
             + "\"model_version\":\"v1\",\"shadow_threshold\":0.35,\"prod_model_sha256\":\"p\","
-            + "\"shadow_model_sha256\":\"s\",\"shadow_contract_hash\":\"sc\",\"shadow_feature_list_hash\":\"sf\"}";
+            + "\"shadow_model_sha256\":\"s\",\"shadow_contract_hash\":\"sc\",\"shadow_feature_list_hash\":\"sf\","
+            + "\"extra_shadows\":[{\"name\":\"x\",\"status\":\"ok\",\"bot_probability\":0.9,\"is_bot\":true}]}";
 
     private HttpServer server;
     private int responseStatus = 200;
@@ -118,6 +119,7 @@ class ScoreTelemetryTest {
         assertEquals(2.5, e.mlMetadata().shadowInferenceLatencyMs());
         assertEquals(1, e.mlMetadata().shadowIsBotFlag());
         assertEquals("s", e.mlMetadata().shadowModelSha256());
+        assertEquals("[{\"name\":\"x\",\"status\":\"ok\",\"bot_probability\":0.9,\"is_bot\":true}]", e.mlMetadata().extraShadows());
         assertEquals(21.0, e.features().sessionDepth());
         assertEquals(2.25, e.features().requestVelocity());
         assertEquals(0.44, e.features().nonStaticNavigationGap());
@@ -136,6 +138,7 @@ class ScoreTelemetryTest {
         assertEquals(0.61, r.getAttribute("SAGE-ShadowBotProbability"));
         assertEquals("s", r.getAttribute("SAGE-ShadowModelSha256"));
         assertEquals("sf", r.getAttribute("SAGE-ShadowFeatureListHash"));
+        assertEquals("[{\"name\":\"x\",\"status\":\"ok\",\"bot_probability\":0.9,\"is_bot\":true}]", r.getAttribute("SAGE-ExtraShadows"));
         assertEquals(1.25, r.getAttribute("SAGE-ProdInferenceLatencyMs"));
         assertEquals(2.5, r.getAttribute("SAGE-ShadowInferenceLatencyMs"));
         assertEquals("fresh_sync", awaitScoreEvent().mlMetadata().decisionSource());

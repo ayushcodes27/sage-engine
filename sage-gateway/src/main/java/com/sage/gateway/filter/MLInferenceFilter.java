@@ -145,6 +145,7 @@ public class MLInferenceFilter implements GatewayFilter {
         String shadowModelSha256 = null;
         String shadowContractHash = null;
         String shadowFeatureListHash = null;
+        String extraShadows = null;
 
         try {
             final String telemetryIp = ipAddress;
@@ -216,6 +217,7 @@ public class MLInferenceFilter implements GatewayFilter {
                 shadowModelSha256 = cachedDecision.get("shadowModelSha256");
                 shadowContractHash = cachedDecision.get("shadowContractHash");
                 shadowFeatureListHash = cachedDecision.get("shadowFeatureListHash");
+                extraShadows = cachedDecision.get("extraShadows");
                 if (cachedDecision.containsKey("scoringDepth")) {
                     try {
                         scoringDepth = Double.parseDouble(cachedDecision.get("scoringDepth"));
@@ -266,6 +268,7 @@ public class MLInferenceFilter implements GatewayFilter {
                         shadowModelSha256 = freshResult.get("shadowModelSha256");
                         shadowContractHash = freshResult.get("shadowContractHash");
                         shadowFeatureListHash = freshResult.get("shadowFeatureListHash");
+                        extraShadows = freshResult.get("extraShadows");
                         prodInferenceLatencyMs = parseDoubleOrNull(freshResult.get("prodInferenceLatencyMs"));
                         shadowInferenceLatencyMs = parseDoubleOrNull(freshResult.get("shadowInferenceLatencyMs"));
                     } else {
@@ -332,6 +335,7 @@ public class MLInferenceFilter implements GatewayFilter {
         request.setAttribute("SAGE-ShadowModelSha256", shadowModelSha256);
         request.setAttribute("SAGE-ShadowContractHash", shadowContractHash);
         request.setAttribute("SAGE-ShadowFeatureListHash", shadowFeatureListHash);
+        request.setAttribute("SAGE-ExtraShadows", extraShadows);
         
         return Optional.empty();
     }
@@ -389,7 +393,8 @@ public class MLInferenceFilter implements GatewayFilter {
                     context.decisionSource(), sessionDepth(features),
                     result.containsKey("scoringTimestamp") ? Long.parseLong(result.get("scoringTimestamp")) : System.currentTimeMillis(),
                     result.get("prodModelSha256"), result.get("shadowModelSha256"),
-                    result.get("shadowContractHash"), result.get("shadowFeatureListHash"));
+                    result.get("shadowContractHash"), result.get("shadowFeatureListHash"),
+                    result.get("extraShadows"));
             long roundTrip = result.containsKey("mlRoundTripMs") ? Math.round(Double.parseDouble(result.get("mlRoundTripMs"))) : 0L;
             RequestEvent event = new RequestEvent(
                     "1.1",
@@ -494,6 +499,11 @@ public class MLInferenceFilter implements GatewayFilter {
                 if (!responseNode.path("shadow_model_sha256").isNull()) result.put("shadowModelSha256", responseNode.path("shadow_model_sha256").asText());
                 if (!responseNode.path("shadow_contract_hash").isNull()) result.put("shadowContractHash", responseNode.path("shadow_contract_hash").asText());
                 if (!responseNode.path("shadow_feature_list_hash").isNull()) result.put("shadowFeatureListHash", responseNode.path("shadow_feature_list_hash").asText());
+
+                // Additional shadow models (campaign C): kept as the service's JSON array, one object per model.
+                if (responseNode.hasNonNull("extra_shadows") && responseNode.get("extra_shadows").size() > 0) {
+                    result.put("extraShadows", responseNode.get("extra_shadows").toString());
+                }
 
                 redisTelemetryService.cacheMlDecision(ipAddress, result);
 
