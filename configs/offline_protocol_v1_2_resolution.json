@@ -1,0 +1,27 @@
+{
+  "name": "offline_protocol_v1_2_resolution",
+  "status": "declared before any jittered feature was computed; addendum to offline_protocol_v1 (audit N1); changes require a new version",
+  "question": "EClog timestamps have 1 s resolution (90.6 % of NonStatic_Navigation_Gap values are whole seconds in the one-day file) while the gateway measures milliseconds. How much do the frozen models' outputs depend on that resolution?",
+  "limitation": "True sub-second times are unrecoverable. The experiment tests robustness to plausible sub-second structure, it does not recover what the models would have learned from millisecond training data. Live ms-resolution behaviour is judged only by campaign C.",
+  "method": {
+    "data": "test-split scored known-label sessions of ml_pipeline/data/eclog6m_sessions.csv.gz (split configs/split_eclog6m_v1.json); session membership, labels and client ids are those of the session table and never change",
+    "perturbation": "each logged timestamp t (whole seconds) is replaced by t + u, u ~ Uniform[0,1) s drawn per request; within a run of identical logged timestamps the draws are sorted ascending so input order is preserved (a timestamp truncated to the second is the floor of a time in [t, t+1))",
+    "recomputation": "the prefix feature vector is recomputed at the gateway's first scoring point with gateway_emulator.first_score on the perturbed times (the f0 > 20 and duration >= 3 s gate is re-evaluated; a session that no longer reaches it is dropped from that draw and counted)",
+    "draws": 5,
+    "seeds": [42, 43, 44, 45, 46],
+    "control": "the same pipeline with u = 0 (must reproduce the session table's pre_* columns exactly; the run aborts otherwise)"
+  },
+  "models_and_thresholds": {
+    "eclog6m_prefix_8feature_v1": "frozen threshold 0.0176 (v7 manifest) - primary",
+    "eclog6m_completed_8feature_v1": "frozen threshold 0.1342 (v7 manifest), applied to prefix vectors as in offline_protocol_v1",
+    "eclog_timing_binary_model": "fixed 0.35",
+    "sage_binary_model": "fixed 0.5 (7 features; Asset_Skip_Ratio is a cart/asset ratio and is unaffected by time)"
+  },
+  "reported": [
+    "per model, per draw and as mean [min, max]: client-level ROC-AUC, recall and FPR at the frozen threshold, change relative to the u = 0 control",
+    "per feature (all 8 + asset skip): share of test scored sessions whose value changes by more than 10 % (relative) or crosses 0.5 s for the gap features, mean over draws",
+    "number of sessions dropped by the gate per draw",
+    "no significance tests; with 5 draws the range is descriptive"
+  ],
+  "interpretation_rule": "A change in client ROC-AUC or recall of more than 0.01 (absolute) or in FPR of more than 0.005 (absolute) for the primary model is reported as resolution-sensitive; otherwise as robust within this perturbation. Fixed now, before the run."
+}
