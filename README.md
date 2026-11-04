@@ -66,7 +66,13 @@ SAGE evaluates sessions based on canonical navigation patterns across a rolling 
 
 ## 4. Key Experimental Results & Evaluation
 
-SAGE V2 is validated across **three independent evaluation axes** plus a **Leave-One-Profile-Out (LOPO)** generalization study, each with exact **95% Clopper-Pearson confidence intervals (CI)**. For full data tables and analysis, see [`PAPER_RESULTS.md`](PAPER_RESULTS.md).
+> **Revision notice.** The results of record are in [`docs/RESULTS.md`](docs/RESULTS.md); how to reproduce them is in
+> [`docs/REPRODUCE.md`](docs/REPRODUCE.md); unfinished work is in [`Future Enhancements.md`](Future%20Enhancements.md).
+> The table and sections below are the earlier summary and are **partly superseded**: the "60.67% - 66.67%" live recall
+> omits run B (33.33%), the cross-site (Zanbil) and LOPO-hybrid results were not reproduced in this revision, and the
+> production 7-feature model flags 33-35% of humans in the live campaigns. `docs/RESULTS.md` section 6 lists every difference.
+
+SAGE V2 is validated across **three independent evaluation axes** plus a **Leave-One-Profile-Out (LOPO)** generalization study, each with exact **95% Clopper-Pearson confidence intervals (CI)**. For full data tables and analysis, see [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ### Summary Table across Evaluation Axes
 
