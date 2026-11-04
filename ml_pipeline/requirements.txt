@@ -21,6 +21,3 @@ redis==7.4.0
 
 # --- Telemetry & Monitoring ---
 prometheus_client==0.25.0
-
-# --- Load-test harness (generator, benchmark) ---
-requests==2.32.3
