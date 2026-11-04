@@ -48,7 +48,7 @@ If Kafka exits with `NodeExists`: `docker compose -f infra/docker-compose.yml re
 ```bash
 .venv/bin/python load-tests/benchmark_gateway_overhead.py --label final
 ```
-Canonical result and the reasons for superseded runs: `results/benchmark/README.md`.
+A rerun writes a new `bench-final-<id>` directory; the canonical committed run is `bench-final-1971425f`, and the reasons for the superseded runs are in `results/benchmark/README.md`.
 
 ## 6. Axis D (campaign C) - ~1 h
 Requires a clean git tree (the generator refuses otherwise). Declaration: `configs/campaign_c_declaration_v1.json`

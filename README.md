@@ -183,8 +183,8 @@ curl http://localhost:8000/health
 python ml_pipeline/scripts/evaluate/verify_frozen_manifests.py
 
 # 1. Run Automated Test Suites
-pytest ml_pipeline                     # Python ML unit & parity tests (13 tests)
-cd sage-gateway && mvn test            # Java Spring Gateway test suite (17+ tests)
+pytest ml_pipeline                     # Python ML unit & parity tests (89 tests)
+cd sage-gateway && mvn test            # Java Spring Gateway test suite (37 tests)
 
 # 2. Run Zanbil.ir 10.36M Cross-Site Evaluation
 python ml_pipeline/scripts/evaluate/evaluate_zanbil_crosssite.py \
@@ -219,7 +219,7 @@ python load-tests/session_replay.py
 
 ## 9. Governance & Auditing
 
-All project development, model freezing, evaluation runs, and validation decisions are immutably logged in [`AUDIT_LEDGER.md`](AUDIT_LEDGER.md) and tracked against [`SAGE_PHASE2_ROADMAP.md`](SAGE_PHASE2_ROADMAP.md).
+All project development, model freezing, evaluation runs, and validation decisions are immutably logged in the audit and plan in [`docs/jnsm/STEP_A_AUDIT.md`](docs/jnsm/STEP_A_AUDIT.md), the git history, and the committed protocols in `configs/`; pending work is tracked in [`Future Enhancements.md`](Future%20Enhancements.md).
 
 The CI pipeline (`.github/workflows/ci.yml`) enforces:
 - Java Gateway compilation and test suite

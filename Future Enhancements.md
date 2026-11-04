@@ -4,7 +4,7 @@ Work that was planned or identified during the JNSM revision but is **not** need
 (`docs/RESULTS.md`) and has **not** been implemented. Nothing here is claimed anywhere in the documentation.
 
 ## Evidence and statistics
-- **Campaign C replicates (seed sets 2 and 3).** Configs already exist (`configs/campaign_c_v1_s2.json`, `_s3.json`). About one hour each; would show run-to-run stability of the live result.
+- **Campaign C replicates (seed sets 2 and 3).** Configs already exist (`configs/campaign_c_v1_s2.json` and `configs/campaign_c_v1_s3.json`). About one hour each; would show run-to-run stability of the live result.
 - **Python 3.11 re-run of the final numbers** in the sage-ml image (audit N29); the reported numbers come from Python 3.12.
 - **Cross-site (Zanbil) evaluation.** Needs approved access to the restricted Dataverse file; protocol items are in `configs/offline_protocol_v1.json`.
 - **Millisecond-resolution training data.** Collect real gateway sessions with ms timestamps and retrain/evaluate, replacing the jitter-based robustness check.
@@ -26,3 +26,4 @@ Work that was planned or identified during the JNSM revision but is **not** need
 - **Clean-clone test** (fresh clone, rebuild, compare hashes).
 - **`TRACEABILITY.md` / `RESULTS_CHANGELOG.md`**: claim-by-claim mapping from manuscript text to result files.
 - **Remaining audit items** in `docs/jnsm/STEP_A_AUDIT.md` that are not mentioned in `docs/RESULTS.md` (low-severity findings, not needed for the reported results).
+- **Rewrite the README body.** Sections 4-6 still contain the earlier summary (flagged by the revision notice); rewrite them from `docs/RESULTS.md` once the remaining analyses above are decided.
