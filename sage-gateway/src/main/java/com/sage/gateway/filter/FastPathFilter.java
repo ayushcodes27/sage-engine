@@ -39,6 +39,26 @@ public class FastPathFilter implements GatewayFilter {
         
         // Ensure IP is available for subsequent filters
         request.setAttribute("X-Client-Ip", ipAddress);
+
+        // Reviewer Item 4: Cookie-based session identity tracking
+        jakarta.servlet.http.Cookie[] cookies = request.getCookies();
+        String cookieSid = null;
+        if (cookies != null) {
+            for (jakarta.servlet.http.Cookie c : cookies) {
+                if ("__sage_sid".equals(c.getName())) {
+                    cookieSid = c.getValue();
+                    break;
+                }
+            }
+        }
+        if (cookieSid == null || cookieSid.isBlank()) {
+            cookieSid = java.util.UUID.randomUUID().toString().replace("-", "");
+            request.setAttribute("SAGE-Set-Cookie", cookieSid);
+            request.setAttribute("SAGE-Has-Cookie", false);
+        } else {
+            request.setAttribute("SAGE-Has-Cookie", true);
+        }
+        request.setAttribute("SAGE-Session-Id", cookieSid);
         
         if (redisTelemetryService.isIpBanned(ipAddress)) {
             logger.warn("🚨 FAST-PATH BLOCK: IP " + ipAddress + " is on the ban list.");

@@ -154,13 +154,14 @@ public class EnforcementFilter implements GatewayFilter {
         String shadowModelSha256 = (String) request.getAttribute("SAGE-ShadowModelSha256");
         String shadowContractHash = (String) request.getAttribute("SAGE-ShadowContractHash");
         String shadowFeatureListHash = (String) request.getAttribute("SAGE-ShadowFeatureListHash");
+        String extraShadows = (String) request.getAttribute("SAGE-ExtraShadows");
 
         RequestEvent.MLMetadata mlMetadata = new RequestEvent.MLMetadata(
                 botProbability, isBot ? 1 : 0, threatClass, evaluationStatus,
                 shadowBotProb, shadowIsBotInt, shadowThreat, shadowAction, shadowStatus,
                 prodLat, shadLat, contractHash, modelVer, shadowThreshold,
                 decisionSource, scoringDepth, scoringTimestampMs,
-                prodModelSha256, shadowModelSha256, shadowContractHash, shadowFeatureListHash
+                prodModelSha256, shadowModelSha256, shadowContractHash, shadowFeatureListHash, extraShadows
         );
 
         String runId = (String) request.getAttribute("X-SAGE-Run-Id");
@@ -218,6 +219,7 @@ public class EnforcementFilter implements GatewayFilter {
         String shadowModelSha256 = (String) request.getAttribute("SAGE-ShadowModelSha256");
         String shadowContractHash = (String) request.getAttribute("SAGE-ShadowContractHash");
         String shadowFeatureListHash = (String) request.getAttribute("SAGE-ShadowFeatureListHash");
+        String extraShadows = (String) request.getAttribute("SAGE-ExtraShadows");
         
         Integer shadowIsBotInt = null;
         if (shadowIsBot != null) {
@@ -229,7 +231,7 @@ public class EnforcementFilter implements GatewayFilter {
                 shadowBotProb, shadowIsBotInt, shadowThreat, shadowAction, shadowStatus,
                 prodLat, shadLat, contractHash, modelVer, shadowThreshold,
                 decisionSource, scoringDepth, scoringTimestampMs,
-                prodModelSha256, shadowModelSha256, shadowContractHash, shadowFeatureListHash
+                prodModelSha256, shadowModelSha256, shadowContractHash, shadowFeatureListHash, extraShadows
         );
 
         String runId = (String) request.getAttribute("X-SAGE-Run-Id");

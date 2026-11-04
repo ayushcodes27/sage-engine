@@ -1,0 +1,2759 @@
+[
+  {
+    "mode": "off",
+    "concurrency": 1,
+    "rep": 0,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.157758235931396,
+    "throughput_rps": 21.839405982053517,
+    "latency_ms": {
+      "p50": 25.713403499992182,
+      "p95": 34.92391380007688,
+      "p99": 36.36058611001544,
+      "mean": 25.6605038899977
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 28.575,
+        "cpu_pct_max": 50.87,
+        "mem_mib_max": 342.3
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 1.1833333333333333,
+        "cpu_pct_max": 1.36,
+        "mem_mib_max": 584.5
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 1.4283333333333332,
+        "cpu_pct_max": 3.53,
+        "mem_mib_max": 15.87
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 25.761666666666667,
+        "cpu_pct_max": 149.96,
+        "mem_mib_max": 458.3
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 3.8966666666666665,
+        "cpu_pct_max": 6.64,
+        "mem_mib_max": 72.39
+      }
+    },
+    "raw_file": "raw/off_c1_r0.csv.gz",
+    "raw_sha256": "20d9c1148b89bce8ffdeec27ec098d3de1a3895d948ef0f86bb6c90e703560cb"
+  },
+  {
+    "mode": "off",
+    "concurrency": 1,
+    "rep": 1,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 8.745588064193726,
+    "throughput_rps": 22.86867372805289,
+    "latency_ms": {
+      "p50": 23.809114499954376,
+      "p95": 32.82310230002849,
+      "p99": 35.109059339984015,
+      "mean": 23.592500095003288
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 24.106,
+        "cpu_pct_max": 36.53,
+        "mem_mib_max": 345.8
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 1.204,
+        "cpu_pct_max": 1.45,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 1.094,
+        "cpu_pct_max": 3.39,
+        "mem_mib_max": 15.86
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 1.26,
+        "cpu_pct_max": 2.12,
+        "mem_mib_max": 379.3
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 4.46,
+        "cpu_pct_max": 8.04,
+        "mem_mib_max": 73.54
+      }
+    },
+    "raw_file": "raw/off_c1_r1.csv.gz",
+    "raw_sha256": "763d1ddf04f2c828219a424bc5eac1d2c11955963bf7244c9e6ffee8b3d45e1a"
+  },
+  {
+    "mode": "off",
+    "concurrency": 1,
+    "rep": 2,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 8.63952374458313,
+    "throughput_rps": 23.149424194290503,
+    "latency_ms": {
+      "p50": 22.803114999987883,
+      "p95": 31.820847300042484,
+      "p99": 33.18199832999766,
+      "mean": 23.075495545003264
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 20.636,
+        "cpu_pct_max": 29.38,
+        "mem_mib_max": 350.0
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 1.1,
+        "cpu_pct_max": 1.29,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 0.98,
+        "cpu_pct_max": 2.94,
+        "mem_mib_max": 15.85
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 28.48,
+        "cpu_pct_max": 138.34,
+        "mem_mib_max": 456.4
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 4.338,
+        "cpu_pct_max": 9.22,
+        "mem_mib_max": 74.54
+      }
+    },
+    "raw_file": "raw/off_c1_r2.csv.gz",
+    "raw_sha256": "629c8c46af207b1ccd26988bb1be80c635279d77da800fd8ff8aa0e69a2f208d"
+  },
+  {
+    "mode": "off",
+    "concurrency": 8,
+    "rep": 0,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 7.933908700942993,
+    "throughput_rps": 201.6660463725566,
+    "latency_ms": {
+      "p50": 19.080455999983315,
+      "p95": 27.711185850029096,
+      "p99": 31.279872040022383,
+      "mean": 18.89543254812672
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 106.608,
+        "cpu_pct_max": 187.38,
+        "mem_mib_max": 393.4
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 0.994,
+        "cpu_pct_max": 1.43,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 1.932,
+        "cpu_pct_max": 3.89,
+        "mem_mib_max": 15.09
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 3.282,
+        "cpu_pct_max": 13.4,
+        "mem_mib_max": 395.1
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 22.158,
+        "cpu_pct_max": 32.34,
+        "mem_mib_max": 87.85
+      }
+    },
+    "raw_file": "raw/off_c8_r0.csv.gz",
+    "raw_sha256": "47a29e61018d725889a6fe6c302af1aca2d68fe6316bfa26598e945866ca849e"
+  },
+  {
+    "mode": "off",
+    "concurrency": 8,
+    "rep": 1,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 7.715060710906982,
+    "throughput_rps": 207.38657282865427,
+    "latency_ms": {
+      "p50": 17.83963949998224,
+      "p95": 25.63456124995014,
+      "p99": 27.769948229977217,
+      "mean": 17.748173169376216
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 69.466,
+        "cpu_pct_max": 136.16,
+        "mem_mib_max": 388.7
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 1.038,
+        "cpu_pct_max": 1.3,
+        "mem_mib_max": 584.0
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 1.938,
+        "cpu_pct_max": 4.89,
+        "mem_mib_max": 15.1
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 30.024,
+        "cpu_pct_max": 147.02,
+        "mem_mib_max": 464.8
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 16.762,
+        "cpu_pct_max": 23.72,
+        "mem_mib_max": 100.3
+      }
+    },
+    "raw_file": "raw/off_c8_r1.csv.gz",
+    "raw_sha256": "27dea472d8962a256e517ce3b22478a4affb9231cb13079e256fd939ea0ab77d"
+  },
+  {
+    "mode": "off",
+    "concurrency": 8,
+    "rep": 2,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 7.713291168212891,
+    "throughput_rps": 207.43415036550573,
+    "latency_ms": {
+      "p50": 17.641557499985083,
+      "p95": 25.763427450027613,
+      "p99": 28.879861530018616,
+      "mean": 17.70155308937447
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 62.21,
+        "cpu_pct_max": 104.41,
+        "mem_mib_max": 389.5
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 0.97,
+        "cpu_pct_max": 1.13,
+        "mem_mib_max": 584.0
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 1.964,
+        "cpu_pct_max": 4.69,
+        "mem_mib_max": 14.87
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 1.246,
+        "cpu_pct_max": 2.94,
+        "mem_mib_max": 386.0
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 19.284,
+        "cpu_pct_max": 28.07,
+        "mem_mib_max": 101.0
+      }
+    },
+    "raw_file": "raw/off_c8_r2.csv.gz",
+    "raw_sha256": "28356dee41b4f0b5301a6ee5f047a704666b519ba3a0dfc8fde51e3bc752c332"
+  },
+  {
+    "mode": "off",
+    "concurrency": 32,
+    "rep": 0,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 8.989384889602661,
+    "throughput_rps": 711.9508262909505,
+    "latency_ms": {
+      "p50": 19.437088000017866,
+      "p95": 42.5063032999901,
+      "p99": 68.9153235299034,
+      "mean": 21.43820786171954
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 127.69,
+        "cpu_pct_max": 191.38,
+        "mem_mib_max": 414.8
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 0.79,
+        "cpu_pct_max": 1.16,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 3.8859999999999997,
+        "cpu_pct_max": 6.45,
+        "mem_mib_max": 14.86
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 33.222,
+        "cpu_pct_max": 163.02,
+        "mem_mib_max": 451.6
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 39.146,
+        "cpu_pct_max": 52.12,
+        "mem_mib_max": 103.1
+      }
+    },
+    "raw_file": "raw/off_c32_r0.csv.gz",
+    "raw_sha256": "3edea9b74cc00bd451698fc4ee27f68c3b7141d9d92e861d8c756b38ad567b75"
+  },
+  {
+    "mode": "off",
+    "concurrency": 32,
+    "rep": 1,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 12.402125358581543,
+    "throughput_rps": 516.0405829611757,
+    "latency_ms": {
+      "p50": 28.047976000038943,
+      "p95": 67.13978920001291,
+      "p99": 93.06458711008646,
+      "mean": 32.51803438890665
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 7,
+        "cpu_pct_mean": 89.16571428571429,
+        "cpu_pct_max": 174.85,
+        "mem_mib_max": 412.1
+      },
+      "sage-ml": {
+        "samples": 7,
+        "cpu_pct_mean": 1.0271428571428571,
+        "cpu_pct_max": 1.23,
+        "mem_mib_max": 584.0
+      },
+      "sage-redis": {
+        "samples": 7,
+        "cpu_pct_mean": 5.0285714285714285,
+        "cpu_pct_max": 10.21,
+        "mem_mib_max": 14.9
+      },
+      "sage-kafka": {
+        "samples": 7,
+        "cpu_pct_mean": 21.562857142857144,
+        "cpu_pct_max": 119.41,
+        "mem_mib_max": 409.0
+      },
+      "sage-ecommerce": {
+        "samples": 7,
+        "cpu_pct_mean": 43.49857142857143,
+        "cpu_pct_max": 54.45,
+        "mem_mib_max": 104.6
+      }
+    },
+    "raw_file": "raw/off_c32_r1.csv.gz",
+    "raw_sha256": "118f9eca354c271dc90538d3fdc570d62edd85c8e7e8705de4dd04f52f2ef5ef"
+  },
+  {
+    "mode": "off",
+    "concurrency": 32,
+    "rep": 2,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 12.091544389724731,
+    "throughput_rps": 529.2954972268599,
+    "latency_ms": {
+      "p50": 27.742883500025073,
+      "p95": 64.47797274997811,
+      "p99": 89.66545939002806,
+      "mean": 31.592499212343697
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "ml_outcomes": {}
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 7,
+        "cpu_pct_mean": 71.83142857142857,
+        "cpu_pct_max": 114.48,
+        "mem_mib_max": 411.8
+      },
+      "sage-ml": {
+        "samples": 7,
+        "cpu_pct_mean": 0.93,
+        "cpu_pct_max": 1.08,
+        "mem_mib_max": 584.7
+      },
+      "sage-redis": {
+        "samples": 7,
+        "cpu_pct_mean": 4.071428571428571,
+        "cpu_pct_max": 7.27,
+        "mem_mib_max": 15.09
+      },
+      "sage-kafka": {
+        "samples": 7,
+        "cpu_pct_mean": 28.900000000000002,
+        "cpu_pct_max": 196.24,
+        "mem_mib_max": 460.6
+      },
+      "sage-ecommerce": {
+        "samples": 7,
+        "cpu_pct_mean": 41.691428571428574,
+        "cpu_pct_max": 60.07,
+        "mem_mib_max": 105.0
+      }
+    },
+    "raw_file": "raw/off_c32_r2.csv.gz",
+    "raw_sha256": "142bf428f124915ae0076565ebd0de8258e681bba4b4e8a719e2e2a7ee821f3a"
+  },
+  {
+    "mode": "features",
+    "concurrency": 1,
+    "rep": 0,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.460275411605835,
+    "throughput_rps": 21.141033563847483,
+    "latency_ms": {
+      "p50": 26.960979500017856,
+      "p95": 37.86645084994689,
+      "p99": 40.401110220104776,
+      "mean": 27.171576009989167
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 3.87282892,
+        "p50_ms_upper": 3.844776,
+        "p95_ms_upper": 6.990506,
+        "p99_ms_upper": 8.388606999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 200.0,
+        "mean_ms": 12.92330819,
+        "p50_ms_upper": 13.981011,
+        "p95_ms_upper": 15.379112000000001,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 38.0,
+        "GateDepthNotMet": 26.0,
+        "ScoringDisabled": 136.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 52.769999999999996,
+        "cpu_pct_max": 114.13,
+        "mem_mib_max": 326.6
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 1.0116666666666667,
+        "cpu_pct_max": 1.37,
+        "mem_mib_max": 584.0
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 1.81,
+        "cpu_pct_max": 2.52,
+        "mem_mib_max": 15.32
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 21.64,
+        "cpu_pct_max": 113.22,
+        "mem_mib_max": 380.5
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 2.8433333333333333,
+        "cpu_pct_max": 4.28,
+        "mem_mib_max": 69.06
+      }
+    },
+    "raw_file": "raw/features_c1_r0.csv.gz",
+    "raw_sha256": "6bd882439044e11a8b2660e891520407ae1e714bc8b49ba5352028a5b92ac67a"
+  },
+  {
+    "mode": "features",
+    "concurrency": 1,
+    "rep": 1,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.335153102874756,
+    "throughput_rps": 21.424394200713227,
+    "latency_ms": {
+      "p50": 26.62520949991176,
+      "p95": 36.202938750034264,
+      "p99": 38.78422949985179,
+      "mean": 26.552224339991426
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 3.278779555,
+        "p50_ms_upper": 3.495251,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 6.990506
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 200.0,
+        "mean_ms": 12.695721925,
+        "p50_ms_upper": 13.981011,
+        "p95_ms_upper": 15.379112000000001,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 38.0,
+        "GateDepthNotMet": 26.0,
+        "ScoringDisabled": 136.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 30.881666666666668,
+        "cpu_pct_max": 49.13,
+        "mem_mib_max": 328.4
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 1.14,
+        "cpu_pct_max": 1.31,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 1.9516666666666667,
+        "cpu_pct_max": 2.92,
+        "mem_mib_max": 15.37
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 10.068333333333333,
+        "cpu_pct_max": 43.08,
+        "mem_mib_max": 416.0
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 2.9916666666666667,
+        "cpu_pct_max": 4.35,
+        "mem_mib_max": 69.87
+      }
+    },
+    "raw_file": "raw/features_c1_r1.csv.gz",
+    "raw_sha256": "f509c35aea315fa63426d3c9f4f143559ef36a7ee241dccf538e51d76903440b"
+  },
+  {
+    "mode": "features",
+    "concurrency": 1,
+    "rep": 2,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.17420744895935,
+    "throughput_rps": 21.800248262610022,
+    "latency_ms": {
+      "p50": 25.455801500129382,
+      "p95": 35.27532955007472,
+      "p99": 37.81054290985139,
+      "mean": 25.744870440007617
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 3.075176085000001,
+        "p50_ms_upper": 3.1457260000000002,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 6.990506
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 200.0,
+        "mean_ms": 12.583272859999997,
+        "p50_ms_upper": 13.981011,
+        "p95_ms_upper": 15.379112000000001,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 41.0,
+        "GateDepthNotMet": 26.0,
+        "ScoringDisabled": 133.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 30.365,
+        "cpu_pct_max": 51.05,
+        "mem_mib_max": 330.9
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 1.2666666666666666,
+        "cpu_pct_max": 1.49,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 2.0216666666666665,
+        "cpu_pct_max": 3.18,
+        "mem_mib_max": 15.6
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 18.201666666666664,
+        "cpu_pct_max": 87.24,
+        "mem_mib_max": 380.4
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 3.04,
+        "cpu_pct_max": 5.26,
+        "mem_mib_max": 71.47
+      }
+    },
+    "raw_file": "raw/features_c1_r2.csv.gz",
+    "raw_sha256": "215c52c381005f28857fd756f96ea6e6e65f872148ea8f73c7e9e3df2032a59c"
+  },
+  {
+    "mode": "features",
+    "concurrency": 8,
+    "rep": 0,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 8.214440107345581,
+    "throughput_rps": 194.77894769349348,
+    "latency_ms": {
+      "p50": 20.117641500064565,
+      "p95": 29.63167834988098,
+      "p99": 36.706323500031885,
+      "mean": 20.310507732502856
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 2.33373998125,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 8.388606999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1600.0,
+        "mean_ms": 8.234301250625,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 396.0,
+        "GateDepthNotMet": 208.0,
+        "ScoringDisabled": 996.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 156.002,
+        "cpu_pct_max": 226.65,
+        "mem_mib_max": 374.8
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 0.9339999999999999,
+        "cpu_pct_max": 1.39,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 12.028,
+        "cpu_pct_max": 16.16,
+        "mem_mib_max": 15.45
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 7.11,
+        "cpu_pct_max": 10.46,
+        "mem_mib_max": 380.9
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 18.014,
+        "cpu_pct_max": 25.03,
+        "mem_mib_max": 85.7
+      }
+    },
+    "raw_file": "raw/features_c8_r0.csv.gz",
+    "raw_sha256": "6f524710059696dfc77050a52c711db1875b8798d0b5af2f5980455760d3b93e"
+  },
+  {
+    "mode": "features",
+    "concurrency": 8,
+    "rep": 1,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 8.329780101776123,
+    "throughput_rps": 192.08190137682493,
+    "latency_ms": {
+      "p50": 20.690254999976787,
+      "p95": 30.714084750002257,
+      "p99": 35.54113414984613,
+      "mean": 20.908142798752465
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 2.64824833125,
+        "p50_ms_upper": 2.446676,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 8.388606999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1600.0,
+        "mean_ms": 8.157706424375,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 392.0,
+        "GateDepthNotMet": 208.0,
+        "ScoringDisabled": 1000.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 112.084,
+        "cpu_pct_max": 171.12,
+        "mem_mib_max": 369.2
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 0.998,
+        "cpu_pct_max": 1.62,
+        "mem_mib_max": 584.0
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 13.506,
+        "cpu_pct_max": 19.35,
+        "mem_mib_max": 16.0
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 32.254,
+        "cpu_pct_max": 129.46,
+        "mem_mib_max": 381.3
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 18.498,
+        "cpu_pct_max": 25.78,
+        "mem_mib_max": 102.0
+      }
+    },
+    "raw_file": "raw/features_c8_r1.csv.gz",
+    "raw_sha256": "19d3d4f832a7ba629878e68e4d5652895dbf69aec8f43daa833c64f4c647bc36"
+  },
+  {
+    "mode": "features",
+    "concurrency": 8,
+    "rep": 2,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 8.134668827056885,
+    "throughput_rps": 196.68901512968887,
+    "latency_ms": {
+      "p50": 20.02682650004317,
+      "p95": 28.944223799908283,
+      "p99": 32.11236981002684,
+      "mean": 20.03025278500033
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 2.2893735281250005,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 6.990506
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1600.0,
+        "mean_ms": 8.100267711874999,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 385.0,
+        "GateDepthNotMet": 208.0,
+        "ScoringDisabled": 1007.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 102.768,
+        "cpu_pct_max": 142.04,
+        "mem_mib_max": 369.8
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 0.978,
+        "cpu_pct_max": 1.59,
+        "mem_mib_max": 584.5
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 12.862,
+        "cpu_pct_max": 16.92,
+        "mem_mib_max": 16.07
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 10.97,
+        "cpu_pct_max": 27.03,
+        "mem_mib_max": 397.3
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 17.14,
+        "cpu_pct_max": 23.23,
+        "mem_mib_max": 101.7
+      }
+    },
+    "raw_file": "raw/features_c8_r2.csv.gz",
+    "raw_sha256": "8d9bd98a594e05c8be89b6843af88de42ca6bfd49cf41d9ec19c899d6dd7863c"
+  },
+  {
+    "mode": "features",
+    "concurrency": 32,
+    "rep": 0,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 10.248735427856445,
+    "throughput_rps": 624.4672862375353,
+    "latency_ms": {
+      "p50": 23.195732000090175,
+      "p95": 52.33660749998988,
+      "p99": 76.93399653004244,
+      "mean": 26.306011692498927
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 2.6197115751562503,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 6.990506,
+        "p99_ms_upper": 11.184809
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6400.0,
+        "mean_ms": 6.822366263750001,
+        "p50_ms_upper": 6.990506,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 12.58291
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1211.0,
+        "GateDepthNotMet": 832.0,
+        "ScoringDisabled": 4357.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 228.14333333333332,
+        "cpu_pct_max": 376.08,
+        "mem_mib_max": 387.0
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 0.8683333333333333,
+        "cpu_pct_max": 1.2,
+        "mem_mib_max": 584.0
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 36.645,
+        "cpu_pct_max": 48.22,
+        "mem_mib_max": 15.93
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 24.535,
+        "cpu_pct_max": 76.41,
+        "mem_mib_max": 403.0
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 43.41166666666667,
+        "cpu_pct_max": 55.14,
+        "mem_mib_max": 103.6
+      }
+    },
+    "raw_file": "raw/features_c32_r0.csv.gz",
+    "raw_sha256": "8e7abff7d97878f62095603c48cddc1d6f8014a7b6da88e58777a00afd3b151e"
+  },
+  {
+    "mode": "features",
+    "concurrency": 32,
+    "rep": 1,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 9.161515235900879,
+    "throughput_rps": 698.5743990165039,
+    "latency_ms": {
+      "p50": 20.619238500103165,
+      "p95": 42.996033499832706,
+      "p99": 65.06355802001285,
+      "mean": 22.556049926875197
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 2.12669831375,
+        "p50_ms_upper": 1.747626,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 9.786707999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6400.0,
+        "mean_ms": 6.55805595078125,
+        "p50_ms_upper": 6.990506,
+        "p95_ms_upper": 11.184809,
+        "p99_ms_upper": 12.58291
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1099.0,
+        "GateDepthNotMet": 832.0,
+        "ScoringDisabled": 4469.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 142.45666666666668,
+        "cpu_pct_max": 240.58,
+        "mem_mib_max": 387.1
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 0.775,
+        "cpu_pct_max": 1.02,
+        "mem_mib_max": 584.2
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 28.63,
+        "cpu_pct_max": 48.83,
+        "mem_mib_max": 16.07
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 33.17666666666666,
+        "cpu_pct_max": 143.51,
+        "mem_mib_max": 399.2
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 32.026666666666664,
+        "cpu_pct_max": 51.33,
+        "mem_mib_max": 104.8
+      }
+    },
+    "raw_file": "raw/features_c32_r1.csv.gz",
+    "raw_sha256": "45e5cd5608daf1a46c81518db65b053a8fe266ff1a7efcbb625ae2958a94799d"
+  },
+  {
+    "mode": "features",
+    "concurrency": 32,
+    "rep": 2,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 10.114793300628662,
+    "throughput_rps": 632.7366076380644,
+    "latency_ms": {
+      "p50": 23.144887000171366,
+      "p95": 48.98137744997938,
+      "p99": 68.6863967000593,
+      "mean": 25.60309194421869
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 2.3987136628124994,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 6.990506,
+        "p99_ms_upper": 9.786707999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 0,
+        "mean_ms": null,
+        "p50_ms_upper": null,
+        "p95_ms_upper": null,
+        "p99_ms_upper": null
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6400.0,
+        "mean_ms": 6.536052928906248,
+        "p50_ms_upper": 6.990506,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 12.58291
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1112.0,
+        "GateDepthNotMet": 832.0,
+        "ScoringDisabled": 4456.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 163.27833333333334,
+        "cpu_pct_max": 215.44,
+        "mem_mib_max": 387.0
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 0.9233333333333333,
+        "cpu_pct_max": 1.34,
+        "mem_mib_max": 584.5
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 37.11,
+        "cpu_pct_max": 47.61,
+        "mem_mib_max": 15.66
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 15.321666666666667,
+        "cpu_pct_max": 39.31,
+        "mem_mib_max": 406.0
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 38.64,
+        "cpu_pct_max": 49.55,
+        "mem_mib_max": 105.3
+      }
+    },
+    "raw_file": "raw/features_c32_r2.csv.gz",
+    "raw_sha256": "3441421ba1e378b98ceb06d86abafbf168bc0e6d763bd43dec9e91e21eadd1d4"
+  },
+  {
+    "mode": "async",
+    "concurrency": 1,
+    "rep": 0,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.629427194595337,
+    "throughput_rps": 20.769667391249715,
+    "latency_ms": {
+      "p50": 27.711852500033274,
+      "p95": 38.07731895003599,
+      "p99": 63.00323423000907,
+      "mean": 28.036695354991252
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 4.262901645,
+        "p50_ms_upper": 4.194304000000001,
+        "p95_ms_upper": 6.990506,
+        "p99_ms_upper": 27.962026
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 6.0,
+        "mean_ms": 50.83202666666667,
+        "p50_ms_upper": 44.739241,
+        "p95_ms_upper": 111.848106,
+        "p99_ms_upper": 111.848106
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 206.0,
+        "mean_ms": 12.721891839805824,
+        "p50_ms_upper": 12.58291,
+        "p95_ms_upper": 15.379112000000001,
+        "p99_ms_upper": 16.777216000000003
+      },
+      "ml_outcomes": {
+        "Cached": 133.0,
+        "GateDurationNotMet": 39.0,
+        "GateDepthNotMet": 26.0,
+        "AsyncScheduled": 2.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 60.205000000000005,
+        "cpu_pct_max": 101.43,
+        "mem_mib_max": 331.7
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 49.74333333333333,
+        "cpu_pct_max": 93.84,
+        "mem_mib_max": 584.5
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 2.075,
+        "cpu_pct_max": 2.95,
+        "mem_mib_max": 16.18
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 9.008333333333333,
+        "cpu_pct_max": 35.87,
+        "mem_mib_max": 393.9
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 2.005,
+        "cpu_pct_max": 3.05,
+        "mem_mib_max": 104.0
+      }
+    },
+    "raw_file": "raw/async_c1_r0.csv.gz",
+    "raw_sha256": "ca66e2313c84080dd00b2c641375cadd6beac48fa5cb572a271ca43ab8eb1440"
+  },
+  {
+    "mode": "async",
+    "concurrency": 1,
+    "rep": 1,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.619403600692749,
+    "throughput_rps": 20.79130976327855,
+    "latency_ms": {
+      "p50": 28.32863499997984,
+      "p95": 36.831994149997605,
+      "p99": 43.30985291990369,
+      "mean": 27.965608019993624
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 3.5332159750000005,
+        "p50_ms_upper": 3.495251,
+        "p95_ms_upper": 6.990506,
+        "p99_ms_upper": 11.184809
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 6.0,
+        "mean_ms": 44.06712666666667,
+        "p50_ms_upper": 44.739241,
+        "p95_ms_upper": 67.10886400000001,
+        "p99_ms_upper": 67.10886400000001
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 206.0,
+        "mean_ms": 12.239229524271844,
+        "p50_ms_upper": 12.58291,
+        "p95_ms_upper": 13.981011,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 39.0,
+        "Cached": 134.0,
+        "GateDepthNotMet": 26.0,
+        "AsyncScheduled": 1.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 37.61833333333333,
+        "cpu_pct_max": 54.53,
+        "mem_mib_max": 337.2
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 38.83833333333333,
+        "cpu_pct_max": 80.36,
+        "mem_mib_max": 584.9
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 2.1033333333333335,
+        "cpu_pct_max": 2.79,
+        "mem_mib_max": 16.76
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 17.291666666666668,
+        "cpu_pct_max": 93.36,
+        "mem_mib_max": 454.1
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 2.9066666666666667,
+        "cpu_pct_max": 5.19,
+        "mem_mib_max": 80.69
+      }
+    },
+    "raw_file": "raw/async_c1_r1.csv.gz",
+    "raw_sha256": "9dff8e238d5ab53dd85a9a4b4c31692f482d09c617e3bf40b65fe7b2f967a22a"
+  },
+  {
+    "mode": "async",
+    "concurrency": 1,
+    "rep": 2,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 8.099379301071167,
+    "throughput_rps": 24.693250256047325,
+    "latency_ms": {
+      "p50": 20.43268649993024,
+      "p95": 27.46228404987505,
+      "p99": 34.56187636994163,
+      "mean": 20.394642844992177
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 2.062735629999999,
+        "p50_ms_upper": 1.747626,
+        "p95_ms_upper": 2.796201,
+        "p99_ms_upper": 9.786707999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 5.0,
+        "mean_ms": 52.283031199999996,
+        "p50_ms_upper": 44.739241,
+        "p95_ms_upper": 89.47848499999999,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 205.0,
+        "mean_ms": 11.1916824,
+        "p50_ms_upper": 12.58291,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 16.777216000000003
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 48.0,
+        "Cached": 124.0,
+        "GateDepthNotMet": 26.0,
+        "AsyncScheduled": 2.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 5,
+        "cpu_pct_mean": 20.96,
+        "cpu_pct_max": 33.64,
+        "mem_mib_max": 339.8
+      },
+      "sage-ml": {
+        "samples": 5,
+        "cpu_pct_mean": 42.36,
+        "cpu_pct_max": 82.33,
+        "mem_mib_max": 584.4
+      },
+      "sage-redis": {
+        "samples": 5,
+        "cpu_pct_mean": 1.534,
+        "cpu_pct_max": 2.99,
+        "mem_mib_max": 15.98
+      },
+      "sage-kafka": {
+        "samples": 5,
+        "cpu_pct_mean": 15.758,
+        "cpu_pct_max": 73.52,
+        "mem_mib_max": 394.3
+      },
+      "sage-ecommerce": {
+        "samples": 5,
+        "cpu_pct_mean": 1.778,
+        "cpu_pct_max": 2.36,
+        "mem_mib_max": 79.55
+      }
+    },
+    "raw_file": "raw/async_c1_r2.csv.gz",
+    "raw_sha256": "3371db6c7282835b20d423f71b3ff3fca4dc47d17bc1a17b8d4083ce0facf46a"
+  },
+  {
+    "mode": "async",
+    "concurrency": 8,
+    "rep": 0,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 9.73858642578125,
+    "throughput_rps": 164.29489148078744,
+    "latency_ms": {
+      "p50": 21.77037550006844,
+      "p95": 73.71231409999835,
+      "p99": 112.43242333003991,
+      "mean": 27.464437825626646
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 8.10675253375,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 50.331646,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 40.0,
+        "mean_ms": 160.589845,
+        "p50_ms_upper": 134.217727,
+        "p95_ms_upper": 447.392426,
+        "p99_ms_upper": 536.870911
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1640.0,
+        "mean_ms": 7.9694565981707335,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 386.0,
+        "Cached": 973.0,
+        "GateDepthNotMet": 208.0,
+        "AsyncScheduled": 33.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 118.72166666666666,
+        "cpu_pct_max": 235.72,
+        "mem_mib_max": 387.2
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 236.86833333333334,
+        "cpu_pct_max": 543.83,
+        "mem_mib_max": 585.5
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 9.166666666666666,
+        "cpu_pct_max": 14.61,
+        "mem_mib_max": 15.97
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 14.428333333333335,
+        "cpu_pct_max": 73.04,
+        "mem_mib_max": 435.0
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 10.683333333333334,
+        "cpu_pct_max": 17.31,
+        "mem_mib_max": 91.93
+      }
+    },
+    "raw_file": "raw/async_c8_r0.csv.gz",
+    "raw_sha256": "3d762c610d98a2ad614d083183eb2ce600d6ccb85f145c517213f9faa0cbbafe"
+  },
+  {
+    "mode": "async",
+    "concurrency": 8,
+    "rep": 1,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 9.304095268249512,
+    "throughput_rps": 171.9672847138663,
+    "latency_ms": {
+      "p50": 20.88290650010549,
+      "p95": 67.53255545020237,
+      "p99": 99.85956513000929,
+      "mean": 25.568131693747915
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 6.984925112499999,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 39.146836,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 40.0,
+        "mean_ms": 123.74790675000001,
+        "p50_ms_upper": 89.47848499999999,
+        "p95_ms_upper": 447.392426,
+        "p99_ms_upper": 447.392426
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1640.0,
+        "mean_ms": 8.002119480487803,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 402.0,
+        "Cached": 961.0,
+        "GateDepthNotMet": 208.0,
+        "AsyncScheduled": 29.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 90.61500000000001,
+        "cpu_pct_max": 182.44,
+        "mem_mib_max": 381.2
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 220.95333333333332,
+        "cpu_pct_max": 520.66,
+        "mem_mib_max": 585.6
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 9.363333333333333,
+        "cpu_pct_max": 14.07,
+        "mem_mib_max": 16.14
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 28.631666666666668,
+        "cpu_pct_max": 136.33,
+        "mem_mib_max": 420.8
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 12.3,
+        "cpu_pct_max": 18.15,
+        "mem_mib_max": 101.6
+      }
+    },
+    "raw_file": "raw/async_c8_r1.csv.gz",
+    "raw_sha256": "929a4c2380dd36a67ac8f2e3f879bea02292e818440c700ae1cbc59d85a64e06"
+  },
+  {
+    "mode": "async",
+    "concurrency": 8,
+    "rep": 2,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 9.645991086959839,
+    "throughput_rps": 165.87201725315688,
+    "latency_ms": {
+      "p50": 21.934403000045677,
+      "p95": 77.96501899987331,
+      "p99": 120.57472415992834,
+      "mean": 27.01996890625054
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 7.7321228162499995,
+        "p50_ms_upper": 2.796201,
+        "p95_ms_upper": 50.331646,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 40.0,
+        "mean_ms": 201.942306625,
+        "p50_ms_upper": 201.32659,
+        "p95_ms_upper": 357.913941,
+        "p99_ms_upper": 447.392426
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1640.0,
+        "mean_ms": 8.167293210365855,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 381.0,
+        "Cached": 993.0,
+        "GateDepthNotMet": 208.0,
+        "AsyncScheduled": 18.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 96.245,
+        "cpu_pct_max": 161.22,
+        "mem_mib_max": 380.0
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 204.42499999999998,
+        "cpu_pct_max": 570.17,
+        "mem_mib_max": 585.4
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 12.273333333333333,
+        "cpu_pct_max": 20.85,
+        "mem_mib_max": 15.68
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 21.44,
+        "cpu_pct_max": 106.72,
+        "mem_mib_max": 394.8
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 16.391666666666666,
+        "cpu_pct_max": 27.94,
+        "mem_mib_max": 84.71
+      }
+    },
+    "raw_file": "raw/async_c8_r2.csv.gz",
+    "raw_sha256": "a67f44a63b33d173962714dec0bedb3445135734a21cae57cdc68e180a64421c"
+  },
+  {
+    "mode": "async",
+    "concurrency": 32,
+    "rep": 0,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 13.622574090957642,
+    "throughput_rps": 469.80841926550255,
+    "latency_ms": {
+      "p50": 33.452222000050824,
+      "p95": 90.08763625006392,
+      "p99": 111.62304114004202,
+      "mean": 41.989373827031216
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 14.767570608437502,
+        "p50_ms_upper": 3.844776,
+        "p95_ms_upper": 61.516456,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 192.0,
+        "mean_ms": 341.57500854166665,
+        "p50_ms_upper": 357.913941,
+        "p95_ms_upper": 984.2633360000001,
+        "p99_ms_upper": 984.2633360000001
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6592.0,
+        "mean_ms": 7.09012901243932,
+        "p50_ms_upper": 8.388606999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1095.0,
+        "Cached": 4182.0,
+        "GateDepthNotMet": 832.0,
+        "AsyncScheduled": 291.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 8,
+        "cpu_pct_mean": 173.555,
+        "cpu_pct_max": 385.25,
+        "mem_mib_max": 420.0
+      },
+      "sage-ml": {
+        "samples": 8,
+        "cpu_pct_mean": 356.41,
+        "cpu_pct_max": 839.99,
+        "mem_mib_max": 586.1
+      },
+      "sage-redis": {
+        "samples": 8,
+        "cpu_pct_mean": 22.5425,
+        "cpu_pct_max": 49.25,
+        "mem_mib_max": 16.14
+      },
+      "sage-kafka": {
+        "samples": 8,
+        "cpu_pct_mean": 7.305,
+        "cpu_pct_max": 28.96,
+        "mem_mib_max": 414.8
+      },
+      "sage-ecommerce": {
+        "samples": 8,
+        "cpu_pct_mean": 31.197499999999998,
+        "cpu_pct_max": 55.79,
+        "mem_mib_max": 103.6
+      }
+    },
+    "raw_file": "raw/async_c32_r0.csv.gz",
+    "raw_sha256": "5d4e058db5a12dd6a0b588af452a122aec9c6333b36d59bec82b1b836cdf2fa7"
+  },
+  {
+    "mode": "async",
+    "concurrency": 32,
+    "rep": 1,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 14.621248245239258,
+    "throughput_rps": 437.7191257992537,
+    "latency_ms": {
+      "p50": 34.704465999880085,
+      "p95": 103.43052875000467,
+      "p99": 117.97896120999442,
+      "mean": 47.37235616671782
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 22.18834753671875,
+        "p50_ms_upper": 3.844776,
+        "p95_ms_upper": 89.47848499999999,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 191.0,
+        "mean_ms": 516.8524765392671,
+        "p50_ms_upper": 536.870911,
+        "p95_ms_upper": 984.2633360000001,
+        "p99_ms_upper": 984.2633360000001
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6592.0,
+        "mean_ms": 7.0970075515776685,
+        "p50_ms_upper": 8.388606999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1072.0,
+        "Cached": 4279.0,
+        "GateDepthNotMet": 832.0,
+        "AsyncScheduled": 217.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 8,
+        "cpu_pct_mean": 95.1225,
+        "cpu_pct_max": 253.24,
+        "mem_mib_max": 422.1
+      },
+      "sage-ml": {
+        "samples": 8,
+        "cpu_pct_mean": 667.8175,
+        "cpu_pct_max": 941.49,
+        "mem_mib_max": 586.8
+      },
+      "sage-redis": {
+        "samples": 8,
+        "cpu_pct_mean": 13.74375,
+        "cpu_pct_max": 41.77,
+        "mem_mib_max": 15.95
+      },
+      "sage-kafka": {
+        "samples": 8,
+        "cpu_pct_mean": 35.7925,
+        "cpu_pct_max": 177.29,
+        "mem_mib_max": 478.1
+      },
+      "sage-ecommerce": {
+        "samples": 8,
+        "cpu_pct_mean": 22.44875,
+        "cpu_pct_max": 50.33,
+        "mem_mib_max": 104.9
+      }
+    },
+    "raw_file": "raw/async_c32_r1.csv.gz",
+    "raw_sha256": "524f8039ed4bd5b33aaec6ed17202e971d8825ef38639097f4f77502f73e5c52"
+  },
+  {
+    "mode": "async",
+    "concurrency": 32,
+    "rep": 2,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 16.132455110549927,
+    "throughput_rps": 396.71581021878546,
+    "latency_ms": {
+      "p50": 50.19357600008334,
+      "p95": 100.49264149993176,
+      "p99": 119.57373857009318,
+      "mean": 54.3553037496876
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 27.174609377812498,
+        "p50_ms_upper": 22.369621,
+        "p95_ms_upper": 89.47848499999999,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 118.0,
+        "mean_ms": 517.930398983051,
+        "p50_ms_upper": 536.870911,
+        "p95_ms_upper": 984.2633360000001,
+        "p99_ms_upper": 1073.7418240000002
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6658.0,
+        "mean_ms": 7.543715338540105,
+        "p50_ms_upper": 8.388606999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 22.369621
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 846.0,
+        "Cached": 4426.0,
+        "GateDepthNotMet": 832.0,
+        "AsyncScheduled": 296.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 9,
+        "cpu_pct_mean": 82.65222222222222,
+        "cpu_pct_max": 197.87,
+        "mem_mib_max": 426.6
+      },
+      "sage-ml": {
+        "samples": 9,
+        "cpu_pct_mean": 853.0177777777778,
+        "cpu_pct_max": 1168.75,
+        "mem_mib_max": 587.3
+      },
+      "sage-redis": {
+        "samples": 9,
+        "cpu_pct_mean": 13.506666666666666,
+        "cpu_pct_max": 46.86,
+        "mem_mib_max": 15.82
+      },
+      "sage-kafka": {
+        "samples": 9,
+        "cpu_pct_mean": 6.593333333333333,
+        "cpu_pct_max": 27.04,
+        "mem_mib_max": 414.3
+      },
+      "sage-ecommerce": {
+        "samples": 9,
+        "cpu_pct_mean": 22.314444444444444,
+        "cpu_pct_max": 57.71,
+        "mem_mib_max": 104.6
+      }
+    },
+    "raw_file": "raw/async_c32_r2.csv.gz",
+    "raw_sha256": "471c4b53a22f2104f6a04f1ee03a59275740cca407ec7922014329a92db033d5"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 1,
+    "rep": 0,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.765552759170532,
+    "throughput_rps": 20.480151501120723,
+    "latency_ms": {
+      "p50": 26.982238499954292,
+      "p95": 41.059290299847355,
+      "p99": 73.3501551799528,
+      "mean": 28.72436577499684
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 4.0767075649999995,
+        "p50_ms_upper": 3.844776,
+        "p95_ms_upper": 9.786707999999999,
+        "p99_ms_upper": 12.58291
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 5.0,
+        "mean_ms": 43.641752000000004,
+        "p50_ms_upper": 27.962026,
+        "p95_ms_upper": 134.217727,
+        "p99_ms_upper": 134.217727
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 205.0,
+        "mean_ms": 12.267373326829269,
+        "p50_ms_upper": 12.58291,
+        "p95_ms_upper": 15.379112000000001,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "Cached": 129.0,
+        "GateDurationNotMet": 40.0,
+        "GateDepthNotMet": 26.0,
+        "Scored": 5.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 59.56166666666667,
+        "cpu_pct_max": 94.93,
+        "mem_mib_max": 326.0
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 29.866666666666667,
+        "cpu_pct_max": 67.97,
+        "mem_mib_max": 585.3
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 2.0100000000000002,
+        "cpu_pct_max": 2.92,
+        "mem_mib_max": 16.09
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 23.62,
+        "cpu_pct_max": 131.37,
+        "mem_mib_max": 482.5
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 2.8966666666666665,
+        "cpu_pct_max": 4.69,
+        "mem_mib_max": 104.1
+      }
+    },
+    "raw_file": "raw/sync_c1_r0.csv.gz",
+    "raw_sha256": "964e2216e832c049fa49c7e3d89b8a4b034c1812d1eaefede064f0a597b9ecf2"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 1,
+    "rep": 1,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.786149024963379,
+    "throughput_rps": 20.43704826993971,
+    "latency_ms": {
+      "p50": 28.486992500006636,
+      "p95": 37.8837947499278,
+      "p99": 66.8603693801014,
+      "mean": 28.798752135005543
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 3.5197598900000004,
+        "p50_ms_upper": 3.495251,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 8.388606999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 6.0,
+        "mean_ms": 24.953416166666667,
+        "p50_ms_upper": 11.184809,
+        "p95_ms_upper": 55.924051000000006,
+        "p99_ms_upper": 55.924051000000006
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 206.0,
+        "mean_ms": 12.521325548543691,
+        "p50_ms_upper": 13.981011,
+        "p95_ms_upper": 13.981011,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 38.0,
+        "Scored": 6.0,
+        "Cached": 130.0,
+        "GateDepthNotMet": 26.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 36.156666666666666,
+        "cpu_pct_max": 56.58,
+        "mem_mib_max": 331.0
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 36.02166666666667,
+        "cpu_pct_max": 63.95,
+        "mem_mib_max": 585.6
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 2.368333333333333,
+        "cpu_pct_max": 3.12,
+        "mem_mib_max": 16.28
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 2.355,
+        "cpu_pct_max": 2.81,
+        "mem_mib_max": 406.3
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 3.513333333333333,
+        "cpu_pct_max": 5.8,
+        "mem_mib_max": 79.73
+      }
+    },
+    "raw_file": "raw/sync_c1_r1.csv.gz",
+    "raw_sha256": "b7874896fe24682b5ff93b108490e08b9eefa75aa88a9e856b4dac79fd84ca67"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 1,
+    "rep": 2,
+    "requests": 200,
+    "errors": 0,
+    "wall_s": 9.370965719223022,
+    "throughput_rps": 21.34251751553549,
+    "latency_ms": {
+      "p50": 25.96293599992805,
+      "p95": 37.155149500017615,
+      "p99": 46.91460107004784,
+      "mean": 26.724258454999017
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 200.0,
+        "mean_ms": 3.2767585749999997,
+        "p50_ms_upper": 3.495251,
+        "p95_ms_upper": 5.592405,
+        "p99_ms_upper": 8.388606999999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 5.0,
+        "mean_ms": 17.003579599999995,
+        "p50_ms_upper": 12.58291,
+        "p95_ms_upper": 44.739241,
+        "p99_ms_upper": 44.739241
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 205.0,
+        "mean_ms": 12.18185410731707,
+        "p50_ms_upper": 12.58291,
+        "p95_ms_upper": 13.981011,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 40.0,
+        "Scored": 5.0,
+        "Cached": 129.0,
+        "GateDepthNotMet": 26.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 28.931666666666665,
+        "cpu_pct_max": 47.98,
+        "mem_mib_max": 333.1
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 9.879999999999999,
+        "cpu_pct_max": 30.99,
+        "mem_mib_max": 585.6
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 1.9316666666666666,
+        "cpu_pct_max": 2.79,
+        "mem_mib_max": 16.52
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 23.135,
+        "cpu_pct_max": 127.65,
+        "mem_mib_max": 483.3
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 2.558333333333333,
+        "cpu_pct_max": 4.38,
+        "mem_mib_max": 76.46
+      }
+    },
+    "raw_file": "raw/sync_c1_r2.csv.gz",
+    "raw_sha256": "0caaa4fd839062f07a5b6a42cc9497dff48ab13b3607774a0a7be699fb860b8d"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 8,
+    "rep": 0,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 9.805366516113281,
+    "throughput_rps": 163.1759503707179,
+    "latency_ms": {
+      "p50": 21.254596500057232,
+      "p95": 72.93617720002884,
+      "p99": 183.8581168001451,
+      "mean": 28.0343805006261
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 6.186498726875,
+        "p50_ms_upper": 2.0971509999999998,
+        "p95_ms_upper": 44.739241,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 40.0,
+        "mean_ms": 124.11938905,
+        "p50_ms_upper": 111.848106,
+        "p95_ms_upper": 268.43545600000004,
+        "p99_ms_upper": 357.913941
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1640.0,
+        "mean_ms": 8.091901801219512,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 392.0,
+        "Scored": 40.0,
+        "Cached": 960.0,
+        "GateDepthNotMet": 208.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 127.40666666666667,
+        "cpu_pct_max": 214.46,
+        "mem_mib_max": 377.2
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 185.84166666666667,
+        "cpu_pct_max": 498.86,
+        "mem_mib_max": 585.6
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 10.698333333333334,
+        "cpu_pct_max": 14.33,
+        "mem_mib_max": 15.95
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 3.973333333333333,
+        "cpu_pct_max": 5.81,
+        "mem_mib_max": 406.9
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 12.481666666666667,
+        "cpu_pct_max": 18.57,
+        "mem_mib_max": 90.66
+      }
+    },
+    "raw_file": "raw/sync_c8_r0.csv.gz",
+    "raw_sha256": "5ddf4c70e849f4ce716b0317949b23a6efd1a7449b0ce66b9a6e4914e9b472eb"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 8,
+    "rep": 1,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 9.936338901519775,
+    "throughput_rps": 161.02510349715206,
+    "latency_ms": {
+      "p50": 21.48841700011417,
+      "p95": 69.4766283498552,
+      "p99": 178.91179728019316,
+      "mean": 28.205747277500564
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 6.155789604374999,
+        "p50_ms_upper": 2.446676,
+        "p95_ms_upper": 39.146836,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 40.0,
+        "mean_ms": 125.76165095000002,
+        "p50_ms_upper": 89.47848499999999,
+        "p95_ms_upper": 357.913941,
+        "p99_ms_upper": 447.392426
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1640.0,
+        "mean_ms": 8.062080603658536,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 383.0,
+        "Scored": 40.0,
+        "Cached": 969.0,
+        "GateDepthNotMet": 208.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 94.57666666666667,
+        "cpu_pct_max": 177.64,
+        "mem_mib_max": 373.8
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 220.565,
+        "cpu_pct_max": 551.37,
+        "mem_mib_max": 585.8
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 10.365,
+        "cpu_pct_max": 14.86,
+        "mem_mib_max": 15.7
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 26.96333333333333,
+        "cpu_pct_max": 143.48,
+        "mem_mib_max": 483.9
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 12.201666666666666,
+        "cpu_pct_max": 17.5,
+        "mem_mib_max": 101.3
+      }
+    },
+    "raw_file": "raw/sync_c8_r1.csv.gz",
+    "raw_sha256": "eeef0f26bc02ad86cab25d72e91f010cb58ddec6a795f3cc0688a230563e4c6d"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 8,
+    "rep": 2,
+    "requests": 1600,
+    "errors": 0,
+    "wall_s": 10.169283628463745,
+    "throughput_rps": 157.3365497960557,
+    "latency_ms": {
+      "p50": 21.793744999968112,
+      "p95": 74.00668859992261,
+      "p99": 177.36193529013235,
+      "mean": 29.19679935125515
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 1600.0,
+        "mean_ms": 6.470424399375004,
+        "p50_ms_upper": 2.796201,
+        "p95_ms_upper": 39.146836,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 40.0,
+        "mean_ms": 123.39425007499999,
+        "p50_ms_upper": 111.848106,
+        "p95_ms_upper": 357.913941,
+        "p99_ms_upper": 447.392426
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 1640.0,
+        "mean_ms": 8.135225696341465,
+        "p50_ms_upper": 9.786707999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 15.379112000000001
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 380.0,
+        "Scored": 40.0,
+        "Cached": 972.0,
+        "GateDepthNotMet": 208.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 6,
+        "cpu_pct_mean": 106.12,
+        "cpu_pct_max": 152.43,
+        "mem_mib_max": 374.2
+      },
+      "sage-ml": {
+        "samples": 6,
+        "cpu_pct_mean": 228.175,
+        "cpu_pct_max": 531.59,
+        "mem_mib_max": 585.6
+      },
+      "sage-redis": {
+        "samples": 6,
+        "cpu_pct_mean": 12.456666666666667,
+        "cpu_pct_max": 21.84,
+        "mem_mib_max": 16.18
+      },
+      "sage-kafka": {
+        "samples": 6,
+        "cpu_pct_mean": 13.886666666666665,
+        "cpu_pct_max": 65.85,
+        "mem_mib_max": 415.0
+      },
+      "sage-ecommerce": {
+        "samples": 6,
+        "cpu_pct_mean": 13.718333333333334,
+        "cpu_pct_max": 20.03,
+        "mem_mib_max": 101.0
+      }
+    },
+    "raw_file": "raw/sync_c8_r2.csv.gz",
+    "raw_sha256": "eedddd16da348d55ee8fd55f3d7037c5a8d2b4e7f1679bb046df464cad2c9c0c"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 32,
+    "rep": 0,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 29.291809797286987,
+    "throughput_rps": 218.49110875329967,
+    "latency_ms": {
+      "p50": 51.08990050007378,
+      "p95": 348.10962194997893,
+      "p99": 1088.1477711900561,
+      "mean": 98.50958588453184
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 26.1965180740625,
+        "p50_ms_upper": 22.369621,
+        "p95_ms_upper": 89.47848499999999,
+        "p99_ms_upper": 111.848106
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 177.0,
+        "mean_ms": 408.1859865423728,
+        "p50_ms_upper": 357.913941,
+        "p95_ms_upper": 984.2633360000001,
+        "p99_ms_upper": 1073.7418240000002
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6793.0,
+        "mean_ms": 7.860717777417931,
+        "p50_ms_upper": 8.388606999999999,
+        "p95_ms_upper": 13.981011,
+        "p99_ms_upper": 22.369621
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1046.0,
+        "Scored": 177.0,
+        "Cached": 4129.0,
+        "GateDepthNotMet": 832.0,
+        "Timeout": 216.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 15,
+        "cpu_pct_mean": 85.214,
+        "cpu_pct_max": 360.63,
+        "mem_mib_max": 414.9
+      },
+      "sage-ml": {
+        "samples": 15,
+        "cpu_pct_mean": 803.8213333333333,
+        "cpu_pct_max": 1149.34,
+        "mem_mib_max": 588.0
+      },
+      "sage-redis": {
+        "samples": 15,
+        "cpu_pct_mean": 9.500666666666667,
+        "cpu_pct_max": 42.48,
+        "mem_mib_max": 15.96
+      },
+      "sage-kafka": {
+        "samples": 15,
+        "cpu_pct_mean": 18.13,
+        "cpu_pct_max": 143.85,
+        "mem_mib_max": 496.8
+      },
+      "sage-ecommerce": {
+        "samples": 15,
+        "cpu_pct_mean": 14.083333333333332,
+        "cpu_pct_max": 47.68,
+        "mem_mib_max": 102.5
+      }
+    },
+    "raw_file": "raw/sync_c32_r0.csv.gz",
+    "raw_sha256": "963050cefc593707e83e4f3dd1d9fefc0af9dc09f794497e6c3f3d9f785abe64"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 32,
+    "rep": 1,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 15.048443078994751,
+    "throughput_rps": 425.293165970996,
+    "latency_ms": {
+      "p50": 33.92986500000461,
+      "p95": 99.33606299991871,
+      "p99": 278.0547219300496,
+      "mean": 47.27857203250036
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 13.42880484890625,
+        "p50_ms_upper": 3.495251,
+        "p95_ms_upper": 61.516456,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 192.0,
+        "mean_ms": 210.04446032291673,
+        "p50_ms_upper": 156.587348,
+        "p95_ms_upper": 536.870911,
+        "p99_ms_upper": 715.827881
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6593.0,
+        "mean_ms": 7.085057001061733,
+        "p50_ms_upper": 8.388606999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 13.981011
+      },
+      "ml_outcomes": {
+        "Error": 1.0,
+        "GateDurationNotMet": 1057.0,
+        "Scored": 192.0,
+        "Cached": 4318.0,
+        "GateDepthNotMet": 832.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 8,
+        "cpu_pct_mean": 96.9575,
+        "cpu_pct_max": 242.45,
+        "mem_mib_max": 415.7
+      },
+      "sage-ml": {
+        "samples": 8,
+        "cpu_pct_mean": 623.75,
+        "cpu_pct_max": 919.17,
+        "mem_mib_max": 586.7
+      },
+      "sage-redis": {
+        "samples": 8,
+        "cpu_pct_mean": 15.76125,
+        "cpu_pct_max": 44.24,
+        "mem_mib_max": 16.32
+      },
+      "sage-kafka": {
+        "samples": 8,
+        "cpu_pct_mean": 17.1675,
+        "cpu_pct_max": 111.08,
+        "mem_mib_max": 487.2
+      },
+      "sage-ecommerce": {
+        "samples": 8,
+        "cpu_pct_mean": 22.4,
+        "cpu_pct_max": 51.8,
+        "mem_mib_max": 103.4
+      }
+    },
+    "raw_file": "raw/sync_c32_r1.csv.gz",
+    "raw_sha256": "20f727dbf9cc1cacbb512597f750b7d710dd6cc74972a58ba751b698b1c8034c"
+  },
+  {
+    "mode": "sync",
+    "concurrency": 32,
+    "rep": 2,
+    "requests": 6400,
+    "errors": 0,
+    "wall_s": 18.364531993865967,
+    "throughput_rps": 348.49785456758156,
+    "latency_ms": {
+      "p50": 49.085383499914315,
+      "p95": 113.5001699001009,
+      "p99": 350.71354772008453,
+      "mean": 62.426704130470334
+    },
+    "internal": {
+      "sage_gateway_redis_telemetry_seconds": {
+        "count": 6400.0,
+        "mean_ms": 25.72165440921875,
+        "p50_ms_upper": 22.369621,
+        "p95_ms_upper": 89.47848499999999,
+        "p99_ms_upper": 89.47848499999999
+      },
+      "sage_gateway_ml_roundtrip_seconds": {
+        "count": 192.0,
+        "mean_ms": 228.7494665677083,
+        "p50_ms_upper": 178.956969,
+        "p95_ms_upper": 805.306366,
+        "p99_ms_upper": 984.2633360000001
+      },
+      "sage_gateway_kafka_publish_seconds": {
+        "count": 6604.0,
+        "mean_ms": 7.556215812235009,
+        "p50_ms_upper": 8.388606999999999,
+        "p95_ms_upper": 12.58291,
+        "p99_ms_upper": 22.369621
+      },
+      "ml_outcomes": {
+        "GateDurationNotMet": 1058.0,
+        "Scored": 192.0,
+        "Cached": 4306.0,
+        "GateDepthNotMet": 832.0,
+        "Timeout": 12.0
+      }
+    },
+    "containers": {
+      "sage-gateway": {
+        "samples": 10,
+        "cpu_pct_mean": 79.929,
+        "cpu_pct_max": 208.36,
+        "mem_mib_max": 416.6
+      },
+      "sage-ml": {
+        "samples": 10,
+        "cpu_pct_mean": 676.333,
+        "cpu_pct_max": 957.47,
+        "mem_mib_max": 586.5
+      },
+      "sage-redis": {
+        "samples": 10,
+        "cpu_pct_mean": 14.874,
+        "cpu_pct_max": 46.19,
+        "mem_mib_max": 15.91
+      },
+      "sage-kafka": {
+        "samples": 10,
+        "cpu_pct_mean": 19.821,
+        "cpu_pct_max": 166.34,
+        "mem_mib_max": 508.9
+      },
+      "sage-ecommerce": {
+        "samples": 10,
+        "cpu_pct_mean": 20.712,
+        "cpu_pct_max": 48.27,
+        "mem_mib_max": 103.5
+      }
+    },
+    "raw_file": "raw/sync_c32_r2.csv.gz",
+    "raw_sha256": "4d196589a441894a63d026b8454b0740602192c553ba28b2880c234e628984e0"
+  }
+]

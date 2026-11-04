@@ -1,0 +1,53 @@
+{
+  "name": "offline_protocol_v1",
+  "status": "declared before any model was trained on the six-month data; changes require a new version",
+  "data": {
+    "sessions": "ml_pipeline/data/eclog6m_sessions.csv.gz (sha256 in configs/split_eclog6m_v1.json)",
+    "split": "configs/split_eclog6m_v1.json (client-grouped; frozen-model training clients forced into train)",
+    "labels": "session label from user agent exactly as label_eclog.py; 'unknown' sessions excluded from training and metrics",
+    "timestamps": "EClog 1 s resolution, used as is (definitions unchanged); the resolution effect is a separate declared sensitivity experiment (audit N1)"
+  },
+  "rows": {
+    "prefix": "pre_* columns: feature vector at the gateway's first scoring point (non-static count > 20 and duration >= 3 s; gateway_emulator.first_score); only sessions with scored == 1",
+    "completed": "done_* columns: label_eclog.py completed-session vector; for training the completed model, sessions with n_non_static > 20 and duration_s >= 3 (the sessions the gateway can score), so both new models see the same sessions"
+  },
+  "models": {
+    "frozen (unchanged, v2-frozen-models-v6)": {
+      "sage_binary_model": {"features": "7 (prod, incl. Asset_Skip_Ratio)", "threshold_fixed": 0.5},
+      "eclog_timing_binary_model": {"features": "8 timing (f0-f7)", "threshold_fixed": 0.35}
+    },
+    "new": {
+      "eclog6m_prefix_8feature_v1": {"train_rows": "prefix rows of train-split sessions"},
+      "eclog6m_completed_8feature_v1": {"train_rows": "completed rows of the same train-split sessions"},
+      "common": {
+        "features": ["SAGE_Session_Depth", "SAGE_Temporal_Variance", "SAGE_Request_Velocity", "SAGE_Behavioral_Diversity",
+                     "SAGE_Endpoint_Concentration", "SAGE_Cart_Ratio", "SAGE_NonStatic_Navigation_Gap", "SAGE_NonStatic_Long_Gap_Ratio"],
+        "estimator": "xgboost.XGBClassifier(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, eval_metric='logloss') — the frozen timing model's settings, no tuning",
+        "sample_weight": "none (one row per session, as the frozen models)",
+        "freeze": "pickled, SHA-256 recorded in ml_pipeline/models/frozen_models_manifest_v7.json before any test-split metric is computed"
+      }
+    },
+    "baseline_markov": {
+      "definition": "first-order Markov chain over canonical non-static paths of the session prefix up to the first scoring point; one chain per class from train-split sessions; paths seen in fewer than 5 train sessions mapped to <UNK>; add-one smoothing; score = log P(seq|bot) - log P(seq|human) per transition (length-normalised)",
+      "threshold": "selected on validation exactly as for the other models"
+    }
+  },
+  "evaluation": {
+    "primary_unit": "client: clients of the split with >= 1 scored known-label session; client label = the label of its scored known sessions when they all agree, mixed-label clients excluded (count reported); client score = max over its scored sessions (the campaign 'ever flagged' rule)",
+    "secondary_unit": "session (scored known-label sessions)",
+    "primary_inputs": "prefix vectors (what the gateway scores); completed vectors reported as secondary",
+    "thresholds": {
+      "validation_selected": "per model, the smallest threshold whose VALIDATION client-level FPR <= 1 %; applied unchanged to test",
+      "matched_fpr_validation": "per model, thresholds giving validation client-level FPR <= 1 % and <= 5 %; test recall and test FPR reported",
+      "matched_fpr_test_descriptive": "recall at test FPR = 1 % and 5 % read off the test ROC; labelled descriptive (not a deployable operating point)",
+      "fixed": "frozen models also at their fixed thresholds (0.5, 0.35)"
+    },
+    "metrics": ["ROC-AUC", "PR-AUC (average precision)", "recall, FPR, precision with confusion counts", "Brier score", "reliability curve: 10 equal-width bins, counts and observed bot rate per bin"],
+    "intervals": {
+      "proportions": "exact Clopper-Pearson 95 %",
+      "auc_and_brier": "client-cluster bootstrap, 2000 resamples, seed 42, percentile 95 %"
+    },
+    "coverage": "share of known-label sessions and clients (all splits and per split) with n_non_static >= k and duration_s >= 3, k in {5, 10, 15, 21}; k = 21 equals the gateway gate",
+    "zanbil": "no retraining and calibration-only variants declared; BLOCKED: restricted Dataverse file, no verified copy available"
+  }
+}

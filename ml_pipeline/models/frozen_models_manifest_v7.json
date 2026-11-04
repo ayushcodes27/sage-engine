@@ -1,0 +1,107 @@
+{
+  "manifest_version": "7.0",
+  "created": "2026-11-02T00:02:00+0530",
+  "note": "New six-month EClog models (B3). The v6 frozen models and frozen_models_manifest.json are unchanged.",
+  "protocol": {
+    "path": "configs/offline_protocol_v1.json",
+    "sha256": "1725e586b74a368d774d8760d65a4486ca99d83ef1b8df4949b505ec3731682d"
+  },
+  "split": {
+    "path": "configs/split_eclog6m_v1.json",
+    "sha256": "b492c460561145a8165cb81c7269aaa601ef7eada8d35c02dddcb2211f2c6d87",
+    "assignment_sha256": "3751cae52d0cfa8de10abe4bfbdca6ddd1c89fa9aa42b47bd3627b5e143e01b3"
+  },
+  "session_table_sha256": "f5cac61fc69217f8e451dc19818a73ddf6c908ee389c14d64879cc111a78ee06",
+  "training_script_sha256": "a50adb864e316e9a951b70cb730906d814f0ee99e65811abd2f85f548acaa592",
+  "environment": {
+    "python": "3.12.3",
+    "xgboost": "3.2.0",
+    "scikit-learn": "1.8.0",
+    "pandas": "2.3.3",
+    "numpy": "2.4.4"
+  },
+  "contract": {
+    "name": "eclog_timing_8feature",
+    "path": "ml_pipeline/models/contracts/contract_eclog_timing_8feat.json",
+    "sha256": "2fb47afb4dae24d3345aa0d1f270e622477da729e9f9c64a7cc001edc1260dfc"
+  },
+  "feature_list_sha256": "8cd1accfb56c5e68099d89f9bfe3b84bc849da63f5a44d3dd6cb953b1cf29e2c",
+  "models": {
+    "eclog6m_prefix_8feature_v1": {
+      "relative_path": "ml_pipeline/models/eclog6m_prefix_8feature_v1.pkl",
+      "sha256": "c253bdec80fac63f0568d818ecbb7ca35d3e5748b543f9d5d0a79395fe00e168",
+      "features": [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio",
+        "SAGE_NonStatic_Navigation_Gap",
+        "SAGE_NonStatic_Long_Gap_Ratio"
+      ],
+      "training_rows": "pre_* columns of scored known-label train-split sessions",
+      "train_sessions": {
+        "bot": 6506,
+        "human": 36078
+      },
+      "train_clients": 23266,
+      "hyperparameters": {
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "random_state": 42,
+        "eval_metric": "logloss"
+      },
+      "threshold": 0.017599599435925487,
+      "threshold_rule": "smallest threshold with validation client-level FPR <= 1 % on prefix inputs",
+      "validation_at_threshold": {
+        "clients_bot": 184,
+        "clients_human": 7493,
+        "mixed_label_clients_excluded": 0,
+        "tp": 184,
+        "fn": 0,
+        "fp": 74,
+        "tn": 7419
+      }
+    },
+    "eclog6m_completed_8feature_v1": {
+      "relative_path": "ml_pipeline/models/eclog6m_completed_8feature_v1.pkl",
+      "sha256": "25867a37e08c5cf443f6c7c3e951ea27d54868a248277c44ec38eed2cd40ac34",
+      "features": [
+        "SAGE_Session_Depth",
+        "SAGE_Temporal_Variance",
+        "SAGE_Request_Velocity",
+        "SAGE_Behavioral_Diversity",
+        "SAGE_Endpoint_Concentration",
+        "SAGE_Cart_Ratio",
+        "SAGE_NonStatic_Navigation_Gap",
+        "SAGE_NonStatic_Long_Gap_Ratio"
+      ],
+      "training_rows": "done_* columns of scored known-label train-split sessions",
+      "train_sessions": {
+        "bot": 6506,
+        "human": 36078
+      },
+      "train_clients": 23266,
+      "hyperparameters": {
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "random_state": 42,
+        "eval_metric": "logloss"
+      },
+      "threshold": 0.1342238634824753,
+      "threshold_rule": "smallest threshold with validation client-level FPR <= 1 % on prefix inputs",
+      "validation_at_threshold": {
+        "clients_bot": 184,
+        "clients_human": 7493,
+        "mixed_label_clients_excluded": 0,
+        "tp": 184,
+        "fn": 0,
+        "fp": 74,
+        "tn": 7419
+      }
+    }
+  }
+}

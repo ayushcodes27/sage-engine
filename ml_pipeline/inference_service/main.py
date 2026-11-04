@@ -20,6 +20,7 @@ INFERENCE_LATENCY = Histogram('sage_inference_latency_seconds', 'Time spent proc
 # Global State
 PROD_MODEL = None
 SHADOW_MODEL = None
+EXTRA_SHADOWS: List[Dict[str, Any]] = []  # audit N25: additional shadow models, scored on every request
 CLASSES = []
 CONTRACT_HASH = "unknown"
 
@@ -97,11 +98,57 @@ class InferenceResult(BaseModel):
     shadow_model_sha256: Optional[str] = None
     shadow_contract_hash: Optional[str] = None
     shadow_feature_list_hash: Optional[str] = None
+    # One entry per additional shadow model (env EXTRA_SHADOW_MODEL_FILES), in load order.
+    extra_shadows: List[Dict[str, Any]] = []
+
+def load_frozen_sha(model_dir: str, key: str) -> Optional[str]:
+    """Expected SHA-256 for a model file stem from any frozen manifest (v6 or v7), or None."""
+    for name in sorted(os.listdir(model_dir)):
+        if not (name.startswith("frozen_models_manifest") and name.endswith(".json")):
+            continue
+        try:
+            with open(os.path.join(model_dir, name), "r", encoding="utf-8") as f:
+                entry = json.load(f).get("models", {}).get(key)
+        except Exception:
+            continue
+        if entry and entry.get("sha256"):
+            return entry["sha256"]
+    return None
+
+def load_extra_shadows(model_dir: str) -> List[Dict[str, Any]]:
+    """Load models named in EXTRA_SHADOW_MODEL_FILES (comma separated). Every one MUST be in a frozen manifest;
+    the hash is checked before unpickling."""
+    loaded = []
+    for fname in [x.strip() for x in os.getenv("EXTRA_SHADOW_MODEL_FILES", "").split(",") if x.strip()]:
+        path = os.path.join(model_dir, fname)
+        key = os.path.splitext(fname)[0]
+        raw = open(path, "rb").read()
+        sha = hashlib.sha256(raw).hexdigest()
+        expected = load_frozen_sha(model_dir, key)
+        if expected is None:
+            raise RuntimeError(f"EXTRA shadow {fname} is not in any frozen manifest")
+        if sha != expected:
+            raise RuntimeError(f"EXTRA shadow {fname} hash mismatch! Expected {expected}, got {sha}")
+        d = pickle.loads(raw)
+        model = d["model"]
+        if hasattr(model, "n_jobs"):
+            model.n_jobs = 1
+        if d.get("threshold") is None:
+            raise RuntimeError(f"EXTRA shadow {fname} has no frozen threshold")
+        features = d["features"]
+        c_path = os.path.join(model_dir, "contracts", {7: "contract_prod_7feat.json", 6: "contract_eclog_6feat.json",
+                                                       8: "contract_eclog_timing_8feat.json"}.get(len(features), "none"))
+        contract_hash = hashlib.sha256(open(c_path, "rb").read()).hexdigest() if os.path.exists(c_path) else "unknown"
+        loaded.append({"name": key, "model": model, "features": features, "threshold": float(d["threshold"]),
+                       "sha256": sha, "contract_hash": contract_hash,
+                       "feature_list_hash": hashlib.sha256(json.dumps(features, separators=(',', ':')).encode("utf-8")).hexdigest()})
+        print(f"[+] EXTRA SHADOW Loaded: {fname} (SHA-256: {sha[:12]}..., {len(features)} features, thr {d['threshold']})")
+    return loaded
 
 # Lifespan & Initialization
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global PROD_MODEL, SHADOW_MODEL, CLASSES, CONTRACT_HASH
+    global PROD_MODEL, SHADOW_MODEL, CLASSES, CONTRACT_HASH, EXTRA_SHADOWS
     global PROD_FEATURE_MAP, SHADOW_FEATURE_MAP, PROD_MODEL_META, SHADOW_MODEL_META
     base_path = os.path.dirname(__file__)
     model_dir = os.path.abspath(os.path.join(base_path, "..", "models"))
@@ -230,7 +277,9 @@ async def lifespan(app: FastAPI):
             raise
     else:
         print(f"WARNING: Missing SHADOW model {shadow_path}")
-        
+
+    EXTRA_SHADOWS = load_extra_shadows(model_dir)
+
     yield
 
 app = FastAPI(lifespan=lifespan, title="SAGE ML Inference")
@@ -294,6 +343,22 @@ async def predict_anomaly(data: GatewayTelemetry):
                 print(f"[-] Shadow inference failed: {e}")
                 shadow_status = "error"
 
+        extra_results = []
+        for sh in EXTRA_SHADOWS:
+            r = {"name": sh["name"], "status": "unavailable", "model_sha256": sh["sha256"],
+                 "contract_hash": sh["contract_hash"], "feature_list_hash": sh["feature_list_hash"],
+                 "threshold": sh["threshold"]}
+            try:
+                t0 = time.perf_counter()
+                X = pd.DataFrame([[getattr(data, feat, 0.0) for feat in sh["features"]]], columns=sh["features"])
+                p = float(sh["model"].predict_proba(X)[0][1])
+                r.update(status="ok", bot_probability=round(p, 6), is_bot=bool(p >= sh["threshold"]),
+                         processing_time_ms=round((time.perf_counter() - t0) * 1000.0, 3))
+            except Exception as e:
+                print(f"[-] Extra shadow {sh['name']} failed: {e}")
+                r["status"] = "error"
+            extra_results.append(r)
+
         return InferenceResult(
             session_id=data.session_id,
             is_bot=is_malicious,
@@ -312,7 +377,8 @@ async def predict_anomaly(data: GatewayTelemetry):
             prod_model_sha256=PROD_MODEL_META.get("sha256"),
             shadow_model_sha256=shadow_model_sha256,
             shadow_contract_hash=shadow_contract_hash,
-            shadow_feature_list_hash=shadow_feature_list_hash
+            shadow_feature_list_hash=shadow_feature_list_hash,
+            extra_shadows=extra_results
         )
 
     except Exception as e:
@@ -343,6 +409,7 @@ def health_check():
         "shadow_feature_list_hash": SHADOW_MODEL_META.get("feature_list_hash"),
         "shadow_threshold": SHADOW_MODEL_META.get("threshold", 0.35),
         "shadow_model_version": SHADOW_MODEL_META.get("version", "unknown"),
+        "extra_shadows": [{k: v for k, v in sh.items() if k != "model"} for sh in EXTRA_SHADOWS],
     }
 
 if __name__ == "__main__":

@@ -1,0 +1,151 @@
+{
+  "name": "campaign_c_v1",
+  "status": "declared before any campaign C traffic; the numbers below are validation-only",
+  "design": {
+    "humans": 300,
+    "bots": 150,
+    "per_human_profile": 75,
+    "per_bot_profile": 50,
+    "profiles": [
+      "normal_browser",
+      "spa_client",
+      "mobile_browser",
+      "privacy_browser",
+      "slow_scraper",
+      "asset_fetching_bot",
+      "fast_scraper"
+    ],
+    "traffic": "same generator and profile logic as runs A/B",
+    "seed_sets": {
+      "seed_set_1": {
+        "path": "configs/campaign_c_v1_s1.json",
+        "sha256": "c3013c3f75919f5ea863fb1d064e4f3a8750051461b39d6a233a2b10c4287828",
+        "profile_seeds": {
+          "normal_browser": 9101,
+          "spa_client": 9102,
+          "mobile_browser": 9103,
+          "privacy_browser": 9104,
+          "slow_scraper": 9105,
+          "asset_fetching_bot": 9106,
+          "fast_scraper": 9107
+        }
+      },
+      "seed_set_2": {
+        "path": "configs/campaign_c_v1_s2.json",
+        "sha256": "b839357e71ccf76b4e8b667372e263fc803ded8d115a86989ac30543ebd4083a",
+        "profile_seeds": {
+          "normal_browser": 9201,
+          "spa_client": 9202,
+          "mobile_browser": 9203,
+          "privacy_browser": 9204,
+          "slow_scraper": 9205,
+          "asset_fetching_bot": 9206,
+          "fast_scraper": 9207
+        }
+      },
+      "seed_set_3": {
+        "path": "configs/campaign_c_v1_s3.json",
+        "sha256": "b80b16f2317ddb8cc0ed6119f268a7bf22062b1d4bb1d44122b336fa3ca32a85",
+        "profile_seeds": {
+          "normal_browser": 9301,
+          "spa_client": 9302,
+          "mobile_browser": 9303,
+          "privacy_browser": 9304,
+          "slow_scraper": 9305,
+          "asset_fetching_bot": 9306,
+          "fast_scraper": 9307
+        }
+      }
+    },
+    "runs": "seed set 1 is the primary campaign; sets 2 and 3 run only if time allows and are reported as replicates, never selected between"
+  },
+  "models_graded": {
+    "prod_sage_binary_7feat": {
+      "threshold": 0.5,
+      "source": "service pickle"
+    },
+    "shadow_eclog_timing_8feat": {
+      "threshold": 0.35,
+      "note": "v6 frozen, as runs A/B"
+    },
+    "extra:eclog6m_prefix_8feature_v1@frozen": {
+      "threshold": 0.017599599435925487,
+      "primary_for_v7": true,
+      "note": "threshold chosen on the six-month VALIDATION split (client FPR <= 1 %)"
+    },
+    "extra:eclog6m_prefix_8feature_v1@secondary": {
+      "threshold": 0.992882013320923,
+      "rule": "smallest threshold with VALIDATION client FPR <= 0.1%",
+      "applied": "offline, to the logged per-request probabilities; declared now so it is not a post-hoc choice"
+    }
+  },
+  "validation_counts_v7_prefix_client_level": {
+    "frozen_threshold": {
+      "tp": 184,
+      "fn": 0,
+      "fp": 74,
+      "tn": 7419
+    },
+    "secondary_threshold": {
+      "tp": 168,
+      "fn": 16,
+      "fp": 7,
+      "tn": 7486
+    }
+  },
+  "expectation_declared_now": "Revised gate R5 (one-sided 95 % upper bound on human FPR <= 1 %) with 300 humans is met only with 0 flagged humans (1 flagged gives 1.57 %). At the frozen v7 threshold the validation human FPR was 0.99 %, so a pass is not expected on EClog-like humans; the campaign humans are synthetic, so no prediction is made for them. Results are reported for every model and operating point above; none is dropped.",
+  "gates": "original G1-G7 (final_campaign_config.json) for the timing shadow exactly as A/B, via the tag-pinned evaluator; revised R1-R7 (configs/gates_revised_v1.json) for every model above with campaign_metrics.py",
+  "unscored_clients": "every manifest client without a scored decision is explained from telemetry (unscored_reason)",
+  "environment": {
+    "EXTRA_SHADOW_MODEL_FILES": "eclog6m_prefix_8feature_v1.pkl",
+    "SAGE_ML_MODE": "async",
+    "SAGE_PROBE_SECRET": "set in the shell, never recorded"
+  },
+  "hashes": {
+    "models": {
+      "eclog6m_completed_8feature_v1.pkl": "25867a37e08c5cf443f6c7c3e951ea27d54868a248277c44ec38eed2cd40ac34",
+      "eclog6m_prefix_8feature_v1.pkl": "c253bdec80fac63f0568d818ecbb7ca35d3e5748b543f9d5d0a79395fe00e168",
+      "eclog_6feature_binary_model.pkl": "2acaafa0ec1c22e2bf73fdfc8319ad0b797273e6b701007cd53a3c1e5d6cceea",
+      "eclog_timing_binary_model.pkl": "7b29ee3b574ce43cf9984408ff2d19096a6205c6389deff907cebf67e8e7f193",
+      "eclog_weak_binary_model.pkl": "ed184cb9d93ae700b6d395a81a81ae1dbcd159b07b23f7c6a5b3b83644023ebc",
+      "sage_binary_model.pkl": "a979d5c2f6d463851fbc02c6a5a4892a05bb34bc644e977e42712bba4c9bf70f"
+    },
+    "frozen_manifests": {
+      "frozen_models_manifest.json": "9398b6d00410f5c6b8afa422c35c913913a100737893ec3f5512522730bec67a",
+      "frozen_models_manifest_v7.json": "707692ff14504c04b13301fbddc4b7276dc2b4ebf71829349d0ac5e463e452a0"
+    },
+    "contracts": {
+      "contract_eclog_6feat.json": "40f3b0dd6b44127ca0f8b3f2636a5645da896b234e2b6a051d70c9e80439a69d",
+      "contract_eclog_timing_8feat.json": "2fb47afb4dae24d3345aa0d1f270e622477da729e9f9c64a7cc001edc1260dfc",
+      "contract_prod_7feat.json": "4e8b01ac1b96952c3ad35b86e80948dafb296fb9306815c5fb807c3012a7222c"
+    },
+    "scoring_manifest": {
+      "path": "ml_pipeline/models/scoring_manifest_campaign_c_v1.json",
+      "sha256": "836bfd8363432b7bd34c8b9eb2ceb2ddb6fe8f8fa1305c603f3a753649436317"
+    },
+    "original_gates": {
+      "path": "final_campaign_config.json",
+      "sha256": "f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9"
+    },
+    "revised_gates": {
+      "path": "configs/gates_revised_v1.json",
+      "sha256": "f8ac2fedcd47d07793aa420b646cec782c3725d1b417b03a9696f8b148be877e"
+    },
+    "protocols": {
+      "offline_protocol_v1.json": "1725e586b74a368d774d8760d65a4486ca99d83ef1b8df4949b505ec3731682d",
+      "offline_protocol_v1_1.json": "8f0addcc3e916415efed32b7a4f9eee769c55c24e2f1892ba81795607c4bdb9a",
+      "offline_protocol_v1_2_resolution.json": "e0e9df249cb24b0f649af8da3a729ac0cd026cb8f803cb10ac0c5e0000f6ede1",
+      "split_eclog6m_v1.json": "b492c460561145a8165cb81c7269aaa601ef7eada8d35c02dddcb2211f2c6d87"
+    },
+    "code": {
+      "load-tests/diverse-shadow-traffic.py": "541ae9abffe79876bfec60ebc20b7b2a0152435cf20cbe2caefdd7f7d01a6090",
+      "ml_pipeline/inference_service/main.py": "7698e8c44199977fa62ae2bf721ef6fa1184f0ee4206d02d2a32915e9d5ad8b7",
+      "ml_pipeline/scripts/evaluate/campaign_metrics.py": "23fd1ff911ac304bcd91272f4c65f274dc3071476ffa20b55c8d7de2356f486c",
+      "ml_pipeline/scripts/evaluate/evaluate_shadow.py": "de0b710ff4c143f6661779ca8fc38e22aca4ecfb9e846d1900f425818ebe991d",
+      "ml_pipeline/scripts/evaluate/regrade_campaigns.py": "faeba9bbe27879e1051ae801408fb629b170475040aee6ed77ecfac65f63e299",
+      "infra/docker-compose.yml": "0ae52d0eb699b07dad8c7f7f30eecc323ae1482e6757f60c7e2a624a57a53e88",
+      "sage-gateway/src/main/resources/application.yaml": "a0fc1bfc5fdec59373e2c6a515b0ead983b7039ace6f064f995366c0df0809c4",
+      "sage-gateway/src/main/resources/application-docker.properties": "e773984c41a65bd03b69a944f04a851b2169a2b43727a070cb1ba7e36dbb6d61"
+    }
+  }
+}

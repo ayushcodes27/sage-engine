@@ -82,7 +82,14 @@ SAGE evaluates sessions based on canonical navigation patterns across a rolling 
 
 ## 4. Key Experimental Results & Evaluation
 
-SAGE V2 is validated across **three independent evaluation axes** with exact **95% Clopper-Pearson confidence intervals (CI)**. For full data tables and analysis, see [`PAPER_RESULTS.md`](PAPER_RESULTS.md).
+> **Revision notice.** The results of record are in [`docs/RESULTS.md`](docs/RESULTS.md); how to reproduce them is in
+> [`docs/REPRODUCE.md`](docs/REPRODUCE.md); unfinished work is in [`Future Enhancements.md`](Future%20Enhancements.md).
+> The summary table and gate tables below are the earlier summary and are **partly superseded**: Axis 1 (one-day holdout)
+> is replaced by the six-month evaluation, Axis 2 (Zanbil) was not reproduced in this revision, the live recall range
+> "60.67%-66.67%" omits run B (33.33%), and the production 7-feature model flags 33-35% of humans in the live
+> campaigns. `docs/RESULTS.md` section 6 lists every difference.
+
+SAGE V2 is validated across **three independent evaluation axes** with exact **95% Clopper-Pearson confidence intervals (CI)**. For full data tables and analysis, see [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ### Summary Table
 
@@ -160,13 +167,15 @@ curl http://localhost:8000/health
 
 ## 7. Running Validations & Evaluations
 
+> The commands below are the earlier set. The current, verified commands (data build, offline evaluations, benchmark, campaign C, grading) are in [`docs/REPRODUCE.md`](docs/REPRODUCE.md); the live generator now needs a clean git tree and `SAGE_PROBE_SECRET`.
+
 ```bash
 # 0. Cryptographically verify frozen models & contracts (tag v2-frozen-models-v6)
 python ml_pipeline/scripts/evaluate/verify_frozen_manifests.py
 
 # 1. Run automated test suites
-pytest ml_pipeline                      # Python ML unit & parity tests (13 tests)
-cd sage-gateway && mvn test             # Java Spring Gateway test suite (17 tests)
+pytest ml_pipeline                      # Python ML unit & parity tests (89 tests)
+cd sage-gateway && mvn test             # Java Spring Gateway test suite (37 tests)
 
 # 2. Run Zanbil.ir 10.36M cross-site evaluation
 python ml_pipeline/scripts/evaluate/evaluate_zanbil_crosssite.py \
@@ -194,7 +203,7 @@ python ml_pipeline/scripts/evaluate/evaluate_shadow.py \
 
 ## 8. Governance & Auditing
 
-All project development, model freezing, evaluation runs, and validation decisions are immutably logged in [`AUDIT_LEDGER.md`](AUDIT_LEDGER.md) and tracked against [`SAGE_PHASE2_ROADMAP.md`](SAGE_PHASE2_ROADMAP.md).
+All project development, model freezing, evaluation runs, and validation decisions are immutably logged in the audit and plan in [`docs/jnsm/STEP_A_AUDIT.md`](docs/jnsm/STEP_A_AUDIT.md), the git history and the committed protocols in `configs/`; pending work is tracked in [`Future Enhancements.md`](Future%20Enhancements.md).
 
 The CI pipeline (`.github/workflows/ci.yml`) automatically enforces:
 - Java Gateway compilation and full test suite

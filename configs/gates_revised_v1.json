@@ -1,0 +1,40 @@
+{
+  "gates_version": "revised-v1",
+  "supersedes": "none — evaluated alongside the original G1–G7 in final_campaign_config.json (sha256 f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9), which stay unchanged",
+  "client_rule": "a client is predicted bot if any scored decision for that client is flagged; a manifest client with no scored decision counts as not flagged (bot = miss, human = negative)",
+  "scorable_rule": "a client is scorable if its telemetry shows non-static session depth (features.sessionDepth) > 20 at some request; session duration is not logged in telemetry and is therefore not part of the rule",
+  "gates": {
+    "R1_identity": {
+      "description": "every scored record carries the full identity tuple and it equals the pinned manifest; one tuple per model across the run"
+    },
+    "R2_coverage": {
+      "description": "share of scorable manifest clients with at least one scored decision",
+      "min": 1.0
+    },
+    "R3_timeouts_errors": {
+      "description": "count of records whose evaluationStatus is Timeout, SemaphoreFull, Error or Failed, or whose shadowStatus is timeout/error, or HTTP status >= 500",
+      "max": 0
+    },
+    "R4_timing_features": {
+      "description": "f6 and f7 are non-default on at least one scored record"
+    },
+    "R5_human_fpr": {
+      "description": "client-level human FPR; gate on the exact Clopper–Pearson one-sided upper bound",
+      "upper_bound_max": 0.01,
+      "alpha_one_sided": 0.05,
+      "report": ["point_estimate", "two_sided_95_ci", "one_sided_95_upper"]
+    },
+    "R6_bot_recall": {
+      "description": "per bot profile recall over ALL manifest clients of that profile (unscored = miss)",
+      "macro_min": 0.90,
+      "per_profile_min": 0.80,
+      "bot_profiles": ["slow_scraper", "asset_fetching_bot", "fast_scraper"]
+    },
+    "R7_gateway_overhead": {
+      "description": "p95 latency of async-ML gateway minus p95 of proxy-only gateway at the same concurrency, from the B2 benchmark; FAIL if no measurement is available",
+      "computation": "for each concurrency level: median over repetitions of client-side p95 (mode=async) minus median over repetitions of client-side p95 (mode=off); observed value = the maximum of these differences over all measured concurrency levels (worst case)",
+      "source": "results/benchmark/<benchmark_id>/summary.json -> r7_observed_ms",
+      "max_p95_overhead_ms": 50.0
+    }
+  }
+}

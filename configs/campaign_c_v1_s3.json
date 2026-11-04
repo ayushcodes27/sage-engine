@@ -1,0 +1,40 @@
+{
+  "run_mode": "final",
+  "clients_per_profile": 50,
+  "profiles": [
+    "normal_browser",
+    "spa_client",
+    "mobile_browser",
+    "privacy_browser",
+    "slow_scraper",
+    "asset_fetching_bot",
+    "fast_scraper"
+  ],
+  "gate_thresholds": {
+    "macro_average_bot_recall_min": 0.9,
+    "human_fpr_limit": 0.01,
+    "scoring_coverage_min": 1.0,
+    "timeouts_max": 0,
+    "errors_max": 0,
+    "max_p95_paired_overhead_ms": 50.0
+  },
+  "campaign": "campaign_c_v1_s3",
+  "clients_per_profile_overrides": {
+    "normal_browser": 75,
+    "spa_client": 75,
+    "mobile_browser": 75,
+    "privacy_browser": 75,
+    "slow_scraper": 50,
+    "asset_fetching_bot": 50,
+    "fast_scraper": 50
+  },
+  "profile_seeds": {
+    "normal_browser": 9301,
+    "spa_client": 9302,
+    "mobile_browser": 9303,
+    "privacy_browser": 9304,
+    "slow_scraper": 9305,
+    "asset_fetching_bot": 9306,
+    "fast_scraper": 9307
+  }
+}

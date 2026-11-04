@@ -1,0 +1,2056 @@
+{
+  "generated_by": "ml_pipeline/scripts/evaluate/regrade_campaigns.py",
+  "inputs": {
+    "tag": "v2-frozen-models-v6",
+    "original_evaluator_sha256": "367cff60867249b109ddef302bab163179e5235eea46a80bc366bc925fffdf8d",
+    "original_gate_config_sha256": "f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9",
+    "revised_gate_config": "configs/gates_revised_v1.json",
+    "revised_gate_config_sha256": "f8ac2fedcd47d07793aa420b646cec782c3725d1b417b03a9696f8b148be877e",
+    "campaign_metrics_sha256": "23fd1ff911ac304bcd91272f4c65f274dc3071476ffa20b55c8d7de2356f486c",
+    "regrade_script_sha256": "faeba9bbe27879e1051ae801408fb629b170475040aee6ed77ecfac65f63e299"
+  },
+  "runs": {
+    "A": {
+      "run_id": "diverse-8881bc1c",
+      "telemetry": "telemetry/diverse-8881bc1c/adversarial_retest_telemetry_8881bc1c.jsonl.gz",
+      "telemetry_sha256": "a11a8a045f8bf99d1716b7d9df09f9cb6b5412f8eeff82ce4eb18ef2db1d365d",
+      "manifest": "telemetry/diverse-8881bc1c/manifest_8881bc1c_reconstructed.json",
+      "manifest_reconstructed": true,
+      "events": 20325,
+      "original_report": "load-tests/final_campaign_report.md",
+      "original_gates": {
+        "all_pass": false,
+        "gates": [
+          {
+            "gate": "Cryptographic Identity Verified (Tagged Manifest)",
+            "pass": true,
+            "id": "G1"
+          },
+          {
+            "gate": "Scoring coverage >= 100.00% (observed: 97.43%)",
+            "pass": false,
+            "id": "G2"
+          },
+          {
+            "gate": "Timeouts <= 0 and Errors <= 0",
+            "pass": true,
+            "id": "G3"
+          },
+          {
+            "gate": "Timing Features Present & Active (8 features)",
+            "pass": true,
+            "id": "G4"
+          },
+          {
+            "gate": "Human FPR <= 1.00% (observed: 0.00%)",
+            "pass": true,
+            "id": "G5"
+          },
+          {
+            "gate": "Macro-average bot recall >= 90.00% (observed: 66.67%) [run_mode: final]",
+            "pass": false,
+            "id": "G6"
+          },
+          {
+            "gate": "p95 paired overhead < 50 ms",
+            "pass": true,
+            "id": "G7"
+          }
+        ],
+        "frozen_manifest_sha256": "9398b6d00410f5c6b8afa422c35c913913a100737893ec3f5512522730bec67a",
+        "frozen_manifest_source": "git show v2-frozen-models-v6:ml_pipeline/models/frozen_models_manifest.json"
+      },
+      "models": {
+        "shadow_eclog_timing_8feat": {
+          "metrics": {
+            "confusion": {
+              "tp": 91,
+              "fp": 0,
+              "tn": 200,
+              "fn": 59
+            },
+            "bot_recall": {
+              "k": 91,
+              "n": 150,
+              "point": 0.6066666666666667,
+              "lower": 0.5236848599831525,
+              "upper": 0.685347369989403,
+              "upper_one_sided": 0.6735610071162665
+            },
+            "human_fpr": {
+              "k": 0,
+              "n": 200,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.01827534035513624,
+              "upper_one_sided": 0.014867039231272054
+            },
+            "precision": {
+              "k": 91,
+              "n": 91,
+              "point": 1.0,
+              "lower": 0.9602735023081505,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "macro_bot_recall": 0.6066666666666666,
+            "per_profile": {
+              "normal_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "spa_client": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "mobile_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "privacy_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "slow_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 50,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "scored_only": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {}
+              },
+              "asset_fetching_bot": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "fast_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 41,
+                "flagged": 41,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 41,
+                  "n": 50,
+                  "point": 0.82,
+                  "lower": 0.6856305887143497,
+                  "upper": 0.9142379218903364,
+                  "upper_one_sided": 0.9027519054914082
+                },
+                "scored_only": {
+                  "k": 41,
+                  "n": 41,
+                  "point": 1.0,
+                  "lower": 0.9139561637059715,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {
+                  "depth_21_reached_but_gate_not_met": 9
+                }
+              }
+            },
+            "scored_clients": 341,
+            "scorable_clients": 350,
+            "scorable_and_scored_clients": 341
+          },
+          "unified_gates": {
+            "G2u_coverage_scorable": {
+              "observed": 0.9742857142857143,
+              "threshold": 1.0,
+              "pass": false
+            },
+            "G5u_human_fpr_point": {
+              "observed": 0.0,
+              "threshold": 0.01,
+              "pass": true,
+              "clopper_pearson": {
+                "k": 0,
+                "n": 200,
+                "point": 0.0,
+                "lower": 0.0,
+                "upper": 0.01827534035513624,
+                "upper_one_sided": 0.014867039231272054
+              }
+            },
+            "G6u_macro_recall_all_clients": {
+              "observed": 0.6066666666666666,
+              "threshold": 0.9,
+              "pass": false
+            }
+          },
+          "unscored_clients": [
+            {
+              "client_id": "fast_scraper-00",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 57,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-01",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 55,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-02",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 54,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-04",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 56,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-05",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 58,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-06",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 55,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-31",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 54,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-47",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 54,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-49",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 57,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            }
+          ]
+        },
+        "prod_sage_binary_7feat": {
+          "metrics": {
+            "confusion": {
+              "tp": 91,
+              "fp": 70,
+              "tn": 130,
+              "fn": 59
+            },
+            "bot_recall": {
+              "k": 91,
+              "n": 150,
+              "point": 0.6066666666666667,
+              "lower": 0.5236848599831525,
+              "upper": 0.685347369989403,
+              "upper_one_sided": 0.6735610071162665
+            },
+            "human_fpr": {
+              "k": 70,
+              "n": 200,
+              "point": 0.35,
+              "lower": 0.2840706703229419,
+              "upper": 0.4204506224779936,
+              "upper_one_sided": 0.4093901416767925
+            },
+            "precision": {
+              "k": 91,
+              "n": 161,
+              "point": 0.5652173913043478,
+              "lower": 0.4849382823343271,
+              "upper": 0.6430508426831238,
+              "upper_one_sided": 0.6312680475300847
+            },
+            "macro_bot_recall": 0.6066666666666666,
+            "per_profile": {
+              "normal_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "spa_client": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 50,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "scored_only": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {}
+              },
+              "mobile_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 20,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 20,
+                  "n": 50,
+                  "point": 0.4,
+                  "lower": 0.2640783950945368,
+                  "upper": 0.5482059715208196,
+                  "upper_one_sided": 0.5261197488696557
+                },
+                "scored_only": {
+                  "k": 20,
+                  "n": 50,
+                  "point": 0.4,
+                  "lower": 0.2640783950945368,
+                  "upper": 0.5482059715208196,
+                  "upper_one_sided": 0.5261197488696557
+                },
+                "unscored_reasons": {}
+              },
+              "privacy_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "slow_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 50,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "scored_only": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {}
+              },
+              "asset_fetching_bot": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "fast_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 41,
+                "flagged": 41,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 41,
+                  "n": 50,
+                  "point": 0.82,
+                  "lower": 0.6856305887143497,
+                  "upper": 0.9142379218903364,
+                  "upper_one_sided": 0.9027519054914082
+                },
+                "scored_only": {
+                  "k": 41,
+                  "n": 41,
+                  "point": 1.0,
+                  "lower": 0.9139561637059715,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {
+                  "depth_21_reached_but_gate_not_met": 9
+                }
+              }
+            },
+            "scored_clients": 341,
+            "scorable_clients": 350,
+            "scorable_and_scored_clients": 341
+          },
+          "unified_gates": {
+            "G2u_coverage_scorable": {
+              "observed": 0.9742857142857143,
+              "threshold": 1.0,
+              "pass": false
+            },
+            "G5u_human_fpr_point": {
+              "observed": 0.35,
+              "threshold": 0.01,
+              "pass": false,
+              "clopper_pearson": {
+                "k": 70,
+                "n": 200,
+                "point": 0.35,
+                "lower": 0.2840706703229419,
+                "upper": 0.4204506224779936,
+                "upper_one_sided": 0.4093901416767925
+              }
+            },
+            "G6u_macro_recall_all_clients": {
+              "observed": 0.6066666666666666,
+              "threshold": 0.9,
+              "pass": false
+            }
+          },
+          "unscored_clients": [
+            {
+              "client_id": "fast_scraper-00",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 57,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-01",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 55,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-02",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 54,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-04",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 56,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-05",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 58,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-06",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 55,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-31",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 54,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-47",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 54,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-49",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 57,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            }
+          ]
+        }
+      },
+      "revised_gates": {
+        "R1_identity": {
+          "observed": {
+            "distinct_tuples": 1,
+            "records_missing_identity": 0,
+            "matches_manifest": true
+          },
+          "pass": true
+        },
+        "R2_coverage": {
+          "observed": 0.9742857142857143,
+          "threshold": 1.0,
+          "pass": false
+        },
+        "R3_timeouts_errors": {
+          "observed": 7,
+          "threshold": 0,
+          "pass": false
+        },
+        "R4_timing_features": {
+          "observed": true,
+          "pass": true
+        },
+        "R5_human_fpr": {
+          "observed": {
+            "k": 0,
+            "n": 200,
+            "point": 0.0,
+            "lower": 0.0,
+            "upper": 0.01827534035513624,
+            "upper_one_sided": 0.014867039231272054
+          },
+          "threshold": 0.01,
+          "pass": false
+        },
+        "R6_bot_recall": {
+          "observed": {
+            "macro": 0.6066666666666666,
+            "per_profile": {
+              "slow_scraper": 1.0,
+              "asset_fetching_bot": 0.0,
+              "fast_scraper": 0.82
+            }
+          },
+          "threshold": {
+            "macro_min": 0.9,
+            "per_profile_min": 0.8
+          },
+          "pass": false
+        },
+        "R7_gateway_overhead": {
+          "observed": null,
+          "threshold": 50.0,
+          "pass": false,
+          "note": "not measured -> FAIL"
+        }
+      },
+      "failure_records": 7
+    },
+    "B": {
+      "run_id": "diverse-ba1a90e8",
+      "telemetry": "telemetry/diverse-ba1a90e8/diverse_telemetry_ba1a90e8.jsonl.gz",
+      "telemetry_sha256": "2b65da677f4d1ab7b264a663acd95d7793de190530f996d29ff2fb4b444dc718",
+      "manifest": "telemetry/diverse-ba1a90e8/manifest_ba1a90e8.json",
+      "manifest_reconstructed": false,
+      "events": 20845,
+      "original_report": "load-tests/diverse_report.md",
+      "original_gates": {
+        "all_pass": false,
+        "gates": [
+          {
+            "gate": "Cryptographic Identity Verified (Tagged Manifest)",
+            "pass": true,
+            "id": "G1"
+          },
+          {
+            "gate": "Scoring coverage >= 100.00% (observed: 84.86%)",
+            "pass": false,
+            "id": "G2"
+          },
+          {
+            "gate": "Timeouts <= 0 and Errors <= 0",
+            "pass": true,
+            "id": "G3"
+          },
+          {
+            "gate": "Timing Features Present & Active (8 features)",
+            "pass": true,
+            "id": "G4"
+          },
+          {
+            "gate": "Human FPR <= 1.00% (observed: 0.00%)",
+            "pass": true,
+            "id": "G5"
+          },
+          {
+            "gate": "Macro-average bot recall >= 90.00% (observed: 33.33%) [run_mode: final]",
+            "pass": false,
+            "id": "G6"
+          },
+          {
+            "gate": "p95 paired overhead < 50 ms",
+            "pass": true,
+            "id": "G7"
+          }
+        ],
+        "frozen_manifest_sha256": "9398b6d00410f5c6b8afa422c35c913913a100737893ec3f5512522730bec67a",
+        "frozen_manifest_source": "git show v2-frozen-models-v6:ml_pipeline/models/frozen_models_manifest.json"
+      },
+      "models": {
+        "shadow_eclog_timing_8feat": {
+          "metrics": {
+            "confusion": {
+              "tp": 50,
+              "fp": 0,
+              "tn": 200,
+              "fn": 100
+            },
+            "bot_recall": {
+              "k": 50,
+              "n": 150,
+              "point": 0.3333333333333333,
+              "lower": 0.2585563633935124,
+              "upper": 0.41484300626555887,
+              "upper_one_sided": 0.402077931461023
+            },
+            "human_fpr": {
+              "k": 0,
+              "n": 200,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.01827534035513624,
+              "upper_one_sided": 0.014867039231272054
+            },
+            "precision": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "macro_bot_recall": 0.3333333333333333,
+            "per_profile": {
+              "normal_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "spa_client": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "mobile_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 47,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 47,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07548573369105858,
+                  "upper_one_sided": 0.06175013471082448
+                },
+                "unscored_reasons": {
+                  "never_reached_depth_21_after_session_reset": 3
+                }
+              },
+              "privacy_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "slow_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 50,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "scored_only": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {}
+              },
+              "asset_fetching_bot": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "fast_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 0,
+                "flagged": 0,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 0,
+                  "point": null,
+                  "lower": null,
+                  "upper": null,
+                  "upper_one_sided": null
+                },
+                "unscored_reasons": {
+                  "depth_21_reached_but_gate_not_met": 50
+                }
+              }
+            },
+            "scored_clients": 297,
+            "scorable_clients": 347,
+            "scorable_and_scored_clients": 297
+          },
+          "unified_gates": {
+            "G2u_coverage_scorable": {
+              "observed": 0.8559077809798271,
+              "threshold": 1.0,
+              "pass": false
+            },
+            "G5u_human_fpr_point": {
+              "observed": 0.0,
+              "threshold": 0.01,
+              "pass": true,
+              "clopper_pearson": {
+                "k": 0,
+                "n": 200,
+                "point": 0.0,
+                "lower": 0.0,
+                "upper": 0.01827534035513624,
+                "upper_one_sided": 0.014867039231272054
+              }
+            },
+            "G6u_macro_recall_all_clients": {
+              "observed": 0.3333333333333333,
+              "threshold": 0.9,
+              "pass": false
+            }
+          },
+          "unscored_clients": [
+            {
+              "client_id": "fast_scraper-00",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-01",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-02",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-03",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-04",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-05",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-06",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-07",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-08",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 64,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-09",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-10",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-11",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-12",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-13",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-14",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-15",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-16",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 58,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-17",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-18",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-19",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-20",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-21",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-22",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-23",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-24",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-25",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-26",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-27",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 64,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-28",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-29",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-30",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-31",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-32",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-33",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 64,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-34",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-35",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-36",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-37",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-38",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-39",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 58,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-40",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 59,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-41",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-42",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-43",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 59,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-44",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-45",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-46",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-47",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-48",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 57,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-49",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "mobile_browser-20",
+              "profile": "mobile_browser",
+              "max_depth": 15.0,
+              "events": 35,
+              "unscored_reason": "never_reached_depth_21_after_session_reset"
+            },
+            {
+              "client_id": "mobile_browser-21",
+              "profile": "mobile_browser",
+              "max_depth": 16.0,
+              "events": 39,
+              "unscored_reason": "never_reached_depth_21_after_session_reset"
+            },
+            {
+              "client_id": "mobile_browser-23",
+              "profile": "mobile_browser",
+              "max_depth": 17.0,
+              "events": 34,
+              "unscored_reason": "never_reached_depth_21_after_session_reset"
+            }
+          ]
+        },
+        "prod_sage_binary_7feat": {
+          "metrics": {
+            "confusion": {
+              "tp": 50,
+              "fp": 65,
+              "tn": 135,
+              "fn": 100
+            },
+            "bot_recall": {
+              "k": 50,
+              "n": 150,
+              "point": 0.3333333333333333,
+              "lower": 0.2585563633935124,
+              "upper": 0.41484300626555887,
+              "upper_one_sided": 0.402077931461023
+            },
+            "human_fpr": {
+              "k": 65,
+              "n": 200,
+              "point": 0.325,
+              "lower": 0.2606255147536153,
+              "upper": 0.3946537063048076,
+              "upper_one_sided": 0.3836830074263931
+            },
+            "precision": {
+              "k": 50,
+              "n": 115,
+              "point": 0.43478260869565216,
+              "lower": 0.342598826989028,
+              "upper": 0.5304078907020877,
+              "upper_one_sided": 0.5157675750754984
+            },
+            "macro_bot_recall": 0.3333333333333333,
+            "per_profile": {
+              "normal_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "spa_client": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 50,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "scored_only": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {}
+              },
+              "mobile_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 47,
+                "flagged": 15,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 15,
+                  "n": 50,
+                  "point": 0.3,
+                  "lower": 0.17861784566414687,
+                  "upper": 0.4460823256611783,
+                  "upper_one_sided": 0.4237329666080823
+                },
+                "scored_only": {
+                  "k": 15,
+                  "n": 47,
+                  "point": 0.3191489361702128,
+                  "lower": 0.19086050766750798,
+                  "upper": 0.47118125720406034,
+                  "upper_one_sided": 0.4481026082047046
+                },
+                "unscored_reasons": {
+                  "never_reached_depth_21_after_session_reset": 3
+                }
+              },
+              "privacy_browser": {
+                "true_class": "human",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "fpr",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "slow_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 50,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "scored_only": {
+                  "k": 50,
+                  "n": 50,
+                  "point": 1.0,
+                  "lower": 0.9288782635358024,
+                  "upper": 1.0,
+                  "upper_one_sided": 1.0
+                },
+                "unscored_reasons": {}
+              },
+              "asset_fetching_bot": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 50,
+                "flagged": 0,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "unscored_reasons": {}
+              },
+              "fast_scraper": {
+                "true_class": "bot",
+                "clients": 50,
+                "scored_clients": 0,
+                "flagged": 0,
+                "metric": "recall",
+                "all_clients": {
+                  "k": 0,
+                  "n": 50,
+                  "point": 0.0,
+                  "lower": 0.0,
+                  "upper": 0.07112173646419764,
+                  "upper_one_sided": 0.05815507911697225
+                },
+                "scored_only": {
+                  "k": 0,
+                  "n": 0,
+                  "point": null,
+                  "lower": null,
+                  "upper": null,
+                  "upper_one_sided": null
+                },
+                "unscored_reasons": {
+                  "depth_21_reached_but_gate_not_met": 50
+                }
+              }
+            },
+            "scored_clients": 297,
+            "scorable_clients": 347,
+            "scorable_and_scored_clients": 297
+          },
+          "unified_gates": {
+            "G2u_coverage_scorable": {
+              "observed": 0.8559077809798271,
+              "threshold": 1.0,
+              "pass": false
+            },
+            "G5u_human_fpr_point": {
+              "observed": 0.325,
+              "threshold": 0.01,
+              "pass": false,
+              "clopper_pearson": {
+                "k": 65,
+                "n": 200,
+                "point": 0.325,
+                "lower": 0.2606255147536153,
+                "upper": 0.3946537063048076,
+                "upper_one_sided": 0.3836830074263931
+              }
+            },
+            "G6u_macro_recall_all_clients": {
+              "observed": 0.3333333333333333,
+              "threshold": 0.9,
+              "pass": false
+            }
+          },
+          "unscored_clients": [
+            {
+              "client_id": "fast_scraper-00",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-01",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-02",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-03",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-04",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-05",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-06",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-07",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-08",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 64,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-09",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-10",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-11",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-12",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-13",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-14",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-15",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-16",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 58,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-17",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-18",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-19",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-20",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-21",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-22",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-23",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-24",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-25",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-26",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-27",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 64,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-28",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-29",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-30",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-31",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-32",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 63,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-33",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 64,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-34",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-35",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-36",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-37",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-38",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-39",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 58,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-40",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 59,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-41",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-42",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-43",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 59,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-44",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-45",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-46",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 61,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-47",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 60,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-48",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 57,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "fast_scraper-49",
+              "profile": "fast_scraper",
+              "max_depth": 50.0,
+              "events": 62,
+              "unscored_reason": "depth_21_reached_but_gate_not_met"
+            },
+            {
+              "client_id": "mobile_browser-20",
+              "profile": "mobile_browser",
+              "max_depth": 15.0,
+              "events": 35,
+              "unscored_reason": "never_reached_depth_21_after_session_reset"
+            },
+            {
+              "client_id": "mobile_browser-21",
+              "profile": "mobile_browser",
+              "max_depth": 16.0,
+              "events": 39,
+              "unscored_reason": "never_reached_depth_21_after_session_reset"
+            },
+            {
+              "client_id": "mobile_browser-23",
+              "profile": "mobile_browser",
+              "max_depth": 17.0,
+              "events": 34,
+              "unscored_reason": "never_reached_depth_21_after_session_reset"
+            }
+          ]
+        }
+      },
+      "revised_gates": {
+        "R1_identity": {
+          "observed": {
+            "distinct_tuples": 1,
+            "records_missing_identity": 0,
+            "matches_manifest": true
+          },
+          "pass": true
+        },
+        "R2_coverage": {
+          "observed": 0.8559077809798271,
+          "threshold": 1.0,
+          "pass": false
+        },
+        "R3_timeouts_errors": {
+          "observed": 0,
+          "threshold": 0,
+          "pass": true
+        },
+        "R4_timing_features": {
+          "observed": true,
+          "pass": true
+        },
+        "R5_human_fpr": {
+          "observed": {
+            "k": 0,
+            "n": 200,
+            "point": 0.0,
+            "lower": 0.0,
+            "upper": 0.01827534035513624,
+            "upper_one_sided": 0.014867039231272054
+          },
+          "threshold": 0.01,
+          "pass": false
+        },
+        "R6_bot_recall": {
+          "observed": {
+            "macro": 0.3333333333333333,
+            "per_profile": {
+              "slow_scraper": 1.0,
+              "asset_fetching_bot": 0.0,
+              "fast_scraper": 0.0
+            }
+          },
+          "threshold": {
+            "macro_min": 0.9,
+            "per_profile_min": 0.8
+          },
+          "pass": false
+        },
+        "R7_gateway_overhead": {
+          "observed": null,
+          "threshold": 50.0,
+          "pass": false,
+          "note": "not measured -> FAIL"
+        }
+      },
+      "failure_records": 0
+    }
+  }
+}

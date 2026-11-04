@@ -1,0 +1,7 @@
+# Site profile for zanbil.ir (activate with SPRING_PROFILES_ACTIVE=...,zanbil).
+# zanbil.ir's cart endpoint is /basket/view, so "basket" is added to the cart rule here only.
+# This is a site adaptation: it changes SAGE_Cart_Ratio relative to the EClog training rule
+# and must never be active in campaign runs that are compared with runs A/B.
+sage:
+  telemetry:
+    cart-keywords: cart,checkout,koszyk,platnosc,zamowienie,payment,basket

@@ -1,0 +1,431 @@
+{
+  "protocol": {
+    "path": "configs/offline_protocol_v1_2_resolution.json",
+    "sha256": "e0e9df249cb24b0f649af8da3a729ac0cd026cb8f803cb10ac0c5e0000f6ede1"
+  },
+  "inputs": {
+    "session_table_sha256": "f5cac61fc69217f8e451dc19818a73ddf6c908ee389c14d64879cc111a78ee06",
+    "features_cache_sha256": "f63baf591cd13805667b18c8cb4e77fa9afc1dc994ce212d82a40f9801ce0f4f",
+    "script_sha256": "50ee062d6f2c9ef9163f54972dd07db5b4ef4546c827025e4719c9eee40063f4",
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "test_scored_sessions": 12935
+  },
+  "feature_shift": {
+    "SAGE_Session_Depth": {
+      "share_changed_gt10pct_mean": 1.54619250096637e-05,
+      "min": 0.0,
+      "max": 7.730962504831851e-05
+    },
+    "SAGE_Temporal_Variance": {
+      "share_changed_gt10pct_mean": 0.10021028648374439,
+      "min": 0.09972941631233088,
+      "max": 0.10073444143795902
+    },
+    "SAGE_Request_Velocity": {
+      "share_changed_gt10pct_mean": 0.0008194927845445782,
+      "min": 0.0005411673753382296,
+      "max": 0.0010823347506764593
+    },
+    "SAGE_Behavioral_Diversity": {
+      "share_changed_gt10pct_mean": 3.09238500193274e-05,
+      "min": 0.0,
+      "max": 0.00015461925009663702
+    },
+    "SAGE_Endpoint_Concentration": {
+      "share_changed_gt10pct_mean": 1.54619250096637e-05,
+      "min": 0.0,
+      "max": 7.730962504831851e-05
+    },
+    "SAGE_Cart_Ratio": {
+      "share_changed_gt10pct_mean": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "SAGE_Asset_Skip_Ratio": {
+      "share_changed_gt10pct_mean": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "SAGE_NonStatic_Navigation_Gap": {
+      "share_changed_gt10pct_mean": 0.4804712587691344,
+      "min": 0.47669114804793195,
+      "max": 0.48272129880170084
+    },
+    "SAGE_NonStatic_Long_Gap_Ratio": {
+      "share_changed_gt10pct_mean": 0.19262764202236576,
+      "min": 0.19110939311944336,
+      "max": 0.1945110166215694
+    }
+  },
+  "dropped_sessions_per_draw": [
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "models": {
+    "sage_binary_model": {
+      "threshold": 0.5,
+      "control": {
+        "clients": 7491,
+        "roc_auc": 0.9127972878895162,
+        "recall": 1.0,
+        "fpr": 0.8207198576707267,
+        "tp": 184,
+        "fn": 0,
+        "fp": 5997,
+        "tn": 1310
+      },
+      "draws": [
+        {
+          "clients": 7491,
+          "roc_auc": 0.9124834137604798,
+          "recall": 1.0,
+          "fpr": 0.8216778431640892,
+          "tp": 184,
+          "fn": 0,
+          "fp": 6004,
+          "tn": 1303
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9125191150832138,
+          "recall": 1.0,
+          "fpr": 0.8218146982345695,
+          "tp": 184,
+          "fn": 0,
+          "fp": 6005,
+          "tn": 1302
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9123908134546383,
+          "recall": 1.0,
+          "fpr": 0.8216778431640892,
+          "tp": 184,
+          "fn": 0,
+          "fp": 6004,
+          "tn": 1303
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9124491999928597,
+          "recall": 1.0,
+          "fpr": 0.8216778431640892,
+          "tp": 184,
+          "fn": 0,
+          "fp": 6004,
+          "tn": 1303
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9122409422769114,
+          "recall": 1.0,
+          "fpr": 0.8218146982345695,
+          "tp": 184,
+          "fn": 0,
+          "fp": 6005,
+          "tn": 1302
+        }
+      ],
+      "summary": {
+        "roc_auc": {
+          "control": 0.9127972878895162,
+          "draw_mean": 0.9124166969136207,
+          "draw_min": 0.9122409422769114,
+          "draw_max": 0.9125191150832138,
+          "max_abs_change": 0.0005563456126047583
+        },
+        "recall": {
+          "control": 1.0,
+          "draw_mean": 1.0,
+          "draw_min": 1.0,
+          "draw_max": 1.0,
+          "max_abs_change": 0.0
+        },
+        "fpr": {
+          "control": 0.8207198576707267,
+          "draw_mean": 0.8217325851922814,
+          "draw_min": 0.8216778431640892,
+          "draw_max": 0.8218146982345695,
+          "max_abs_change": 0.0010948405638427916
+        }
+      },
+      "resolution_sensitive_per_declared_rule": false
+    },
+    "eclog_timing_binary_model": {
+      "threshold": 0.35,
+      "control": {
+        "clients": 7491,
+        "roc_auc": 0.9980498152456548,
+        "recall": 0.9782608695652174,
+        "fpr": 0.0030108115505679484,
+        "tp": 180,
+        "fn": 4,
+        "fp": 22,
+        "tn": 7285
+      },
+      "draws": [
+        {
+          "clients": 7491,
+          "roc_auc": 0.9980252705862752,
+          "recall": 0.9782608695652174,
+          "fpr": 0.003284521691528671,
+          "tp": 180,
+          "fn": 4,
+          "fp": 24,
+          "tn": 7283
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9979880817084273,
+          "recall": 0.9782608695652174,
+          "fpr": 0.0034213767620090325,
+          "tp": 180,
+          "fn": 4,
+          "fp": 25,
+          "tn": 7282
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9980669221294649,
+          "recall": 0.9782608695652174,
+          "fpr": 0.0028739564800875873,
+          "tp": 180,
+          "fn": 4,
+          "fp": 21,
+          "tn": 7286
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9979728342685097,
+          "recall": 0.9782608695652174,
+          "fpr": 0.003284521691528671,
+          "tp": 180,
+          "fn": 4,
+          "fp": 24,
+          "tn": 7283
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9980873760122813,
+          "recall": 0.9782608695652174,
+          "fpr": 0.003284521691528671,
+          "tp": 180,
+          "fn": 4,
+          "fp": 24,
+          "tn": 7283
+        }
+      ],
+      "summary": {
+        "roc_auc": {
+          "control": 0.9980498152456548,
+          "draw_mean": 0.9980280969409916,
+          "draw_min": 0.9979728342685097,
+          "draw_max": 0.9980873760122813,
+          "max_abs_change": 7.698097714514684e-05
+        },
+        "recall": {
+          "control": 0.9782608695652174,
+          "draw_mean": 0.9782608695652174,
+          "draw_min": 0.9782608695652174,
+          "draw_max": 0.9782608695652174,
+          "max_abs_change": 0.0
+        },
+        "fpr": {
+          "control": 0.0030108115505679484,
+          "draw_mean": 0.0032297796633365267,
+          "draw_min": 0.0028739564800875873,
+          "draw_max": 0.0034213767620090325,
+          "max_abs_change": 0.00041056521144108415
+        }
+      },
+      "resolution_sensitive_per_declared_rule": false
+    },
+    "eclog6m_prefix_8feature_v1": {
+      "threshold": 0.017599599435925487,
+      "control": {
+        "clients": 7491,
+        "roc_auc": 0.9997869077299315,
+        "recall": 1.0,
+        "fpr": 0.009306144792664568,
+        "tp": 184,
+        "fn": 0,
+        "fp": 68,
+        "tn": 7239
+      },
+      "draws": [
+        {
+          "clients": 7491,
+          "roc_auc": 0.9997552971837607,
+          "recall": 1.0,
+          "fpr": 0.009853565074586013,
+          "tp": 184,
+          "fn": 0,
+          "fp": 72,
+          "tn": 7235
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9997954611718364,
+          "recall": 1.0,
+          "fpr": 0.009853565074586013,
+          "tp": 184,
+          "fn": 0,
+          "fp": 72,
+          "tn": 7235
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9997999238371782,
+          "recall": 1.0,
+          "fpr": 0.00957985493362529,
+          "tp": 184,
+          "fn": 0,
+          "fp": 70,
+          "tn": 7237
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.999786535841153,
+          "recall": 1.0,
+          "fpr": 0.00944299986314493,
+          "tp": 184,
+          "fn": 0,
+          "fp": 69,
+          "tn": 7238
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9997746354002416,
+          "recall": 1.0,
+          "fpr": 0.00957985493362529,
+          "tp": 184,
+          "fn": 0,
+          "fp": 70,
+          "tn": 7237
+        }
+      ],
+      "summary": {
+        "roc_auc": {
+          "control": 0.9997869077299315,
+          "draw_mean": 0.9997823706868341,
+          "draw_min": 0.9997552971837607,
+          "draw_max": 0.9997999238371782,
+          "max_abs_change": 3.161054617084602e-05
+        },
+        "recall": {
+          "control": 1.0,
+          "draw_mean": 1.0,
+          "draw_min": 1.0,
+          "draw_max": 1.0,
+          "max_abs_change": 0.0
+        },
+        "fpr": {
+          "control": 0.009306144792664568,
+          "draw_mean": 0.009661967975913507,
+          "draw_min": 0.00944299986314493,
+          "draw_max": 0.009853565074586013,
+          "max_abs_change": 0.0005474202819214444
+        }
+      },
+      "resolution_sensitive_per_declared_rule": false
+    },
+    "eclog6m_completed_8feature_v1": {
+      "threshold": 0.1342238634824753,
+      "control": {
+        "clients": 7491,
+        "roc_auc": 0.999635920885869,
+        "recall": 0.9945652173913043,
+        "fpr": 0.009716710004105652,
+        "tp": 183,
+        "fn": 1,
+        "fp": 71,
+        "tn": 7236
+      },
+      "draws": [
+        {
+          "clients": 7491,
+          "roc_auc": 0.9996035665621411,
+          "recall": 0.9945652173913043,
+          "fpr": 0.009716710004105652,
+          "tp": 183,
+          "fn": 1,
+          "fp": 71,
+          "tn": 7236
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9996362927746473,
+          "recall": 0.9891304347826086,
+          "fpr": 0.008621869440262761,
+          "tp": 182,
+          "fn": 2,
+          "fp": 63,
+          "tn": 7244
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9996377803297611,
+          "recall": 0.9945652173913043,
+          "fpr": 0.009306144792664568,
+          "tp": 183,
+          "fn": 1,
+          "fp": 68,
+          "tn": 7239
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9996370365522043,
+          "recall": 0.9891304347826086,
+          "fpr": 0.008895579581223485,
+          "tp": 182,
+          "fn": 2,
+          "fp": 65,
+          "tn": 7242
+        },
+        {
+          "clients": 7491,
+          "roc_auc": 0.9996853820934065,
+          "recall": 0.9945652173913043,
+          "fpr": 0.008895579581223485,
+          "tp": 183,
+          "fn": 1,
+          "fp": 65,
+          "tn": 7242
+        }
+      ],
+      "summary": {
+        "roc_auc": {
+          "control": 0.999635920885869,
+          "draw_mean": 0.999640011662432,
+          "draw_min": 0.9996035665621411,
+          "draw_max": 0.9996853820934065,
+          "max_abs_change": 4.9461207537571106e-05
+        },
+        "recall": {
+          "control": 0.9945652173913043,
+          "draw_mean": 0.9923913043478262,
+          "draw_min": 0.9891304347826086,
+          "draw_max": 0.9945652173913043,
+          "max_abs_change": 0.005434782608695676
+        },
+        "fpr": {
+          "control": 0.009716710004105652,
+          "draw_mean": 0.00908717667989599,
+          "draw_min": 0.008621869440262761,
+          "draw_max": 0.009716710004105652,
+          "max_abs_change": 0.0010948405638428905
+        }
+      },
+      "resolution_sensitive_per_declared_rule": false
+    }
+  }
+}

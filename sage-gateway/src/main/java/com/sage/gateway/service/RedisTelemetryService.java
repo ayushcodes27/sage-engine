@@ -19,6 +19,18 @@ public class RedisTelemetryService {
     private final StringRedisTemplate redisTemplate;
     private static final int WINDOW_SIZE = 50;
     private static final Duration ML_DECISION_TTL = Duration.ofMinutes(5);
+    // Not a model feature: uncapped count of non-static requests in the current Redis session.
+    public static final String NON_STATIC_REQUEST_COUNT = "SAGE_NonStatic_Request_Count";
+
+    // Must equal CART_KEYWORDS in ml_pipeline/scripts/train/label_eclog.py (the EClog training rule).
+    // Site-specific additions (e.g. "basket" for zanbil.ir) belong in a profile config, never in this default.
+    public static final String DEFAULT_CART_KEYWORDS = "cart,checkout,koszyk,platnosc,zamowienie,payment";
+
+    @org.springframework.beans.factory.annotation.Value("${sage.telemetry.cart-keywords:" + DEFAULT_CART_KEYWORDS + "}")
+    private String cartKeywordsConfig = DEFAULT_CART_KEYWORDS;
+
+    @org.springframework.beans.factory.annotation.Value("${sage.telemetry.static-extensions:js,css,png,jpg,jpeg,gif,ico,woff,woff2,ttf,svg,webp}")
+    private String staticExtensionsConfig = "js,css,png,jpg,jpeg,gif,ico,woff,woff2,ttf,svg,webp";
 
     public RedisTelemetryService(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -29,6 +41,13 @@ public class RedisTelemetryService {
         String timeKey = "sage:timestamps:" + ip;
         String pathKey = "sage:paths:" + ip;
         String hashKey = "sage:telemetry:" + ip;
+        String firstSeenKey = "sage:first_seen:" + ip;
+        String requestCountKey = "sage:reqcount:" + ip;
+
+        // Reviewer Item 1: SETNX for first-seen timestamp with 5-minute TTL.
+        // Prevents window-span truncation when fast scrapers exceed WINDOW_SIZE (50 requests).
+        redisTemplate.opsForValue().setIfAbsent(firstSeenKey, String.valueOf(currentTimestamp), Duration.ofMinutes(5));
+        redisTemplate.expire(firstSeenKey, Duration.ofMinutes(5));
 
         // Migration: delete old sizeKey if it exists
         String oldSizeKey = "sage:sizes:" + ip;
@@ -37,10 +56,11 @@ public class RedisTelemetryService {
         }
 
         String canonicalPath = canonicalizePath(path);
-        boolean isStatic = isStaticAsset(canonicalPath);
-        boolean isCart = isCartPath(canonicalPath);
+        boolean isStatic = checkIsStatic(canonicalPath);
+        boolean isCart = checkIsCart(canonicalPath);
 
         // Request counters for e-commerce scraper-focused features.
+        incrementSubnetCounter(ip);
         redisTemplate.opsForHash().increment(hashKey, "total_hits", 1);
         if (isCart) {
             redisTemplate.opsForHash().increment(hashKey, "cart_hits", 1);
@@ -60,6 +80,17 @@ public class RedisTelemetryService {
             redisTemplate.opsForList().trim(pathKey, 0, WINDOW_SIZE - 1);
         }
 
+        // Uncapped non-static request counter. Used only to schedule re-scoring;
+        // SAGE_Session_Depth (f0) stays the capped window size exactly as in training.
+        double nonStaticRequestCount;
+        if (!isStatic) {
+            Long count = redisTemplate.opsForValue().increment(requestCountKey);
+            nonStaticRequestCount = count == null ? 0.0 : count;
+        } else {
+            String count = redisTemplate.opsForValue().get(requestCountKey);
+            nonStaticRequestCount = count == null ? 0.0 : Double.parseDouble(count);
+        }
+
         // Fetch the sliding window
         List<String> rawTimes = redisTemplate.opsForList().range(timeKey, 0, -1);
         List<String> rawPaths = redisTemplate.opsForList().range(pathKey, 0, -1);
@@ -69,8 +100,16 @@ public class RedisTelemetryService {
 
         // Calculate the 4 Core SAGE Features
         double sessionDepth = times.size();
+        // Reviewer Item 1: Measure session duration from first-seen key (not trimmed 50-entry list)
         double sessionDuration = 0.0;
-        if (times.size() >= 2) {
+        String firstSeenStr = redisTemplate.opsForValue().get(firstSeenKey);
+        if (firstSeenStr != null) {
+            try {
+                long firstSeenMs = Long.parseLong(firstSeenStr);
+                sessionDuration = Math.max(0.0, (currentTimestamp - firstSeenMs) / 1000.0);
+            } catch (NumberFormatException ignored) {}
+        }
+        if (sessionDuration == 0.0 && times.size() >= 2) {
             sessionDuration = (times.get(0) - times.get(times.size() - 1)) / 1000.0;
         }
         double requestVelocity = calculateVelocity(times);
@@ -105,6 +144,7 @@ public class RedisTelemetryService {
         redisTemplate.expire(hashKey, Duration.ofMinutes(5));
         redisTemplate.expire(timeKey, Duration.ofMinutes(5));
         redisTemplate.expire(pathKey, Duration.ofMinutes(5));
+        redisTemplate.expire(requestCountKey, Duration.ofMinutes(5));
 
         Map<String, Double> features = new LinkedHashMap<>();
         features.put("SAGE_Session_Depth", sessionDepth);
@@ -117,6 +157,7 @@ public class RedisTelemetryService {
         features.put("SAGE_NonStatic_Navigation_Gap", nonStaticNavigationGap);
         features.put("SAGE_NonStatic_Long_Gap_Ratio", nonStaticLongGapRatio);
         features.put("SAGE_Session_Duration", sessionDuration);
+        features.put(NON_STATIC_REQUEST_COUNT, nonStaticRequestCount);
         return features;
     }
 
@@ -143,8 +184,12 @@ public class RedisTelemetryService {
                 nonNullDecision.put(field, value);
             }
         });
-        redisTemplate.opsForHash().putAll(key, nonNullDecision);
-        redisTemplate.expire(key, ML_DECISION_TTL);
+        // N9: replace the whole decision atomically. putAll into the live key would merge, so fields
+        // absent from a newer decision (e.g. a null shadow score) would survive from the older one.
+        String stagingKey = key + ":staging:" + java.util.UUID.randomUUID();
+        redisTemplate.opsForHash().putAll(stagingKey, nonNullDecision);
+        redisTemplate.expire(stagingKey, ML_DECISION_TTL);
+        redisTemplate.rename(stagingKey, key);
     }
 
     private double getCounter(String hashKey, String field) {
@@ -176,6 +221,25 @@ public class RedisTelemetryService {
         if (canonicalPath == null) return false;
         return canonicalPath.startsWith("/static/") ||
                 canonicalPath.matches(".*\\.(js|css|png|jpg|jpeg|gif|ico|woff|woff2|ttf|svg|webp)$");
+    }
+
+    public boolean checkIsStatic(String canonicalPath) {
+        if (canonicalPath == null) return false;
+        if (canonicalPath.startsWith("/static/")) return true;
+        if (staticExtensionsConfig != null && !staticExtensionsConfig.isBlank()) {
+            String regex = ".*\\.(" + staticExtensionsConfig.replace(",", "|").trim() + ")$";
+            return canonicalPath.matches(regex);
+        }
+        return isStaticAsset(canonicalPath);
+    }
+
+    public boolean checkIsCart(String canonicalPath) {
+        if (canonicalPath == null) return false;
+        if (cartKeywordsConfig != null && !cartKeywordsConfig.isBlank()) {
+            String regex = ".*(" + cartKeywordsConfig.replace(",", "|").trim() + ").*";
+            return canonicalPath.matches(regex);
+        }
+        return isCartPath(canonicalPath);
     }
 
     public static boolean isCartPath(String canonicalPath) {
@@ -325,4 +389,48 @@ public class RedisTelemetryService {
 
         return false;
     }
+    public boolean acquireScoringLock(String ip) {
+        String key = "sage:scoring_inflight:" + ip;
+        return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, "true", Duration.ofSeconds(5)));
+    }
+
+    public void releaseScoringLock(String ip) {
+        redisTemplate.delete("sage:scoring_inflight:" + ip);
+    }
+
+    /**
+     * After a failed score (timeout, error, backpressure) the client is not re-scored until the cooldown
+     * expires. Without it an unscored client retried on every request, and under overload the retries kept
+     * the inference service saturated so that almost every attempt timed out.
+     */
+    public void startScoringCooldown(String ip, Duration cooldown) {
+        redisTemplate.opsForValue().set("sage:score_cooldown:" + ip, "1", cooldown);
+    }
+
+    public boolean inScoringCooldown(String ip) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("sage:score_cooldown:" + ip));
+    }
+
+    public static String getSubnet24(String ip) {
+        if (ip == null || ip.isBlank() || !ip.contains(".")) {
+            return "unknown";
+        }
+        String[] parts = ip.split("\\.");
+        if (parts.length >= 3) {
+            return parts[0] + "." + parts[1] + "." + parts[2] + ".0/24";
+        }
+        return ip;
+    }
+
+    public long incrementSubnetCounter(String ip) {
+        String subnet = getSubnet24(ip);
+        if ("unknown".equals(subnet)) return 0L;
+        String key = "sage:subnet:hits:" + subnet;
+        Long count = redisTemplate.opsForValue().increment(key);
+        if (count != null && count == 1L) {
+            redisTemplate.expire(key, Duration.ofMinutes(5));
+        }
+        return count != null ? count : 0L;
+    }
+
 }

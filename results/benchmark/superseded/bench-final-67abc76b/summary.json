@@ -1,0 +1,626 @@
+{
+  "meta": {
+    "benchmark_id": "bench-final-67abc76b",
+    "git_commit": "1c31e34134bc65be53e502715d98a13a7465a7b7",
+    "git_dirty": false,
+    "allow_dirty": false,
+    "argv": [
+      "--label",
+      "final"
+    ],
+    "started": "2026-11-01T22:43:50+0530",
+    "host": {
+      "cpu": {
+        "CPU(s)": "12",
+        "Model name": "13th Gen Intel(R) Core(TM) i5-13420H",
+        "Thread(s) per core": "2",
+        "CPU max MHz": "4600.0000"
+      },
+      "cpu_governor": "powersave",
+      "memtotal": "MemTotal:       16058212 kB",
+      "kernel": "7.0.0-38-generic",
+      "python": "3.12.3",
+      "requests": "2.31.0",
+      "docker": "29.4.0",
+      "load_generator": "python threads (requests.Session per worker) on the same host as the stack"
+    },
+    "load_model": {
+      "requests_per_worker": 200,
+      "think_ms": 20.0,
+      "mix": "3 non-static : 1 static",
+      "non_static_paths": [
+        "/products",
+        "/products/12",
+        "/api/price/23",
+        "/api/inventory/23",
+        "/api/search?q=phone",
+        "/",
+        "/cart"
+      ],
+      "static_paths": [
+        "/static/style.css",
+        "/static/app.js",
+        "/images/logo.png"
+      ]
+    },
+    "modes": [
+      "off",
+      "features",
+      "async",
+      "sync"
+    ],
+    "concurrency_levels": [
+      1,
+      8,
+      32
+    ],
+    "repetitions": 3,
+    "script_sha256": "045353ae6d72b24c6433e333b5ea63b0d6822657f66eb91df72f195384f4a294",
+    "containers": {
+      "off": {
+        "sage-gateway": "sha256:0e47fcdad652a8e0f66d97b07298314bf1516a08b9a0bf30b90979b8558f470d 0 0",
+        "sage-ml": "sha256:258b94876ffe488e4da2ab9b6f2c1292043d2729b78901eb63ca07a7fae5ff8e 0 0",
+        "sage-redis": "sha256:b63cfcebcc37003fa6821163fa9e36c3cc586f915d17bc056d48b52a5a025ab7 0 0",
+        "sage-kafka": "sha256:af34583c49f0fe6458d0679679ad968d7b245eee4d557d6066fb05275e802846 0 0",
+        "sage-ecommerce": "sha256:2700c2e576cf56f857f37e25556f96998d7a12bfd0335d0b1381e39f41694cd9 0 0",
+        "sage-gateway:/app/app.jar": "47cf5c5a1439563dfbb78c743ac7fcf74e2d4a0258783a7381fc2d8443afa884"
+      },
+      "features": {
+        "sage-gateway": "sha256:0e47fcdad652a8e0f66d97b07298314bf1516a08b9a0bf30b90979b8558f470d 0 0",
+        "sage-ml": "sha256:258b94876ffe488e4da2ab9b6f2c1292043d2729b78901eb63ca07a7fae5ff8e 0 0",
+        "sage-redis": "sha256:b63cfcebcc37003fa6821163fa9e36c3cc586f915d17bc056d48b52a5a025ab7 0 0",
+        "sage-kafka": "sha256:af34583c49f0fe6458d0679679ad968d7b245eee4d557d6066fb05275e802846 0 0",
+        "sage-ecommerce": "sha256:2700c2e576cf56f857f37e25556f96998d7a12bfd0335d0b1381e39f41694cd9 0 0",
+        "sage-gateway:/app/app.jar": "47cf5c5a1439563dfbb78c743ac7fcf74e2d4a0258783a7381fc2d8443afa884"
+      },
+      "async": {
+        "sage-gateway": "sha256:0e47fcdad652a8e0f66d97b07298314bf1516a08b9a0bf30b90979b8558f470d 0 0",
+        "sage-ml": "sha256:258b94876ffe488e4da2ab9b6f2c1292043d2729b78901eb63ca07a7fae5ff8e 0 0",
+        "sage-redis": "sha256:b63cfcebcc37003fa6821163fa9e36c3cc586f915d17bc056d48b52a5a025ab7 0 0",
+        "sage-kafka": "sha256:af34583c49f0fe6458d0679679ad968d7b245eee4d557d6066fb05275e802846 0 0",
+        "sage-ecommerce": "sha256:2700c2e576cf56f857f37e25556f96998d7a12bfd0335d0b1381e39f41694cd9 0 0",
+        "sage-gateway:/app/app.jar": "47cf5c5a1439563dfbb78c743ac7fcf74e2d4a0258783a7381fc2d8443afa884"
+      },
+      "sync": {
+        "sage-gateway": "sha256:0e47fcdad652a8e0f66d97b07298314bf1516a08b9a0bf30b90979b8558f470d 0 0",
+        "sage-ml": "sha256:258b94876ffe488e4da2ab9b6f2c1292043d2729b78901eb63ca07a7fae5ff8e 0 0",
+        "sage-redis": "sha256:b63cfcebcc37003fa6821163fa9e36c3cc586f915d17bc056d48b52a5a025ab7 0 0",
+        "sage-kafka": "sha256:af34583c49f0fe6458d0679679ad968d7b245eee4d557d6066fb05275e802846 0 0",
+        "sage-ecommerce": "sha256:2700c2e576cf56f857f37e25556f96998d7a12bfd0335d0b1381e39f41694cd9 0 0",
+        "sage-gateway:/app/app.jar": "47cf5c5a1439563dfbb78c743ac7fcf74e2d4a0258783a7381fc2d8443afa884"
+      }
+    },
+    "finished": "2026-11-01T22:53:03+0530"
+  },
+  "cells": {
+    "off@1": {
+      "mode": "off",
+      "concurrency": 1,
+      "repetitions": 3,
+      "p50_ms": 23.809114499954376,
+      "p95_ms": 32.82310230002849,
+      "p99_ms": 35.109059339984015,
+      "throughput_rps": 22.86867372805289,
+      "p95_ms_per_rep": [
+        34.92391380007688,
+        32.82310230002849,
+        31.820847300042484
+      ],
+      "errors": 0,
+      "redis_mean_ms": null,
+      "ml_roundtrip_mean_ms": null,
+      "kafka_publish_mean_ms": null,
+      "gateway_cpu_pct_mean": 24.106,
+      "gateway_mem_mib_max": 345.8,
+      "ml_calls_per_rep": [
+        0,
+        0,
+        0
+      ],
+      "ml_outcomes_per_rep": [
+        {},
+        {},
+        {}
+      ]
+    },
+    "off@8": {
+      "mode": "off",
+      "concurrency": 8,
+      "repetitions": 3,
+      "p50_ms": 17.83963949998224,
+      "p95_ms": 25.763427450027613,
+      "p99_ms": 28.879861530018616,
+      "throughput_rps": 207.38657282865427,
+      "p95_ms_per_rep": [
+        27.711185850029096,
+        25.63456124995014,
+        25.763427450027613
+      ],
+      "errors": 0,
+      "redis_mean_ms": null,
+      "ml_roundtrip_mean_ms": null,
+      "kafka_publish_mean_ms": null,
+      "gateway_cpu_pct_mean": 69.466,
+      "gateway_mem_mib_max": 389.5,
+      "ml_calls_per_rep": [
+        0,
+        0,
+        0
+      ],
+      "ml_outcomes_per_rep": [
+        {},
+        {},
+        {}
+      ]
+    },
+    "off@32": {
+      "mode": "off",
+      "concurrency": 32,
+      "repetitions": 3,
+      "p50_ms": 27.742883500025073,
+      "p95_ms": 64.47797274997811,
+      "p99_ms": 89.66545939002806,
+      "throughput_rps": 529.2954972268599,
+      "p95_ms_per_rep": [
+        42.5063032999901,
+        67.13978920001291,
+        64.47797274997811
+      ],
+      "errors": 0,
+      "redis_mean_ms": null,
+      "ml_roundtrip_mean_ms": null,
+      "kafka_publish_mean_ms": null,
+      "gateway_cpu_pct_mean": 89.16571428571429,
+      "gateway_mem_mib_max": 412.1,
+      "ml_calls_per_rep": [
+        0,
+        0,
+        0
+      ],
+      "ml_outcomes_per_rep": [
+        {},
+        {},
+        {}
+      ]
+    },
+    "features@1": {
+      "mode": "features",
+      "concurrency": 1,
+      "repetitions": 3,
+      "p50_ms": 26.62520949991176,
+      "p95_ms": 36.202938750034264,
+      "p99_ms": 38.78422949985179,
+      "throughput_rps": 21.424394200713227,
+      "p95_ms_per_rep": [
+        37.86645084994689,
+        36.202938750034264,
+        35.27532955007472
+      ],
+      "errors": 0,
+      "redis_mean_ms": 3.278779555,
+      "ml_roundtrip_mean_ms": null,
+      "kafka_publish_mean_ms": 12.695721925,
+      "gateway_cpu_pct_mean": 30.881666666666668,
+      "gateway_mem_mib_max": 328.4,
+      "ml_calls_per_rep": [
+        0,
+        0,
+        0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 38.0,
+          "GateDepthNotMet": 26.0,
+          "ScoringDisabled": 136.0
+        },
+        {
+          "GateDurationNotMet": 38.0,
+          "GateDepthNotMet": 26.0,
+          "ScoringDisabled": 136.0
+        },
+        {
+          "GateDurationNotMet": 41.0,
+          "GateDepthNotMet": 26.0,
+          "ScoringDisabled": 133.0
+        }
+      ]
+    },
+    "features@8": {
+      "mode": "features",
+      "concurrency": 8,
+      "repetitions": 3,
+      "p50_ms": 20.117641500064565,
+      "p95_ms": 29.63167834988098,
+      "p99_ms": 35.54113414984613,
+      "throughput_rps": 194.77894769349348,
+      "p95_ms_per_rep": [
+        29.63167834988098,
+        30.714084750002257,
+        28.944223799908283
+      ],
+      "errors": 0,
+      "redis_mean_ms": 2.33373998125,
+      "ml_roundtrip_mean_ms": null,
+      "kafka_publish_mean_ms": 8.157706424375,
+      "gateway_cpu_pct_mean": 112.084,
+      "gateway_mem_mib_max": 369.8,
+      "ml_calls_per_rep": [
+        0,
+        0,
+        0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 396.0,
+          "GateDepthNotMet": 208.0,
+          "ScoringDisabled": 996.0
+        },
+        {
+          "GateDurationNotMet": 392.0,
+          "GateDepthNotMet": 208.0,
+          "ScoringDisabled": 1000.0
+        },
+        {
+          "GateDurationNotMet": 385.0,
+          "GateDepthNotMet": 208.0,
+          "ScoringDisabled": 1007.0
+        }
+      ]
+    },
+    "features@32": {
+      "mode": "features",
+      "concurrency": 32,
+      "repetitions": 3,
+      "p50_ms": 23.144887000171366,
+      "p95_ms": 48.98137744997938,
+      "p99_ms": 68.6863967000593,
+      "throughput_rps": 632.7366076380644,
+      "p95_ms_per_rep": [
+        52.33660749998988,
+        42.996033499832706,
+        48.98137744997938
+      ],
+      "errors": 0,
+      "redis_mean_ms": 2.3987136628124994,
+      "ml_roundtrip_mean_ms": null,
+      "kafka_publish_mean_ms": 6.55805595078125,
+      "gateway_cpu_pct_mean": 163.27833333333334,
+      "gateway_mem_mib_max": 387.0,
+      "ml_calls_per_rep": [
+        0,
+        0,
+        0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 1211.0,
+          "GateDepthNotMet": 832.0,
+          "ScoringDisabled": 4357.0
+        },
+        {
+          "GateDurationNotMet": 1099.0,
+          "GateDepthNotMet": 832.0,
+          "ScoringDisabled": 4469.0
+        },
+        {
+          "GateDurationNotMet": 1112.0,
+          "GateDepthNotMet": 832.0,
+          "ScoringDisabled": 4456.0
+        }
+      ]
+    },
+    "async@1": {
+      "mode": "async",
+      "concurrency": 1,
+      "repetitions": 3,
+      "p50_ms": 27.711852500033274,
+      "p95_ms": 36.831994149997605,
+      "p99_ms": 43.30985291990369,
+      "throughput_rps": 20.79130976327855,
+      "p95_ms_per_rep": [
+        38.07731895003599,
+        36.831994149997605,
+        27.46228404987505
+      ],
+      "errors": 0,
+      "redis_mean_ms": 3.5332159750000005,
+      "ml_roundtrip_mean_ms": 50.83202666666667,
+      "kafka_publish_mean_ms": 12.239229524271844,
+      "gateway_cpu_pct_mean": 37.61833333333333,
+      "gateway_mem_mib_max": 337.2,
+      "ml_calls_per_rep": [
+        6.0,
+        6.0,
+        5.0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "Cached": 133.0,
+          "GateDurationNotMet": 39.0,
+          "GateDepthNotMet": 26.0,
+          "AsyncScheduled": 2.0
+        },
+        {
+          "GateDurationNotMet": 39.0,
+          "Cached": 134.0,
+          "GateDepthNotMet": 26.0,
+          "AsyncScheduled": 1.0
+        },
+        {
+          "GateDurationNotMet": 48.0,
+          "Cached": 124.0,
+          "GateDepthNotMet": 26.0,
+          "AsyncScheduled": 2.0
+        }
+      ]
+    },
+    "async@8": {
+      "mode": "async",
+      "concurrency": 8,
+      "repetitions": 3,
+      "p50_ms": 21.77037550006844,
+      "p95_ms": 73.71231409999835,
+      "p99_ms": 112.43242333003991,
+      "throughput_rps": 165.87201725315688,
+      "p95_ms_per_rep": [
+        73.71231409999835,
+        67.53255545020237,
+        77.96501899987331
+      ],
+      "errors": 0,
+      "redis_mean_ms": 7.7321228162499995,
+      "ml_roundtrip_mean_ms": 160.589845,
+      "kafka_publish_mean_ms": 8.002119480487803,
+      "gateway_cpu_pct_mean": 96.245,
+      "gateway_mem_mib_max": 381.2,
+      "ml_calls_per_rep": [
+        40.0,
+        40.0,
+        40.0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 386.0,
+          "Cached": 973.0,
+          "GateDepthNotMet": 208.0,
+          "AsyncScheduled": 33.0
+        },
+        {
+          "GateDurationNotMet": 402.0,
+          "Cached": 961.0,
+          "GateDepthNotMet": 208.0,
+          "AsyncScheduled": 29.0
+        },
+        {
+          "GateDurationNotMet": 381.0,
+          "Cached": 993.0,
+          "GateDepthNotMet": 208.0,
+          "AsyncScheduled": 18.0
+        }
+      ]
+    },
+    "async@32": {
+      "mode": "async",
+      "concurrency": 32,
+      "repetitions": 3,
+      "p50_ms": 34.704465999880085,
+      "p95_ms": 100.49264149993176,
+      "p99_ms": 117.97896120999442,
+      "throughput_rps": 437.7191257992537,
+      "p95_ms_per_rep": [
+        90.08763625006392,
+        103.43052875000467,
+        100.49264149993176
+      ],
+      "errors": 0,
+      "redis_mean_ms": 22.18834753671875,
+      "ml_roundtrip_mean_ms": 516.8524765392671,
+      "kafka_publish_mean_ms": 7.0970075515776685,
+      "gateway_cpu_pct_mean": 95.1225,
+      "gateway_mem_mib_max": 422.1,
+      "ml_calls_per_rep": [
+        192.0,
+        191.0,
+        118.0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 1095.0,
+          "Cached": 4182.0,
+          "GateDepthNotMet": 832.0,
+          "AsyncScheduled": 291.0
+        },
+        {
+          "GateDurationNotMet": 1072.0,
+          "Cached": 4279.0,
+          "GateDepthNotMet": 832.0,
+          "AsyncScheduled": 217.0
+        },
+        {
+          "GateDurationNotMet": 846.0,
+          "Cached": 4426.0,
+          "GateDepthNotMet": 832.0,
+          "AsyncScheduled": 296.0
+        }
+      ]
+    },
+    "sync@1": {
+      "mode": "sync",
+      "concurrency": 1,
+      "repetitions": 3,
+      "p50_ms": 26.982238499954292,
+      "p95_ms": 37.8837947499278,
+      "p99_ms": 66.8603693801014,
+      "throughput_rps": 20.480151501120723,
+      "p95_ms_per_rep": [
+        41.059290299847355,
+        37.8837947499278,
+        37.155149500017615
+      ],
+      "errors": 0,
+      "redis_mean_ms": 3.5197598900000004,
+      "ml_roundtrip_mean_ms": 24.953416166666667,
+      "kafka_publish_mean_ms": 12.267373326829269,
+      "gateway_cpu_pct_mean": 36.156666666666666,
+      "gateway_mem_mib_max": 331.0,
+      "ml_calls_per_rep": [
+        5.0,
+        6.0,
+        5.0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "Cached": 129.0,
+          "GateDurationNotMet": 40.0,
+          "GateDepthNotMet": 26.0,
+          "Scored": 5.0
+        },
+        {
+          "GateDurationNotMet": 38.0,
+          "Scored": 6.0,
+          "Cached": 130.0,
+          "GateDepthNotMet": 26.0
+        },
+        {
+          "GateDurationNotMet": 40.0,
+          "Scored": 5.0,
+          "Cached": 129.0,
+          "GateDepthNotMet": 26.0
+        }
+      ]
+    },
+    "sync@8": {
+      "mode": "sync",
+      "concurrency": 8,
+      "repetitions": 3,
+      "p50_ms": 21.48841700011417,
+      "p95_ms": 72.93617720002884,
+      "p99_ms": 178.91179728019316,
+      "throughput_rps": 161.02510349715206,
+      "p95_ms_per_rep": [
+        72.93617720002884,
+        69.4766283498552,
+        74.00668859992261
+      ],
+      "errors": 0,
+      "redis_mean_ms": 6.186498726875,
+      "ml_roundtrip_mean_ms": 124.11938905,
+      "kafka_publish_mean_ms": 8.091901801219512,
+      "gateway_cpu_pct_mean": 106.12,
+      "gateway_mem_mib_max": 374.2,
+      "ml_calls_per_rep": [
+        40.0,
+        40.0,
+        40.0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 392.0,
+          "Scored": 40.0,
+          "Cached": 960.0,
+          "GateDepthNotMet": 208.0
+        },
+        {
+          "GateDurationNotMet": 383.0,
+          "Scored": 40.0,
+          "Cached": 969.0,
+          "GateDepthNotMet": 208.0
+        },
+        {
+          "GateDurationNotMet": 380.0,
+          "Scored": 40.0,
+          "Cached": 972.0,
+          "GateDepthNotMet": 208.0
+        }
+      ]
+    },
+    "sync@32": {
+      "mode": "sync",
+      "concurrency": 32,
+      "repetitions": 3,
+      "p50_ms": 49.085383499914315,
+      "p95_ms": 113.5001699001009,
+      "p99_ms": 350.71354772008453,
+      "throughput_rps": 348.49785456758156,
+      "p95_ms_per_rep": [
+        348.10962194997893,
+        99.33606299991871,
+        113.5001699001009
+      ],
+      "errors": 0,
+      "redis_mean_ms": 25.72165440921875,
+      "ml_roundtrip_mean_ms": 228.7494665677083,
+      "kafka_publish_mean_ms": 7.556215812235009,
+      "gateway_cpu_pct_mean": 85.214,
+      "gateway_mem_mib_max": 415.7,
+      "ml_calls_per_rep": [
+        177.0,
+        192.0,
+        192.0
+      ],
+      "ml_outcomes_per_rep": [
+        {
+          "GateDurationNotMet": 1046.0,
+          "Scored": 177.0,
+          "Cached": 4129.0,
+          "GateDepthNotMet": 832.0,
+          "Timeout": 216.0
+        },
+        {
+          "Error": 1.0,
+          "GateDurationNotMet": 1057.0,
+          "Scored": 192.0,
+          "Cached": 4318.0,
+          "GateDepthNotMet": 832.0
+        },
+        {
+          "GateDurationNotMet": 1058.0,
+          "Scored": 192.0,
+          "Cached": 4306.0,
+          "GateDepthNotMet": 832.0,
+          "Timeout": 12.0
+        }
+      ]
+    }
+  },
+  "overhead_vs_off": {
+    "features@1": {
+      "p95_minus_off_ms": 3.379836450005776,
+      "p50_minus_off_ms": 2.816094999957386
+    },
+    "async@1": {
+      "p95_minus_off_ms": 4.0088918499691175,
+      "p50_minus_off_ms": 3.902738000078898
+    },
+    "sync@1": {
+      "p95_minus_off_ms": 5.060692449899314,
+      "p50_minus_off_ms": 3.173123999999916
+    },
+    "features@8": {
+      "p95_minus_off_ms": 3.868250899853365,
+      "p50_minus_off_ms": 2.2780020000823242
+    },
+    "async@8": {
+      "p95_minus_off_ms": 47.94888664997074,
+      "p50_minus_off_ms": 3.930736000086199
+    },
+    "sync@8": {
+      "p95_minus_off_ms": 47.17274975000122,
+      "p50_minus_off_ms": 3.648777500131928
+    },
+    "features@32": {
+      "p95_minus_off_ms": -15.49659529999873,
+      "p50_minus_off_ms": -4.597996499853707
+    },
+    "async@32": {
+      "p95_minus_off_ms": 36.01466874995366,
+      "p50_minus_off_ms": 6.961582499855012
+    },
+    "sync@32": {
+      "p95_minus_off_ms": 49.02219715012279,
+      "p50_minus_off_ms": 21.34249999988924
+    }
+  },
+  "r7_observed_ms": 47.94888664997074,
+  "r7_definition": "max over concurrency of median-rep p95(async) - median-rep p95(off) (configs/gates_revised_v1.json R7)"
+}

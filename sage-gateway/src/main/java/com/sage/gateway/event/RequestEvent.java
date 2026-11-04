@@ -56,8 +56,40 @@ public record RequestEvent(
         String prodModelSha256,
         String shadowModelSha256,
         String shadowContractHash,
-        String shadowFeatureListHash
+        String shadowFeatureListHash,
+        String extraShadows
     ) {
+        /** Without the additional shadow models (JSON array of per-model results, see the inference service). */
+        public MLMetadata(
+            Double botProbability,
+            Integer isBotFlag,
+            String threatClass,
+            String evaluationStatus,
+            Double shadowBotProbability,
+            Integer shadowIsBotFlag,
+            String shadowThreatClass,
+            String shadowAction,
+            String shadowStatus,
+            Double prodInferenceLatencyMs,
+            Double shadowInferenceLatencyMs,
+            String contractHash,
+            String modelVersion,
+            Double shadowThreshold,
+            String decisionSource,
+            Double scoringDepth,
+            Long scoringTimestampMs,
+            String prodModelSha256,
+            String shadowModelSha256,
+            String shadowContractHash,
+            String shadowFeatureListHash
+        ) {
+            this(botProbability, isBotFlag, threatClass, evaluationStatus, shadowBotProbability,
+                 shadowIsBotFlag, shadowThreatClass, shadowAction, shadowStatus, prodInferenceLatencyMs,
+                 shadowInferenceLatencyMs, contractHash, modelVersion, shadowThreshold, decisionSource,
+                 scoringDepth, scoringTimestampMs, prodModelSha256, shadowModelSha256, shadowContractHash,
+                 shadowFeatureListHash, null);
+        }
+
         public MLMetadata(
             Double botProbability,
             Integer isBotFlag,
@@ -80,7 +112,7 @@ public record RequestEvent(
             this(botProbability, isBotFlag, threatClass, evaluationStatus, shadowBotProbability,
                  shadowIsBotFlag, shadowThreatClass, shadowAction, shadowStatus, prodInferenceLatencyMs,
                  shadowInferenceLatencyMs, contractHash, modelVersion, shadowThreshold, decisionSource,
-                 scoringDepth, scoringTimestampMs, null, null, null, null);
+                 scoringDepth, scoringTimestampMs, null, null, null, null, null);
         }
 
         public MLMetadata(
@@ -102,7 +134,7 @@ public record RequestEvent(
             this(botProbability, isBotFlag, threatClass, evaluationStatus, shadowBotProbability,
                  shadowIsBotFlag, shadowThreatClass, shadowAction, shadowStatus, prodInferenceLatencyMs,
                  shadowInferenceLatencyMs, contractHash, modelVersion, shadowThreshold, "fresh",
-                 null, null, null, null, null, null);
+                 null, null, null, null, null, null, null);
         }
 
         public MLMetadata(
@@ -125,7 +157,7 @@ public record RequestEvent(
             this(botProbability, isBotFlag, threatClass, evaluationStatus, shadowBotProbability,
                  shadowIsBotFlag, shadowThreatClass, shadowAction, shadowStatus, prodInferenceLatencyMs,
                  shadowInferenceLatencyMs, contractHash, modelVersion, shadowThreshold, decisionSource,
-                 null, null, null, null, null, null);
+                 null, null, null, null, null, null, null);
         }
     }
 }

@@ -1,0 +1,1162 @@
+{
+  "run_id": "diverse-6a1619a7",
+  "declaration_sha256": "159d749b998087bbb666e9d8752947d342ac2543656e93a8ed279ae23ff8c2e6",
+  "grader_sha256": "c38911cef768aee8fb8c628da8f15025109686992040172a449130085ba2ab80",
+  "campaign_metrics_sha256": "23fd1ff911ac304bcd91272f4c65f274dc3071476ffa20b55c8d7de2356f486c",
+  "telemetry_sha256": "9445956d737cc430a80b4c9f2276ee82c75d2be9cc3970e1617bdde3143477c4",
+  "events": 26952,
+  "clients": 450,
+  "gateway_overhead_r7_ms": 52.07264440014113,
+  "failure_records": 0,
+  "models": {
+    "prod_sage_binary_7feat": {
+      "metrics": {
+        "confusion": {
+          "tp": 100,
+          "fp": 103,
+          "tn": 197,
+          "fn": 50
+        },
+        "bot_recall": {
+          "k": 100,
+          "n": 150,
+          "point": 0.6666666666666666,
+          "lower": 0.5851569937344412,
+          "upper": 0.7414436366064876,
+          "upper_one_sided": 0.730389685655209
+        },
+        "human_fpr": {
+          "k": 103,
+          "n": 300,
+          "point": 0.3433333333333333,
+          "lower": 0.2897211376911962,
+          "upper": 0.40007542563511206,
+          "upper_one_sided": 0.391112558270096
+        },
+        "precision": {
+          "k": 100,
+          "n": 203,
+          "point": 0.49261083743842365,
+          "lower": 0.4219267855714544,
+          "upper": 0.5635138172151861,
+          "upper_one_sided": 0.5525834924704076
+        },
+        "macro_bot_recall": 0.6666666666666666,
+        "per_profile": {
+          "normal_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "spa_client": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 75,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "mobile_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 28,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 28,
+              "n": 75,
+              "point": 0.37333333333333335,
+              "lower": 0.2643019116565081,
+              "upper": 0.49269536998870556,
+              "upper_one_sided": 0.4744670516531535
+            },
+            "scored_only": {
+              "k": 28,
+              "n": 75,
+              "point": 0.37333333333333335,
+              "lower": 0.2643019116565081,
+              "upper": 0.49269536998870556,
+              "upper_one_sided": 0.4744670516531535
+            },
+            "unscored_reasons": {}
+          },
+          "privacy_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "slow_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 50,
+            "metric": "recall",
+            "all_clients": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "asset_fetching_bot": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 0,
+            "metric": "recall",
+            "all_clients": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "unscored_reasons": {}
+          },
+          "fast_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 50,
+            "metric": "recall",
+            "all_clients": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          }
+        },
+        "scored_clients": 450,
+        "scorable_clients": 450,
+        "scorable_and_scored_clients": 450
+      },
+      "unified_gates": {
+        "G2u_coverage_scorable": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G5u_human_fpr_point": {
+          "observed": 0.3433333333333333,
+          "threshold": 0.01,
+          "pass": false,
+          "clopper_pearson": {
+            "k": 103,
+            "n": 300,
+            "point": 0.3433333333333333,
+            "lower": 0.2897211376911962,
+            "upper": 0.40007542563511206,
+            "upper_one_sided": 0.391112558270096
+          }
+        },
+        "G6u_macro_recall_all_clients": {
+          "observed": 0.6666666666666666,
+          "threshold": 0.9,
+          "pass": false
+        }
+      },
+      "unscored_clients": []
+    },
+    "shadow_eclog_timing_8feat": {
+      "metrics": {
+        "confusion": {
+          "tp": 100,
+          "fp": 0,
+          "tn": 300,
+          "fn": 50
+        },
+        "bot_recall": {
+          "k": 100,
+          "n": 150,
+          "point": 0.6666666666666666,
+          "lower": 0.5851569937344412,
+          "upper": 0.7414436366064876,
+          "upper_one_sided": 0.730389685655209
+        },
+        "human_fpr": {
+          "k": 0,
+          "n": 300,
+          "point": 0.0,
+          "lower": 0.0,
+          "upper": 0.01222097469429355,
+          "upper_one_sided": 0.009936081944457708
+        },
+        "precision": {
+          "k": 100,
+          "n": 100,
+          "point": 1.0,
+          "lower": 0.9637833073548235,
+          "upper": 1.0,
+          "upper_one_sided": 1.0
+        },
+        "macro_bot_recall": 0.6666666666666666,
+        "per_profile": {
+          "normal_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "spa_client": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "mobile_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "privacy_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "slow_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 50,
+            "metric": "recall",
+            "all_clients": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "asset_fetching_bot": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 0,
+            "metric": "recall",
+            "all_clients": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "unscored_reasons": {}
+          },
+          "fast_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 50,
+            "metric": "recall",
+            "all_clients": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          }
+        },
+        "scored_clients": 450,
+        "scorable_clients": 450,
+        "scorable_and_scored_clients": 450
+      },
+      "unified_gates": {
+        "G2u_coverage_scorable": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G5u_human_fpr_point": {
+          "observed": 0.0,
+          "threshold": 0.01,
+          "pass": true,
+          "clopper_pearson": {
+            "k": 0,
+            "n": 300,
+            "point": 0.0,
+            "lower": 0.0,
+            "upper": 0.01222097469429355,
+            "upper_one_sided": 0.009936081944457708
+          }
+        },
+        "G6u_macro_recall_all_clients": {
+          "observed": 0.6666666666666666,
+          "threshold": 0.9,
+          "pass": false
+        }
+      },
+      "unscored_clients": [],
+      "revised_gates": {
+        "R1_identity": {
+          "observed": {
+            "distinct_tuples": 1,
+            "records_missing_identity": 0,
+            "matches_manifest": true
+          },
+          "pass": true
+        },
+        "R2_coverage": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "R3_timeouts_errors": {
+          "observed": 0,
+          "threshold": 0,
+          "pass": true
+        },
+        "R4_timing_features": {
+          "observed": true,
+          "pass": true
+        },
+        "R5_human_fpr": {
+          "observed": {
+            "k": 0,
+            "n": 300,
+            "point": 0.0,
+            "lower": 0.0,
+            "upper": 0.01222097469429355,
+            "upper_one_sided": 0.009936081944457708
+          },
+          "threshold": 0.01,
+          "pass": true
+        },
+        "R6_bot_recall": {
+          "observed": {
+            "macro": 0.6666666666666666,
+            "per_profile": {
+              "slow_scraper": 1.0,
+              "asset_fetching_bot": 0.0,
+              "fast_scraper": 1.0
+            }
+          },
+          "threshold": {
+            "macro_min": 0.9,
+            "per_profile_min": 0.8
+          },
+          "pass": false
+        },
+        "R7_gateway_overhead": {
+          "observed": 52.07264440014113,
+          "threshold": 50.0,
+          "pass": false,
+          "note": null
+        }
+      }
+    },
+    "extra:eclog6m_prefix_8feature_v1@frozen": {
+      "metrics": {
+        "confusion": {
+          "tp": 100,
+          "fp": 296,
+          "tn": 4,
+          "fn": 50
+        },
+        "bot_recall": {
+          "k": 100,
+          "n": 150,
+          "point": 0.6666666666666666,
+          "lower": 0.5851569937344412,
+          "upper": 0.7414436366064876,
+          "upper_one_sided": 0.730389685655209
+        },
+        "human_fpr": {
+          "k": 296,
+          "n": 300,
+          "point": 0.9866666666666667,
+          "lower": 0.9662151037380822,
+          "upper": 0.9963554859479334,
+          "upper_one_sided": 0.9954331380300033
+        },
+        "precision": {
+          "k": 100,
+          "n": 396,
+          "point": 0.25252525252525254,
+          "lower": 0.21046033544600587,
+          "upper": 0.29833310507646515,
+          "upper_one_sided": 0.2910139870198302
+        },
+        "macro_bot_recall": 0.6666666666666666,
+        "per_profile": {
+          "normal_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 75,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "spa_client": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 75,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "mobile_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 75,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 75,
+              "n": 75,
+              "point": 1.0,
+              "lower": 0.9520049359448577,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "privacy_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 71,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 71,
+              "n": 75,
+              "point": 0.9466666666666667,
+              "lower": 0.8690391927215253,
+              "upper": 0.9852792353408218,
+              "upper_one_sided": 0.9815796619736401
+            },
+            "scored_only": {
+              "k": 71,
+              "n": 75,
+              "point": 0.9466666666666667,
+              "lower": 0.8690391927215253,
+              "upper": 0.9852792353408218,
+              "upper_one_sided": 0.9815796619736401
+            },
+            "unscored_reasons": {}
+          },
+          "slow_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 50,
+            "metric": "recall",
+            "all_clients": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          },
+          "asset_fetching_bot": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 0,
+            "metric": "recall",
+            "all_clients": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "unscored_reasons": {}
+          },
+          "fast_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 50,
+            "metric": "recall",
+            "all_clients": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "scored_only": {
+              "k": 50,
+              "n": 50,
+              "point": 1.0,
+              "lower": 0.9288782635358024,
+              "upper": 1.0,
+              "upper_one_sided": 1.0
+            },
+            "unscored_reasons": {}
+          }
+        },
+        "scored_clients": 450,
+        "scorable_clients": 450,
+        "scorable_and_scored_clients": 450
+      },
+      "unified_gates": {
+        "G2u_coverage_scorable": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G5u_human_fpr_point": {
+          "observed": 0.9866666666666667,
+          "threshold": 0.01,
+          "pass": false,
+          "clopper_pearson": {
+            "k": 296,
+            "n": 300,
+            "point": 0.9866666666666667,
+            "lower": 0.9662151037380822,
+            "upper": 0.9963554859479334,
+            "upper_one_sided": 0.9954331380300033
+          }
+        },
+        "G6u_macro_recall_all_clients": {
+          "observed": 0.6666666666666666,
+          "threshold": 0.9,
+          "pass": false
+        }
+      },
+      "unscored_clients": [],
+      "revised_gates": {
+        "R1_identity": {
+          "observed": {
+            "distinct_tuples": 1,
+            "records_missing_identity": 0,
+            "matches_manifest": true
+          },
+          "pass": true
+        },
+        "R2_coverage": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "R3_timeouts_errors": {
+          "observed": 0,
+          "threshold": 0,
+          "pass": true
+        },
+        "R4_timing_features": {
+          "observed": true,
+          "pass": true
+        },
+        "R5_human_fpr": {
+          "observed": {
+            "k": 296,
+            "n": 300,
+            "point": 0.9866666666666667,
+            "lower": 0.9662151037380822,
+            "upper": 0.9963554859479334,
+            "upper_one_sided": 0.9954331380300033
+          },
+          "threshold": 0.01,
+          "pass": false
+        },
+        "R6_bot_recall": {
+          "observed": {
+            "macro": 0.6666666666666666,
+            "per_profile": {
+              "slow_scraper": 1.0,
+              "asset_fetching_bot": 0.0,
+              "fast_scraper": 1.0
+            }
+          },
+          "threshold": {
+            "macro_min": 0.9,
+            "per_profile_min": 0.8
+          },
+          "pass": false
+        },
+        "R7_gateway_overhead": {
+          "observed": 52.07264440014113,
+          "threshold": 50.0,
+          "pass": false,
+          "note": null
+        }
+      }
+    },
+    "extra:eclog6m_prefix_8feature_v1@secondary": {
+      "metrics": {
+        "confusion": {
+          "tp": 0,
+          "fp": 0,
+          "tn": 300,
+          "fn": 150
+        },
+        "bot_recall": {
+          "k": 0,
+          "n": 150,
+          "point": 0.0,
+          "lower": 0.0,
+          "upper": 0.02429259716610854,
+          "upper_one_sided": 0.01977343816450844
+        },
+        "human_fpr": {
+          "k": 0,
+          "n": 300,
+          "point": 0.0,
+          "lower": 0.0,
+          "upper": 0.01222097469429355,
+          "upper_one_sided": 0.009936081944457708
+        },
+        "precision": {
+          "k": 0,
+          "n": 0,
+          "point": null,
+          "lower": null,
+          "upper": null,
+          "upper_one_sided": null
+        },
+        "macro_bot_recall": 0.0,
+        "per_profile": {
+          "normal_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "spa_client": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "mobile_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "privacy_browser": {
+            "true_class": "human",
+            "clients": 75,
+            "scored_clients": 75,
+            "flagged": 0,
+            "metric": "fpr",
+            "all_clients": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 75,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.047995064055142256,
+              "upper_one_sided": 0.03915588747217124
+            },
+            "unscored_reasons": {}
+          },
+          "slow_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 0,
+            "metric": "recall",
+            "all_clients": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "unscored_reasons": {}
+          },
+          "asset_fetching_bot": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 0,
+            "metric": "recall",
+            "all_clients": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "unscored_reasons": {}
+          },
+          "fast_scraper": {
+            "true_class": "bot",
+            "clients": 50,
+            "scored_clients": 50,
+            "flagged": 0,
+            "metric": "recall",
+            "all_clients": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "scored_only": {
+              "k": 0,
+              "n": 50,
+              "point": 0.0,
+              "lower": 0.0,
+              "upper": 0.07112173646419764,
+              "upper_one_sided": 0.05815507911697225
+            },
+            "unscored_reasons": {}
+          }
+        },
+        "scored_clients": 450,
+        "scorable_clients": 450,
+        "scorable_and_scored_clients": 450
+      },
+      "unified_gates": {
+        "G2u_coverage_scorable": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G5u_human_fpr_point": {
+          "observed": 0.0,
+          "threshold": 0.01,
+          "pass": true,
+          "clopper_pearson": {
+            "k": 0,
+            "n": 300,
+            "point": 0.0,
+            "lower": 0.0,
+            "upper": 0.01222097469429355,
+            "upper_one_sided": 0.009936081944457708
+          }
+        },
+        "G6u_macro_recall_all_clients": {
+          "observed": 0.0,
+          "threshold": 0.9,
+          "pass": false
+        }
+      },
+      "unscored_clients": [],
+      "revised_gates": {
+        "R1_identity": {
+          "observed": {
+            "distinct_tuples": 1,
+            "records_missing_identity": 0,
+            "matches_manifest": true
+          },
+          "pass": true
+        },
+        "R2_coverage": {
+          "observed": 1.0,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "R3_timeouts_errors": {
+          "observed": 0,
+          "threshold": 0,
+          "pass": true
+        },
+        "R4_timing_features": {
+          "observed": true,
+          "pass": true
+        },
+        "R5_human_fpr": {
+          "observed": {
+            "k": 0,
+            "n": 300,
+            "point": 0.0,
+            "lower": 0.0,
+            "upper": 0.01222097469429355,
+            "upper_one_sided": 0.009936081944457708
+          },
+          "threshold": 0.01,
+          "pass": true
+        },
+        "R6_bot_recall": {
+          "observed": {
+            "macro": 0.0,
+            "per_profile": {
+              "slow_scraper": 0.0,
+              "asset_fetching_bot": 0.0,
+              "fast_scraper": 0.0
+            }
+          },
+          "threshold": {
+            "macro_min": 0.9,
+            "per_profile_min": 0.8
+          },
+          "pass": false
+        },
+        "R7_gateway_overhead": {
+          "observed": 52.07264440014113,
+          "threshold": 50.0,
+          "pass": false,
+          "note": null
+        }
+      }
+    }
+  },
+  "original_gates_timing_shadow": {
+    "all_pass": false,
+    "gates": [
+      {
+        "gate": "Cryptographic Identity Verified (Tagged Manifest)",
+        "pass": true,
+        "id": "G1"
+      },
+      {
+        "gate": "Scoring coverage >= 100.00% (observed: 100.00%)",
+        "pass": true,
+        "id": "G2"
+      },
+      {
+        "gate": "Timeouts <= 0 and Errors <= 0",
+        "pass": true,
+        "id": "G3"
+      },
+      {
+        "gate": "Timing Features Present & Active (8 features)",
+        "pass": true,
+        "id": "G4"
+      },
+      {
+        "gate": "Human FPR <= 1.00% (observed: 0.00%)",
+        "pass": true,
+        "id": "G5"
+      },
+      {
+        "gate": "Macro-average bot recall >= 90.00% (observed: 66.67%) [run_mode: final]",
+        "pass": false,
+        "id": "G6"
+      },
+      {
+        "gate": "p95 paired overhead < 50 ms",
+        "pass": true,
+        "id": "G7"
+      }
+    ],
+    "frozen_manifest_sha256": "9398b6d00410f5c6b8afa422c35c913913a100737893ec3f5512522730bec67a",
+    "frozen_manifest_source": "git show v2-frozen-models-v6:ml_pipeline/models/frozen_models_manifest.json"
+  }
+}

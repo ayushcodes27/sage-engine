@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import campaign_metrics as cm  # noqa: E402
 
 PROFILE_ORDER = [
     "normal_browser",
@@ -43,6 +45,9 @@ def parse_args():
     parser.add_argument("--strict", action="store_true", help="Exit with code 1 if identity verification or gates fail")
     parser.add_argument("--allow-dirty", action="store_true", help="Allow running evaluation on dirty git working tree")
     parser.add_argument("--run-mode", choices=["auto", "dry_run", "final"], default="auto", help="Run mode label (dry_run vs final)")
+    parser.add_argument("--gates", default=str(REPO_ROOT / "configs" / "gates_revised_v1.json"), help="Revised gate config (evaluated alongside the original thresholds)")
+    parser.add_argument("--gateway-overhead-p95-ms", type=float, default=None, help="p95 async-ML minus proxy-only latency from the B2 benchmark (R7)")
+    parser.add_argument("--json-out", help="Optional JSON output path for metrics and gates")
     return parser.parse_args()
 
 
@@ -184,7 +189,7 @@ def latency_summary(series):
 
 def load_telemetry(path, run_id=None):
     rows = []
-    with open(path, "r", encoding="utf-8-sig") as f:
+    with cm._open(path) as f:
         for line in f:
             if not line.strip():
                 continue
@@ -328,6 +333,10 @@ def build_report(
     manifest_source="unknown",
     allow_dirty=False,
     run_mode="auto",
+    events=None,
+    gate_cfg=None,
+    gateway_overhead_p95_ms=None,
+    json_sink=None,
 ):
     lines = []
     run_id = manifest.get("run_id", "unknown")
@@ -619,7 +628,7 @@ def build_report(
     active_bot_recalls = [bot_recalls.get(bp, 0.0) for bp in target_bot_profiles]
     macro_bot_recall = sum(active_bot_recalls) / len(active_bot_recalls)
     lines.append("")
-    lines.append(f"**Macro-Average Bot Recall across 3 bot profiles**: {pct(macro_bot_recall)} ({', '.join(f'{bp}: {pct(bot_recalls.get(bp, 0.0))}' for bp in target_bot_profiles)})")
+    lines.append(f"**Macro-Average Bot Recall across 3 bot profiles (scored clients only)**: {pct(macro_bot_recall)} ({', '.join(f'{bp}: {pct(bot_recalls.get(bp, 0.0))}' for bp in target_bot_profiles)})")
 
     # Latency
     valid_latency = scored.dropna(subset=["prod_latency", "shadow_latency"]).copy()
@@ -658,35 +667,69 @@ def build_report(
                 campaign_cfg = {}
     gate_thresholds = campaign_cfg.get("gate_thresholds", {})
     min_macro_recall = float(gate_thresholds.get("macro_average_bot_recall_min", 0.90))
-    max_human_fpr = float(gate_thresholds.get("human_fpr_limit", 0.10))
+    max_human_fpr = float(gate_thresholds.get("human_fpr_limit", 0.01))
     min_coverage = float(gate_thresholds.get("scoring_coverage_min", 1.0))
-    max_timeouts = int(gate_thresholds.get("timeouts_max", 0))
-    max_errors = int(gate_thresholds.get("errors_max", 0))
+    max_failures = int(gate_thresholds.get("timeouts_max", 0)) + int(gate_thresholds.get("errors_max", 0))
     max_overhead_ms = float(gate_thresholds.get("max_p95_paired_overhead_ms", 50.0))
 
-    coverage_rate = ratio(len(scored_clients), len(manifest_client_ids))
-    coverage_ok = (coverage_rate >= min_coverage) and (len(manifest_client_ids) > 0)
-    timeouts_ok = (error_or_timeout <= max_timeouts) and not any("timeout" in e for e in identity_errors)
-    errors_ok = (error_or_timeout <= max_errors) and not any("error" in e for e in identity_errors)
-    macro_recall_ok = macro_bot_recall >= min_macro_recall
-    human_fpr_ok = fpr_ci[0] <= max_human_fpr
-    overhead_ok = over_p95 < max_overhead_ms
+    # One definition for every run (campaign_metrics.py): all manifest clients count,
+    # unscored bot = miss, scorable = non-static depth > 20, failures include evaluationStatus.
+    if events is None:
+        raise ValueError("build_report requires raw events (campaign_metrics.load_events)")
+    cm_clients = {cid: {"profile": m["profile"], "true_class": m["true_class"]} for cid, m in client_manifest.items()}
+    cm_rows = cm.client_table(events, cm_clients, "shadow_eclog_timing_8feat")
+    cm_m = cm.model_metrics(cm_rows)
+    failures = cm.failure_records(events)
+    coverage_rate = ratio(cm_m["scorable_and_scored_clients"], cm_m["scorable_clients"])
+    coverage_ok = cm_m["scorable_clients"] > 0 and coverage_rate >= min_coverage
+    failures_ok = failures <= max_failures
+    unified_fpr = cm_m["human_fpr"]
+    human_fpr_ok = unified_fpr["point"] is not None and unified_fpr["point"] <= max_human_fpr
+    unified_macro = cm_m["macro_bot_recall"] or 0.0
+    macro_recall_ok = unified_macro >= min_macro_recall
+    have_latency = len(valid_latency) > 0
+    overhead_ok = have_latency and over_p95 < max_overhead_ms
+
+    lines.append("Unified definitions (all manifest clients; unscored bot = miss):")
+    lines.append(f"- Human FPR {pct(unified_fpr['point'] or 0.0)} (95% CI {pct(unified_fpr['lower'] or 0.0)} - {pct(unified_fpr['upper'] or 0.0)}; one-sided 95% upper {pct(unified_fpr['upper_one_sided'] or 0.0)})")
+    for bp in target_bot_profiles:
+        pp = cm_m["per_profile"].get(bp)
+        if pp:
+            a = pp["all_clients"]
+            lines.append(f"- {bp}: recall {pct(a['point'])} over {pp['clients']} clients ({pp['scored_clients']} scored)")
+    lines.append(f"- Failure records (Timeout/SemaphoreFull/Error/Failed, shadow timeout/error, HTTP >= 500): {failures}")
+    lines.append("")
 
     gates = [
         ("Cryptographic Identity Verified (Tagged Manifest)", identity_ok),
-        (f"Scoring coverage >= {pct(min_coverage)} (observed: {pct(coverage_rate)})", coverage_ok),
-        (f"Timeouts <= {max_timeouts} and Errors <= {max_errors}", timeouts_ok and errors_ok),
+        (f"Scoring coverage >= {pct(min_coverage)} on scorable clients (observed: {pct(coverage_rate)})", coverage_ok),
+        (f"Timeout/error records <= {max_failures} (observed: {failures})", failures_ok),
         ("Timing Features Present & Active (8 features)", timing_features_valid),
-        (f"Human FPR <= {pct(max_human_fpr)} (observed: {pct(fpr_ci[0])})", human_fpr_ok),
-        (f"Macro-average bot recall >= {pct(min_macro_recall)} (observed: {pct(macro_bot_recall)}) [run_mode: {run_mode}]", macro_recall_ok),
-        (f"p95 paired overhead < {max_overhead_ms:.0f} ms", overhead_ok),
+        (f"Human FPR <= {pct(max_human_fpr)} (observed: {pct(unified_fpr['point'] or 0.0)})", human_fpr_ok),
+        (f"Macro-average bot recall >= {pct(min_macro_recall)} over all clients (observed: {pct(unified_macro)}) [run_mode: {run_mode}]", macro_recall_ok),
+        (f"p95 paired overhead < {max_overhead_ms:.0f} ms" + ("" if have_latency else " (no latency data: FAIL)"), overhead_ok),
     ]
+
+    revised = None
+    if gate_cfg is not None:
+        expected_identity = (frozen_manifest or {}).get("active_deployment") or {}
+        revised = cm.revised_gates(gate_cfg, cm_m, events, expected_identity, gateway_overhead_p95_ms)
+    if json_sink is not None:
+        json_sink.update({"run_id": run_id, "shadow_metrics": cm_m, "failure_records": failures,
+                          "gates": [{"gate": n, "pass": bool(p)} for n, p in gates], "revised_gates": revised})
     all_passed = True
     for name, passed in gates:
         status_str = "PASS" if passed else "FAIL"
         if not passed:
             all_passed = False
         lines.append(f"{name}: {status_str}")
+
+    if revised is not None:
+        lines.append("")
+        lines.append(f"## Revised Gates ({gate_cfg.get('gates_version')})")
+        lines.append("")
+        for name, g in revised.items():
+            lines.append(f"{name}: {'PASS' if g['pass'] else 'FAIL'}")
 
     lines.append("")
     if all_passed:
@@ -702,6 +745,9 @@ def main():
     manifest, client_manifest = load_manifest(args.manifest)
     run_id = manifest.get("run_id")
     telemetry = load_telemetry(args.telemetry, run_id)
+    events = cm.load_events(args.telemetry, run_id)
+    gate_cfg = cm.load_gate_config(args.gates) if args.gates and Path(args.gates).exists() else None
+    json_sink = {}
 
     frozen_manifest, frozen_sha, source = load_tagged_frozen_manifest(
         args.tag, args.frozen_manifest
@@ -718,7 +764,13 @@ def main():
         manifest_source=source,
         allow_dirty=args.allow_dirty,
         run_mode=args.run_mode,
+        events=events,
+        gate_cfg=gate_cfg,
+        gateway_overhead_p95_ms=args.gateway_overhead_p95_ms,
+        json_sink=json_sink,
     )
+    if args.json_out:
+        Path(args.json_out).write_text(json.dumps(json_sink, indent=2, default=str) + "\n", encoding="utf-8")
 
     print(report)
     if args.report:

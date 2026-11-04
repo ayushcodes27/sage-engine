@@ -1,0 +1,189 @@
+{
+  "protocol": {
+    "path": "configs/offline_protocol_v1.json",
+    "sha256": "1725e586b74a368d774d8760d65a4486ca99d83ef1b8df4949b505ec3731682d"
+  },
+  "inputs": {
+    "session_table_sha256": "f5cac61fc69217f8e451dc19818a73ddf6c908ee389c14d64879cc111a78ee06",
+    "prefix_paths_sha256": "6eb16b70a084031da9e424924302a181e7e52aa325a245b3533bb1d11fd0c946",
+    "script_sha256": "c71463ab513081202b3c071cbf172e5099ac08b56c4794034096a23097d68b17",
+    "seed": 42,
+    "bootstrap_resamples": 2000
+  },
+  "model": {
+    "order": 1,
+    "min_train_sessions_per_path": 5,
+    "vocab_size": 8661,
+    "train_sequences": {
+      "bot": 6506,
+      "human": 36078
+    }
+  },
+  "client_level": {
+    "n_bot": 184,
+    "n_human": 7307,
+    "mixed_label_clients_excluded": 0,
+    "roc_auc": 0.9988545825622839,
+    "roc_auc_ci95": [
+      0.9982268559677143,
+      0.9994080043605916
+    ],
+    "pr_auc": 0.9381311628486793,
+    "pr_auc_ci95": [
+      0.9034326980970037,
+      0.9698479068076922
+    ],
+    "operating_points": {
+      "validation_fpr_le_1pct": {
+        "tp": 184,
+        "fn": 0,
+        "fp": 63,
+        "tn": 7244,
+        "recall": {
+          "k": 184,
+          "n": 184,
+          "point": 1.0,
+          "lower": 0.9801513721157983,
+          "upper": 1.0,
+          "upper_one_sided": 1.0
+        },
+        "fpr": {
+          "k": 63,
+          "n": 7307,
+          "point": 0.008621869440262761,
+          "lower": 0.006631459442923884,
+          "upper": 0.011017811055913755,
+          "upper_one_sided": 0.010623248845676109
+        },
+        "precision": {
+          "k": 184,
+          "n": 247,
+          "point": 0.7449392712550608,
+          "lower": 0.6858080725069257,
+          "upper": 0.7980883158761872,
+          "upper_one_sided": 0.7901997870640531
+        },
+        "threshold": -1.3517358933077885,
+        "test_recall_by_crawler_fold": {
+          "bingbot": {
+            "k": 102,
+            "n": 102,
+            "point": 1.0,
+            "lower": 0.964480673342116,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "google": {
+            "k": 14,
+            "n": 14,
+            "point": 1.0,
+            "lower": 0.7683642383498834,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "java": {
+            "k": 3,
+            "n": 3,
+            "point": 1.0,
+            "lower": 0.2924017738212866,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "mj12bot": {
+            "k": 59,
+            "n": 59,
+            "point": 1.0,
+            "lower": 0.9393910990496601,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "other": {
+            "k": 6,
+            "n": 6,
+            "point": 1.0,
+            "lower": 0.5407418735600995,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          }
+        }
+      },
+      "validation_fpr_le_5pct": {
+        "tp": 184,
+        "fn": 0,
+        "fp": 363,
+        "tn": 6944,
+        "recall": {
+          "k": 184,
+          "n": 184,
+          "point": 1.0,
+          "lower": 0.9801513721157983,
+          "upper": 1.0,
+          "upper_one_sided": 1.0
+        },
+        "fpr": {
+          "k": 363,
+          "n": 7307,
+          "point": 0.04967839058437115,
+          "lower": 0.044808548739588075,
+          "upper": 0.05491135798566902,
+          "upper_one_sided": 0.054062917860216296
+        },
+        "precision": {
+          "k": 184,
+          "n": 547,
+          "point": 0.33638025594149906,
+          "lower": 0.2968484487924898,
+          "upper": 0.37769119192349326,
+          "upper_one_sided": 0.37112659756756733
+        },
+        "threshold": -2.068630468661489,
+        "test_recall_by_crawler_fold": {
+          "bingbot": {
+            "k": 102,
+            "n": 102,
+            "point": 1.0,
+            "lower": 0.964480673342116,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "google": {
+            "k": 14,
+            "n": 14,
+            "point": 1.0,
+            "lower": 0.7683642383498834,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "java": {
+            "k": 3,
+            "n": 3,
+            "point": 1.0,
+            "lower": 0.2924017738212866,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "mj12bot": {
+            "k": 59,
+            "n": 59,
+            "point": 1.0,
+            "lower": 0.9393910990496601,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          },
+          "other": {
+            "k": 6,
+            "n": 6,
+            "point": 1.0,
+            "lower": 0.5407418735600995,
+            "upper": 1.0,
+            "upper_one_sided": 1.0
+          }
+        }
+      }
+    }
+  },
+  "session_level": {
+    "n": 12935,
+    "roc_auc": 0.99673761113544
+  }
+}

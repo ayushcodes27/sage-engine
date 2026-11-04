@@ -12,12 +12,13 @@ import argparse
 import hashlib
 import json
 import os
+import platform
 import random
 import subprocess
 import sys
 import time
 import uuid
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict
 
@@ -28,6 +29,8 @@ GATEWAY_URL = os.getenv("SAGE_GATEWAY_URL", "http://localhost:8083")
 ML_SERVICE_URL = os.getenv("SAGE_ML_URL", "http://localhost:8000")
 RUN_ID = f"diverse-{uuid.uuid4().hex[:8]}"
 MAX_WORKERS = max(1, int(os.getenv("DIVERSE_MAX_WORKERS", "3")))
+# Probe secret comes from the environment only; it is never written to the manifest or to disk.
+PROBE_SECRET = os.getenv("SAGE_PROBE_SECRET", "")
 
 # Ensure valid routes against mock-target-site/server.js before scoring.
 HTML_PATHS = ["/", "/products", "/cart", "/products/12", "/products/34"]
@@ -147,6 +150,19 @@ def check_service_health(expected_identity: Dict[str, Any], stage: str = "Pre-ru
             if str(exp_val) != str(obs_val):
                 mismatches.append(f"{exp_key}: expected {exp_val}, observed {obs_val}")
 
+    # Additional shadow models (campaign C): the service must run exactly the models the manifest names.
+    want_extra = {x["name"]: x for x in expected_identity.get("extra_shadows", [])}
+    got_extra = {x["name"]: x for x in data.get("extra_shadows", [])}
+    if set(want_extra) != set(got_extra):
+        mismatches.append(f"extra_shadows: expected {sorted(want_extra)}, observed {sorted(got_extra)}")
+    for name, w in want_extra.items():
+        g = got_extra.get(name, {})
+        for field in ("sha256", "contract_hash", "feature_list_hash"):
+            if str(w.get(field)) != str(g.get(field)):
+                mismatches.append(f"extra_shadows[{name}].{field}: expected {w.get(field)}, observed {g.get(field)}")
+        if g.get("threshold") is None or abs(float(w["threshold"]) - float(g["threshold"])) > 1e-9:
+            mismatches.append(f"extra_shadows[{name}].threshold: expected {w['threshold']}, observed {g.get('threshold')}")
+
     if mismatches:
         print(f"[-] CRITICAL: {stage} ML Service Identity Mismatch against frozen manifest!")
         for m in mismatches:
@@ -193,16 +209,19 @@ def fetch(session, path):
 
 
 def clear_test_redis_cache():
-    try:
-        import redis
-        r = redis.Redis(host=os.getenv("REDIS_HOST", "localhost"), port=6379, socket_timeout=1)
-        for pattern in ["sage:ml-decision:*", "sage:timestamps:*", "sage:paths:*", "sage:telemetry:*"]:
-            keys = list(r.scan_iter(match=pattern, count=100))
-            if keys:
-                r.delete(*keys)
-        print("Cleared test Redis state.")
-    except Exception as e:
-        print(f"Note: Redis state clear skipped ({e}); fresh per-run IPs ensure clean evaluation state.")
+    """
+    Deletes ALL sage:* keys (first_seen, reqcount, scoring locks, subnet counters included) in the stack's
+    Redis container. Goes through `docker exec` so it can never hit a different Redis on localhost:6379.
+    """
+    container = os.getenv("SAGE_REDIS_CONTAINER", "sage-redis")
+    script = "redis-cli --scan --pattern 'sage:*' | xargs -r -n 500 redis-cli DEL | awk '{s+=$1} END {print s+0}'"
+    res = subprocess.run(["docker", "exec", container, "sh", "-c", script], capture_output=True, text=True)
+    if res.returncode != 0:
+        print(f"[-] ERROR: could not clear Redis in container {container}: {res.stderr.strip()}")
+        sys.exit(1)
+    deleted = int(res.stdout.strip() or 0)
+    print(f"Cleared test Redis state ({deleted} sage:* keys in {container}).")
+    return {"cleared": True, "container": container, "deleted_keys": deleted}
 
 
 def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False, seed=None):
@@ -228,17 +247,20 @@ def run_profile(profile_name, client_id, profile_matrix, is_dry_run=False, seed=
     requests_made = 0
     status_counts = {}
 
+    probe_headers = {"X-SAGE-Probe": "true", "X-SAGE-Probe-Secret": PROBE_SECRET, "X-SAGE-Sync-Score": "true"}
+
     def tracked_fetch(path, is_probe=False):
         nonlocal requests_made
         if is_probe:
-            session.headers["X-SAGE-Probe"] = "true"
+            session.headers.update(probe_headers)
         try:
             status_code = fetch(session, path)
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"Connection error on {path}: {e}") from e
         finally:
             if is_probe:
-                session.headers.pop("X-SAGE-Probe", None)
+                for h in probe_headers:
+                    session.headers.pop(h, None)
         status_counts[str(status_code)] = status_counts.get(str(status_code), 0) + 1
         requests_made += 1
 
@@ -332,6 +354,8 @@ def parse_args():
     parser.add_argument("--manifest-path", help="Custom output manifest path")
     parser.add_argument("--frozen-manifest", default=str(BASE_DIR / "ml_pipeline" / "models" / "frozen_models_manifest.json"))
     parser.add_argument("--campaign-config", default=str(BASE_DIR / "final_campaign_config.json"), help="Path to campaign configuration JSON")
+    parser.add_argument("--allow-dirty", action="store_true", help="Allow running with uncommitted git changes (Reviewer Item 14)")
+    parser.add_argument("--allow-no-probe-secret", action="store_true", help="Run without SAGE_PROBE_SECRET (final probe re-score is then ignored by the gateway)")
     return parser.parse_args()
 
 
@@ -376,7 +400,7 @@ def main():
 
     # 3. Path Validation & Redis Cache Clear
     validate_target_paths()
-    clear_test_redis_cache()
+    redis_clear = clear_test_redis_cache()
 
     # Read and hash campaign configuration bytes first
     campaign_config_file = Path(args.campaign_config)
@@ -420,11 +444,13 @@ def main():
     else:
         configured_profiles = campaign_config_data.get("profiles", list(BASE_PROFILE_MATRIX.keys()))
         clients_per_prof = int(campaign_config_data.get("clients_per_profile", 50))
+        # Optional per-profile client counts (e.g. campaign C: 75 per human profile, 50 per bot profile)
+        per_profile_counts = campaign_config_data.get("clients_per_profile_overrides", {})
         profile_matrix = {}
         for p in configured_profiles:
             if p in BASE_PROFILE_MATRIX:
                 p_dict = dict(BASE_PROFILE_MATRIX[p])
-                p_dict["client_count"] = clients_per_prof
+                p_dict["client_count"] = int(per_profile_counts.get(p, clients_per_prof))
                 profile_matrix[p] = p_dict
             else:
                 profile_matrix[p] = {
@@ -442,10 +468,37 @@ def main():
     evaluator_path = BASE_DIR / "ml_pipeline" / "scripts" / "evaluate" / "evaluate_shadow.py"
     evaluator_hash = compute_file_sha256(evaluator_path) if evaluator_path.exists() else "unknown"
 
+    # Reviewer Item 14: Enforce reproducibility & git commit stamping
+    try:
+        git_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        git_status = subprocess.check_output(["git", "status", "--porcelain"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        git_dirty = len(git_status) > 0
+    except Exception:
+        git_commit = "unknown"
+        git_dirty = False
+
+    if git_dirty and not args.allow_dirty:
+        print("[-] ERROR: Working git tree has uncommitted modifications. Commit them or pass --allow-dirty.")
+        sys.exit(1)
+    if not PROBE_SECRET and not args.allow_no_probe_secret:
+        print("[-] ERROR: SAGE_PROBE_SECRET is not set; the gateway would ignore the final probe. Set it or pass --allow-no-probe-secret.")
+        sys.exit(1)
+
     run_mode_val = "dry_run" if args.dry_run else campaign_config_data.get("run_mode", "final")
 
     manifest = {
         "run_id": RUN_ID,
+        "git_commit": git_commit,
+        "git_dirty": git_dirty,
+        "allow_dirty": bool(args.allow_dirty),
+        "probe_secret_configured": bool(PROBE_SECRET),
+        "max_workers": MAX_WORKERS,
+        "argv": sys.argv[1:],
+        "environment": {
+            "python": platform.python_version(),
+            "requests": requests.__version__,
+            "platform": platform.platform(),
+        },
         "run_mode": run_mode_val,
         "gateway_url": GATEWAY_URL,
         "enforcement": "disabled_required",
@@ -464,7 +517,9 @@ def main():
         "profile_matrix": profile_matrix,
         "target_validation_paths": TARGET_VALIDATION_PATHS,
         "scoring_probe_path": SCORING_PROBE_PATH,
+        "redis_clear": redis_clear,
         "clients": {},
+        "failed_clients": {},
     }
 
     profile_seeds = campaign_config_data.get("profile_seeds", {})
@@ -485,18 +540,18 @@ def main():
                     "scoring_probe_path": SCORING_PROBE_PATH,
                 }
                 tasks.append(
-                    executor.submit(run_profile, profile_name, client_id, profile_matrix, args.dry_run, p_seed)
+                    (executor.submit(run_profile, profile_name, client_id, profile_matrix, args.dry_run, p_seed), client_id)
                 )
 
         print("Waiting for all clients to finish...")
-        for future in as_completed(tasks):
+        for future, client_id in tasks:
             try:
                 result = future.result()
                 manifest["clients"][result["client_id"]]["request_count"] = result["request_count"]
                 manifest["clients"][result["client_id"]]["status_counts"] = result["status_counts"]
             except Exception as e:
-                print(f"Client failed with exception: {e}")
-                continue
+                print(f"[-] Client {client_id} failed with exception: {e}")
+                manifest["failed_clients"][client_id] = str(e)
 
     # 4. Post-run Health & Identity Assertion
     check_service_health(expected_identity, stage="Post-run")
@@ -530,22 +585,19 @@ def main():
         with open(out_manifest_file, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
         print(f"Traffic generation complete. Manifest saved to {out_manifest_file}")
-    elif args.dry_run:
+    else:
+        # Every run gets its own manifest. load-tests/diverse_manifest.json and shadow_manifest.json
+        # hold run B's archived manifest and must never be overwritten.
         runs_dir = BASE_DIR / "load-tests" / "runs"
         runs_dir.mkdir(parents=True, exist_ok=True)
         out_manifest_file = runs_dir / f"{RUN_ID}_manifest.json"
         with open(out_manifest_file, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2)
         print(f"Traffic generation complete. Manifest saved to {out_manifest_file}")
-    else:
-        out_manifest_file = BASE_DIR / "load-tests" / "diverse_manifest.json"
-        shadow_manifest_file = BASE_DIR / "load-tests" / "shadow_manifest.json"
-        out_manifest_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(out_manifest_file, "w", encoding="utf-8") as f:
-            json.dump(manifest, f, indent=2)
-        with open(shadow_manifest_file, "w", encoding="utf-8") as f:
-            json.dump(manifest, f, indent=2)
-        print(f"Traffic generation complete. Manifest saved to {out_manifest_file} and {shadow_manifest_file}")
+
+    if manifest["failed_clients"]:
+        print(f"[-] {len(manifest['failed_clients'])} client(s) failed; the run is incomplete.")
+        sys.exit(2)
 
 
 if __name__ == "__main__":

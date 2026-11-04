@@ -625,6 +625,115 @@
         "SAGE_NonStatic_Navigation_Gap": 1.0,
         "SAGE_NonStatic_Long_Gap_Ratio": 1.0
       }
+    },
+    {
+      "case_id": "basket_is_not_cart_under_eclog_rule",
+      "description": "zanbil-style /basket path must NOT count as cart under the EClog training rule",
+      "requests": [
+        {
+          "timestamp_ms": 5000000,
+          "path": "/products/1",
+          "raw_path": "/products/1"
+        },
+        {
+          "timestamp_ms": 5001000,
+          "path": "/basket/view",
+          "raw_path": "/basket/view"
+        },
+        {
+          "timestamp_ms": 5002000,
+          "path": "/basket/add",
+          "raw_path": "/basket/add?id=3"
+        }
+      ],
+      "eval_at_request": 3,
+      "expected_features": {
+        "SAGE_Session_Depth": 3.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 1.5,
+        "SAGE_Behavioral_Diversity": 1.0986122886681096,
+        "SAGE_Endpoint_Concentration": 0.3333333333333333,
+        "SAGE_Cart_Ratio": 0.0,
+        "SAGE_Asset_Skip_Ratio": 1.0,
+        "SAGE_NonStatic_Navigation_Gap": 1.0,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
+    },
+    {
+      "case_id": "query_string_static_and_cart",
+      "description": "query strings are stripped before the static and cart rules",
+      "requests": [
+        {
+          "timestamp_ms": 6000000,
+          "path": "/home",
+          "raw_path": "/home"
+        },
+        {
+          "timestamp_ms": 6000100,
+          "path": "/assets/app.js",
+          "raw_path": "/assets/app.js?v=12"
+        },
+        {
+          "timestamp_ms": 6000200,
+          "path": "/static/x",
+          "raw_path": "/static/x?cache=1"
+        },
+        {
+          "timestamp_ms": 6001000,
+          "path": "/checkout",
+          "raw_path": "/checkout?step=2"
+        },
+        {
+          "timestamp_ms": 6002500,
+          "path": "/home",
+          "raw_path": "/home"
+        }
+      ],
+      "eval_at_request": 5,
+      "expected_features": {
+        "SAGE_Session_Depth": 3.0,
+        "SAGE_Temporal_Variance": 0.2,
+        "SAGE_Request_Velocity": 1.2,
+        "SAGE_Behavioral_Diversity": 0.6365141682948128,
+        "SAGE_Endpoint_Concentration": 0.6666666666666666,
+        "SAGE_Cart_Ratio": 0.2,
+        "SAGE_Asset_Skip_Ratio": 0.6,
+        "SAGE_NonStatic_Navigation_Gap": 1.25,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
+    },
+    {
+      "case_id": "uppercase_paths_canonicalised",
+      "description": "paths are lower-cased before the static and cart rules",
+      "requests": [
+        {
+          "timestamp_ms": 7000000,
+          "path": "/Shop/CART",
+          "raw_path": "/Shop/CART"
+        },
+        {
+          "timestamp_ms": 7000300,
+          "path": "/IMG/Logo.PNG",
+          "raw_path": "/IMG/Logo.PNG"
+        },
+        {
+          "timestamp_ms": 7001200,
+          "path": "/Shop/Item/9",
+          "raw_path": "/Shop/Item/9"
+        }
+      ],
+      "eval_at_request": 3,
+      "expected_features": {
+        "SAGE_Session_Depth": 2.0,
+        "SAGE_Temporal_Variance": 0.0,
+        "SAGE_Request_Velocity": 1.6666666666669192,
+        "SAGE_Behavioral_Diversity": 0.6931471805599453,
+        "SAGE_Endpoint_Concentration": 0.5,
+        "SAGE_Cart_Ratio": 0.3333333333333333,
+        "SAGE_Asset_Skip_Ratio": 0.6666666666666667,
+        "SAGE_NonStatic_Navigation_Gap": 1.199999999999818,
+        "SAGE_NonStatic_Long_Gap_Ratio": 1.0
+      }
     }
   ]
 }

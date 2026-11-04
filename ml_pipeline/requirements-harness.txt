@@ -1,0 +1,2 @@
+# Load-test harness (traffic generator, benchmark, harness tests); not part of the sage-ml image
+requests==2.32.3

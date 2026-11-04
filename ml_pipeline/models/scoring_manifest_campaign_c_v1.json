@@ -1,0 +1,24 @@
+{
+  "manifest_version": "campaign_c_v1",
+  "note": "identity the generator asserts against the sage-ml /health endpoint before and after the run",
+  "active_deployment": {
+    "prod_model_name": "sage_binary_model",
+    "shadow_model_name": "eclog_timing_binary_model",
+    "prod_model_sha256": "a979d5c2f6d463851fbc02c6a5a4892a05bb34bc644e977e42712bba4c9bf70f",
+    "shadow_model_sha256": "7b29ee3b574ce43cf9984408ff2d19096a6205c6389deff907cebf67e8e7f193",
+    "shadow_contract_name": "contract_eclog_timing_8feat",
+    "shadow_contract_hash": "2fb47afb4dae24d3345aa0d1f270e622477da729e9f9c64a7cc001edc1260dfc",
+    "shadow_feature_list_hash": "8cd1accfb56c5e68099d89f9bfe3b84bc849da63f5a44d3dd6cb953b1cf29e2c",
+    "shadow_threshold": 0.35,
+    "extra_shadows": [
+      {
+        "name": "eclog6m_prefix_8feature_v1",
+        "file": "eclog6m_prefix_8feature_v1.pkl",
+        "sha256": "c253bdec80fac63f0568d818ecbb7ca35d3e5748b543f9d5d0a79395fe00e168",
+        "contract_hash": "2fb47afb4dae24d3345aa0d1f270e622477da729e9f9c64a7cc001edc1260dfc",
+        "feature_list_hash": "8cd1accfb56c5e68099d89f9bfe3b84bc849da63f5a44d3dd6cb953b1cf29e2c",
+        "threshold": 0.017599599435925487
+      }
+    ]
+  }
+}

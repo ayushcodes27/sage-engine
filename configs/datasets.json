@@ -1,0 +1,33 @@
+{
+  "_comment": "Pinned public datasets for B3. Checksums are the Dataverse-published MD5 values (dataset metadata API). Raw logs are never committed: /ml_pipeline/data/* is gitignored.",
+  "eclog": {
+    "doi": "doi:10.7910/DVN/Z834IK",
+    "dataverse_version": "1.2",
+    "release_time": "2020-10-14T19:27:41Z",
+    "licence": "CC0 with additional terms (see Dataverse terms of use); derived features only are committed",
+    "restricted": false,
+    "files": {
+      "eclog_1day.csv": {
+        "file_id": 4003436,
+        "download_format": "original",
+        "md5": "8542ef2002e49f8a9e594c075758c109",
+        "size": null,
+        "note": "uploaded original (input of label_eclog.py); for ingested tabular files Dataverse publishes the MD5 of the original upload, not of the .tab"
+      },
+      "eclog.zip": {
+        "file_id": 4004477,
+        "download_format": null,
+        "md5": "fd6ab82d63d252c39650a913c3d7b511",
+        "size": 597837816,
+        "note": "six-month log"
+      }
+    },
+    "access": "Dataverse guestbook 356 (name, email, institution, position required) gates every file download; anonymous API download is refused (HTTP 400 guestbook error, or 403 for some clients). Download in a browser from https://doi.org/10.7910/DVN/Z834IK and place the files in ml_pipeline/data/ under the names below; fetch_datasets.py then verifies them."
+  },
+  "zanbil": {
+    "doi": "doi:10.7910/DVN/3QBYB5",
+    "licence": "Restricted on Dataverse; access request and API token required; never redistributed",
+    "restricted": true,
+    "files": {}
+  }
+}
