@@ -135,3 +135,56 @@ def test_score_completed_event_counts_as_score():
     rows = cm.client_table(events + [done], clients({"fast_scraper-00": "bot"}), "shadow_eclog_timing_8feat")
     assert rows[0]["scored"] and rows[0]["flagged"]
     assert cm.failure_records(events + [done, failed]) == 1
+
+
+# ── additional shadow models (campaign C, audit N25) ──────────────────────────
+
+NAME = "eclog6m_prefix_8feature_v1"
+EXTRA_ID = {"sha256": "x", "contract_hash": "xc", "feature_list_hash": "xf", "threshold": 0.0176}
+
+
+def extra_ev(cid, ts, depth, prob, status="ok", ident=None, name=NAME):
+    e = ev(cid, ts, depth, scored=True, flagged=False)
+    entry = {"name": name, "status": status, "bot_probability": prob, "is_bot": prob is not None and prob >= 0.0176,
+             "model_sha256": "x", "contract_hash": "xc", "feature_list_hash": "xf", "threshold": 0.0176}
+    entry.update(ident or {})
+    e["mlMetadata"]["extraShadows"] = json.dumps([{"name": "other", "status": "ok", "bot_probability": 1.0, "is_bot": True}, entry])
+    return e
+
+
+def extra_client(cid, prob):
+    return [ev(cid, i, float(i + 1)) for i in range(21)] + [extra_ev(cid, 21, 22.0, prob)]
+
+
+def test_extra_model_flags_use_the_named_entry_only():
+    events = extra_client("fast_scraper-00", 0.5) + extra_client("normal_browser-00", 0.001)
+    rows = cm.client_table(events, clients({"fast_scraper-00": "bot", "normal_browser-00": "human"}), cm.extra_model(NAME))
+    assert [(r["client_id"], r["scored"], r["flagged"]) for r in rows] == [
+        ("fast_scraper-00", True, True), ("normal_browser-00", True, False)]
+
+
+def test_extra_model_secondary_threshold_recomputes_flag_from_probability():
+    events = extra_client("normal_browser-00", 0.005)
+    c = clients({"normal_browser-00": "human"})
+    assert cm.client_table(events, c, cm.extra_model(NAME))[0]["flagged"] is False  # below 0.0176
+    assert cm.client_table(events, c, cm.extra_model(NAME, threshold=0.001))[0]["flagged"] is True
+
+
+def test_extra_identity_must_equal_manifest_and_be_single():
+    ok = extra_client("normal_browser-00", 0.1)
+    assert cm.identity_check_extra(ok, NAME, EXTRA_ID)["matches_manifest"]
+    bad = ok + [extra_ev("normal_browser-00", 22, 23.0, 0.1, ident={"model_sha256": "tampered"})]
+    assert not cm.identity_check_extra(bad, NAME, EXTRA_ID)["matches_manifest"]
+    assert not cm.identity_check_extra(ok, NAME, {**EXTRA_ID, "threshold": 0.35})["matches_manifest"]
+
+
+def test_extra_shadow_error_counts_as_gate_r3_failure():
+    events = extra_client("normal_browser-00", 0.1) + [extra_ev("normal_browser-00", 22, 23.0, None, status="error")]
+    assert cm.failure_records(events) == 1
+
+
+def test_revised_gates_extra_use_the_extra_models_identity_and_timing():
+    events = extra_client("fast_scraper-00", 0.5)
+    metrics = cm.model_metrics(cm.client_table(events, clients({"fast_scraper-00": "bot"}), cm.extra_model(NAME)))
+    g = cm.revised_gates_extra(GATES, metrics, events, NAME, EXTRA_ID, IDENTITY, 10.0)
+    assert g["R1_identity"]["pass"] and g["R4_timing_features"]["pass"]

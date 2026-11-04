@@ -5,8 +5,8 @@
     "original_evaluator_sha256": "367cff60867249b109ddef302bab163179e5235eea46a80bc366bc925fffdf8d",
     "original_gate_config_sha256": "f03616e139c0a0ecc48db7a70bd82d6693aa513c4b8e83270d641dc6dcac06f9",
     "revised_gate_config": "configs/gates_revised_v1.json",
-    "revised_gate_config_sha256": "bdf332c1307cb25037e9e72b3acdadc8411d66f8b2355bdeb7a75c39455667ba",
-    "campaign_metrics_sha256": "4aa78ce2901455a235dff4f7b056020783ab2bed5e1b273bb2475f07c4ca6640",
+    "revised_gate_config_sha256": "f8ac2fedcd47d07793aa420b646cec782c3725d1b417b03a9696f8b148be877e",
+    "campaign_metrics_sha256": "23fd1ff911ac304bcd91272f4c65f274dc3071476ffa20b55c8d7de2356f486c",
     "regrade_script_sha256": "faeba9bbe27879e1051ae801408fb629b170475040aee6ed77ecfac65f63e299"
   },
   "runs": {

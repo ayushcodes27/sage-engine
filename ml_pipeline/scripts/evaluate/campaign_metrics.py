@@ -93,6 +93,34 @@ MODELS = {
     "prod_sage_binary_7feat": (prod_scored, prod_flagged),
 }
 
+EXTRA_IDENTITY_FIELDS = ["model_sha256", "contract_hash", "feature_list_hash", "threshold"]
+
+
+def extra_entry(e, name):
+    """The additional-shadow result called `name` on this event (mlMetadata.extraShadows is a JSON array string)."""
+    raw = ml(e).get("extraShadows")
+    if not raw:
+        return None
+    for entry in (json.loads(raw) if isinstance(raw, str) else raw):
+        if entry.get("name") == name:
+            return entry
+    return None
+
+
+def extra_model(name, threshold=None):
+    """(scored, flagged) for an additional shadow model (campaign C). With `threshold`, the flag is recomputed
+    from the logged probability (a pre-declared secondary operating point); otherwise the service's flag is used."""
+    def scored(e):
+        x = extra_entry(e, name)
+        return bool(x) and x.get("status") == "ok" and x.get("bot_probability") is not None
+
+    def flagged(e):
+        if not scored(e):
+            return False
+        x = extra_entry(e, name)
+        return x["bot_probability"] >= threshold if threshold is not None else bool(x.get("is_bot"))
+    return scored, flagged
+
 
 # ── client table ──────────────────────────────────────────────────────────────
 
@@ -114,7 +142,7 @@ def unscored_reason(evs: List[dict]) -> str:
 
 
 def client_table(events: Iterable[dict], clients: Dict[str, dict], model: str) -> List[dict]:
-    scored_fn, flagged_fn = MODELS[model]
+    scored_fn, flagged_fn = MODELS[model] if isinstance(model, str) else model
     by_client: Dict[str, List[dict]] = {}
     for e in events:
         by_client.setdefault(e.get("userId"), []).append(e)
@@ -188,7 +216,10 @@ def failure_records(events: Iterable[dict]) -> int:
     for e in events:
         m = ml(e)
         status = (e.get("response") or {}).get("status") or 0
-        if m.get("evaluationStatus") in FAILURE_STATUSES or m.get("shadowStatus") in ("timeout", "error") or status >= 500:
+        raw = m.get("extraShadows")
+        extra_bad = bool(raw) and any(x.get("status") != "ok" for x in (json.loads(raw) if isinstance(raw, str) else raw))
+        if (m.get("evaluationStatus") in FAILURE_STATUSES or m.get("shadowStatus") in ("timeout", "error")
+                or extra_bad or status >= 500):
             n += 1
     return n
 
@@ -214,6 +245,38 @@ def identity_check(events: Iterable[dict], expected: dict) -> dict:
     )
     match = len(tuples) == 1 and missing == 0 and _tuple_eq(next(iter(tuples)), want)
     return {"distinct_tuples": len(tuples), "records_missing_identity": missing, "matches_manifest": match}
+
+
+def identity_check_extra(events: Iterable[dict], name: str, expected: dict) -> dict:
+    """Identity of an additional shadow: every scored record carries one identical tuple equal to the manifest."""
+    tuples, missing = Counter(), 0
+    for e in events:
+        x = extra_entry(e, name)
+        if not x or x.get("status") != "ok":
+            continue
+        t = tuple(x.get(f) for f in EXTRA_IDENTITY_FIELDS)
+        if any(v is None for v in t):
+            missing += 1
+        else:
+            tuples[t] += 1
+    want = (expected["sha256"], expected["contract_hash"], expected["feature_list_hash"], float(expected["threshold"]))
+    ok = (len(tuples) == 1 and missing == 0 and list(next(iter(tuples)))[:3] == list(want[:3])
+          and abs(float(next(iter(tuples))[3]) - want[3]) <= 1e-9)
+    return {"distinct_tuples": len(tuples), "records_missing_identity": missing, "matches_manifest": ok}
+
+
+def revised_gates_extra(gate_cfg: dict, metrics: dict, events: List[dict], name: str, expected_extra: dict,
+                        expected_identity: dict, gateway_overhead_p95_ms: Optional[float]) -> Dict[str, dict]:
+    """Revised gates for an additional shadow model: R1 and R4 use that model's own records; R2, R3, R5-R7 as usual
+    (`metrics` must come from the same model's client table)."""
+    out = revised_gates(gate_cfg, metrics, events, expected_identity, gateway_overhead_p95_ms)
+    ident = identity_check_extra(events, name, expected_extra)
+    out["R1_identity"] = {"observed": ident, "pass": ident["matches_manifest"]}
+    scored = extra_model(name)[0]
+    active = any(scored(e) and ((e.get("features") or {}).get("nonStaticNavigationGap") or 0) > 0
+                 or scored(e) and ((e.get("features") or {}).get("nonStaticLongGapRatio") or 0) > 0 for e in events)
+    out["R4_timing_features"] = {"observed": active, "pass": active}
+    return out
 
 
 def _tuple_eq(obs, want):
