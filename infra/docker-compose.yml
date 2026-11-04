@@ -107,6 +107,8 @@ services:
     environment:
       - REDIS_HOST=sage-redis
       - REDIS_PORT=6379
+      # comma-separated model files scored as additional shadows (campaign C); must be in a frozen manifest
+      - EXTRA_SHADOW_MODEL_FILES=${EXTRA_SHADOW_MODEL_FILES:-}
     depends_on:
       redis:
         condition: service_healthy

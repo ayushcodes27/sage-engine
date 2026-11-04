@@ -150,6 +150,19 @@ def check_service_health(expected_identity: Dict[str, Any], stage: str = "Pre-ru
             if str(exp_val) != str(obs_val):
                 mismatches.append(f"{exp_key}: expected {exp_val}, observed {obs_val}")
 
+    # Additional shadow models (campaign C): the service must run exactly the models the manifest names.
+    want_extra = {x["name"]: x for x in expected_identity.get("extra_shadows", [])}
+    got_extra = {x["name"]: x for x in data.get("extra_shadows", [])}
+    if set(want_extra) != set(got_extra):
+        mismatches.append(f"extra_shadows: expected {sorted(want_extra)}, observed {sorted(got_extra)}")
+    for name, w in want_extra.items():
+        g = got_extra.get(name, {})
+        for field in ("sha256", "contract_hash", "feature_list_hash"):
+            if str(w.get(field)) != str(g.get(field)):
+                mismatches.append(f"extra_shadows[{name}].{field}: expected {w.get(field)}, observed {g.get(field)}")
+        if g.get("threshold") is None or abs(float(w["threshold"]) - float(g["threshold"])) > 1e-9:
+            mismatches.append(f"extra_shadows[{name}].threshold: expected {w['threshold']}, observed {g.get('threshold')}")
+
     if mismatches:
         print(f"[-] CRITICAL: {stage} ML Service Identity Mismatch against frozen manifest!")
         for m in mismatches:
