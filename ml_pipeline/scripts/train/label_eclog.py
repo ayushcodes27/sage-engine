@@ -56,18 +56,6 @@ def get_label_and_confidence(ua):
         
     return 'unknown', 'none'
 
-def extract_path(uri):
-    """Extracts and canonicalizes the path portion from a URI."""
-    if pd.isna(uri):
-        return "/"
-
-    value = str(uri).strip()
-    path = urlsplit(value).path or "/"
-    path = re.sub(r"/+", "/", path)
-    if len(path) > 1 and path.endswith("/"):
-        path = path[:-1]
-    return path.lower() or "/"
-
 def is_static_asset(uri_path):
     if pd.isna(uri_path): return False
     return uri_path.startswith('/static/') or uri_path.endswith(STATIC_ASSET_EXTS)

@@ -59,6 +59,10 @@ public class MLInferenceFilter implements GatewayFilter {
     @org.springframework.beans.factory.annotation.Value("${sage.ml.failure-cooldown-ms:5000}")
     private long failureCooldownMs = 5000;
 
+    /** Max wait for one inference-service response (env SAGE_ML_REQUEST_TIMEOUT_MS); default unchanged at 1000 ms. */
+    @org.springframework.beans.factory.annotation.Value("${sage.ml.request-timeout-ms:1000}")
+    private long mlRequestTimeoutMs = 1000;
+
     @org.springframework.beans.factory.annotation.Value("${sage.ml.shadow-threshold:0.35}")
     private double shadowThreshold = 0.35;
 
@@ -464,7 +468,7 @@ public class MLInferenceFilter implements GatewayFilter {
                     httpClient.sendAsync(mlRequest, HttpResponse.BodyHandlers.ofString());
             HttpResponse<String> mlResponse;
             try {
-                mlResponse = pending.get(1000, TimeUnit.MILLISECONDS);
+                mlResponse = pending.get(mlRequestTimeoutMs, TimeUnit.MILLISECONDS);
             } catch (java.util.concurrent.TimeoutException | InterruptedException e) {
                 pending.cancel(true); // abort the exchange instead of leaving it queued at the inference service
                 throw e;

@@ -8,6 +8,10 @@ Independent verifier that:
 3. Recomputes SHA-256 from disk bytes and asserts exact equality with the tagged manifest
 4. Verifies pip-freeze environment against recorded versions
 Exits 0 if all assertions hold; exits 1 with detailed failure report otherwise.
+
+Scoring-path source files (under sage-gateway/ and ml_pipeline/inference_service/) were deliberately revised after
+the tag; as in the CI integrity step they are listed for information, not failed. Models, contracts and datasets must
+still match the tag byte for byte. Pass --strict to fail on every frozen file, as before.
 """
 
 import argparse
@@ -19,6 +23,9 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2].parent
+
+# Same rule as the "Verify Frozen Model & Contract Integrity" step in .github/workflows/ci.yml.
+SCORING_PATH_PREFIXES = ("sage-gateway/", "ml_pipeline/inference_service/")
 
 
 def sha256_bytes(b: bytes) -> str:
@@ -45,10 +52,12 @@ def parse_args():
     parser.add_argument("--tag", default="v2-frozen-models-v6", help="Git tag containing frozen manifest")
     parser.add_argument("--local-manifest", help="Optional fallback path to local manifest if tag is not yet created")
     parser.add_argument("--allow-dirty", action="store_true", help="Allow dirty working tree, warning and listing file hashes")
+    parser.add_argument("--strict", action="store_true",
+                        help="Also fail on scoring-path source files revised since the tag (the pre-revision behaviour)")
     return parser.parse_args()
 
 
-def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> bool:
+def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False, strict: bool = False) -> bool:
     print(f"[*] Verifying frozen files against git tag `{tag}`...")
     
     # 1. Load manifest from git tag
@@ -78,6 +87,7 @@ def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> b
     print(f"[*] Found {len(frozen_files)} frozen files in manifest.")
 
     errors = []
+    revised = []
     for rel_path, expected_sha256 in frozen_files.items():
         disk_path = REPO_ROOT / rel_path
         if not disk_path.exists():
@@ -86,6 +96,11 @@ def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> b
 
         disk_bytes = disk_path.read_bytes()
         disk_sha256 = sha256_bytes(disk_bytes)
+
+        if not strict and rel_path.replace("\\", "/").startswith(SCORING_PATH_PREFIXES):
+            if disk_sha256 != expected_sha256:
+                revised.append(rel_path)
+            continue
 
         if disk_sha256 != expected_sha256:
             errors.append(
@@ -107,13 +122,18 @@ def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> b
             # If tag doesn't exist yet (pre-tag check), skip tag byte comparison
             pass
 
+    if revised:
+        print("[i] Scoring-path files revised since the tag (informational; use --strict to fail on these):")
+        for rel_path in revised:
+            print(f"    - {rel_path}")
+
     if errors:
         print("\n[-] VERIFICATION FAILED:")
         for err in errors:
             print(f"    - {err}")
         return False
 
-    print("[+] All frozen files are byte-identical and hash-verified!")
+    print("[+] All frozen models, contracts and datasets are byte-identical and hash-verified!")
 
     # 2. Check Python environment dependencies (including redis & uvicorn)
     print("\n[*] Verifying critical python package versions...")
@@ -264,7 +284,7 @@ def verify(tag: str, local_manifest: str = None, allow_dirty: bool = False) -> b
 
 def main():
     args = parse_args()
-    success = verify(args.tag, args.local_manifest, allow_dirty=args.allow_dirty)
+    success = verify(args.tag, args.local_manifest, allow_dirty=args.allow_dirty, strict=args.strict)
     sys.exit(0 if success else 1)
 
 

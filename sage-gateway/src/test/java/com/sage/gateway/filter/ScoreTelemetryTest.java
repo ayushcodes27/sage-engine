@@ -64,6 +64,9 @@ class ScoreTelemetryTest {
         ReflectionTestUtils.setField(filter, "expectedContractHash", "ch");
         ReflectionTestUtils.setField(filter, "probeSecret", "secret");
         ReflectionTestUtils.setField(filter, "rescoreFrequency", 20);
+        // The stub answers instantly, but a cold CI runner can take >1 s to serve the first request; these tests
+        // check what is published, not the production timeout, so give the round trip ample headroom.
+        ReflectionTestUtils.setField(filter, "mlRequestTimeoutMs", 10_000L);
 
         features = new HashMap<>();
         features.put("SAGE_Session_Depth", 21.0);

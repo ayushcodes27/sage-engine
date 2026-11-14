@@ -26,6 +26,36 @@ jobs:
       - name: Run Maven Tests
         run: mvn -B test -f sage-gateway/pom.xml
 
+  dashboard:
+    name: Dashboard Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            sage-dashboard/package-lock.json
+            sage-dashboard/sage-ui/package-lock.json
+
+      - name: Install, lint and build the dashboard UI
+        working-directory: sage-dashboard/sage-ui
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
+      - name: Install the telemetry bridge and check its syntax
+        working-directory: sage-dashboard
+        run: |
+          npm ci
+          node --check bridge.js
+
   ml-pipeline:
     name: Python ML & Integrity Suite
     runs-on: ubuntu-latest

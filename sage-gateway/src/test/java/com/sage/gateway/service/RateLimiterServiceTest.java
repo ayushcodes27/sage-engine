@@ -16,7 +16,8 @@ class RateLimiterServiceTest {
         RateLimiterService rateLimiterService = new RateLimiterService(
                 mock(StringRedisTemplate.class),
                 mock(RedisScript.class),
-                new RateLimitProperties()
+                new RateLimitProperties(),
+                new ClientIpResolver(ClientIpResolver.DEFAULT_TRUSTED)
         );
 
         MockHttpServletRequest request = new MockHttpServletRequest();

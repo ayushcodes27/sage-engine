@@ -1,5 +1,6 @@
 package com.sage.gateway.filter;
 
+import com.sage.gateway.service.ClientIpResolver;
 import com.sage.gateway.service.RedisTelemetryService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -18,9 +19,11 @@ public class FastPathFilter implements GatewayFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(FastPathFilter.class);
     private final RedisTelemetryService redisTelemetryService;
+    private final ClientIpResolver clientIpResolver;
 
-    public FastPathFilter(RedisTelemetryService redisTelemetryService) {
+    public FastPathFilter(RedisTelemetryService redisTelemetryService, ClientIpResolver clientIpResolver) {
         this.redisTelemetryService = redisTelemetryService;
+        this.clientIpResolver = clientIpResolver;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class FastPathFilter implements GatewayFilter {
 
     @Override
     public Optional<ResponseEntity<String>> filter(HttpServletRequest request, Map<String, String> config) {
-        String ipAddress = resolveClientIp(request);
+        String ipAddress = clientIpResolver.resolve(request);
         
         // Ensure IP is available for subsequent filters
         request.setAttribute("X-Client-Ip", ipAddress);
@@ -66,21 +69,6 @@ public class FastPathFilter implements GatewayFilter {
         }
 
         return Optional.empty();
-    }
-
-    private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            String firstHop = forwarded.split(",")[0].trim();
-            if (!firstHop.isEmpty()) {
-                return firstHop;
-            }
-        }
-        String realIp = request.getHeader("X-Real-IP");
-        if (realIp != null && !realIp.isBlank()) {
-            return realIp.trim();
-        }
-        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "anonymous";
     }
 
     private ResponseEntity<String> buildErrorResponse(HttpStatus status, String message) {

@@ -70,7 +70,7 @@ services:
 
   # Kafka UI - Optional but helpful for debugging
   kafka-ui:
-    image: provectuslabs/kafka-ui:latest
+    image: provectuslabs/kafka-ui:v0.7.2
     container_name: sage-kafka-ui
     depends_on:
       - kafka
@@ -129,6 +129,10 @@ services:
       - ML_URL=http://sage-ml:8000/predict
       # Supplied from the shell / an uncommitted .env; the generator reads the same variable.
       - SAGE_PROBE_SECRET=${SAGE_PROBE_SECRET:-}
+      # Enables POST /admin/routes (sent as X-SAGE-Admin-Token); unset = admin API disabled
+      - SAGE_ADMIN_TOKEN=${SAGE_ADMIN_TOKEN:-}
+      # Peers allowed to set X-Forwarded-For / X-Real-IP (IPs/CIDRs, or *); unset = loopback + private ranges
+      - SAGE_TRUSTED_PROXIES=${SAGE_TRUSTED_PROXIES:-}
       # off | features | sync | async; only the B2 benchmark changes this
       - SAGE_ML_MODE=${SAGE_ML_MODE:-async}
     depends_on:
@@ -143,7 +147,7 @@ services:
 
   # Prometheus - Metrics Collection
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.16.0
     container_name: sage-prometheus
     ports:
       - "9091:9090"
@@ -160,12 +164,12 @@ services:
 
   # Grafana - Metrics Visualization
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.3.1
     container_name: sage-grafana
     ports:
       - "5050:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana-data:/var/lib/grafana
@@ -177,7 +181,7 @@ services:
 
   # RedisInsight - Redis GUI (Optional)
   redis-insight:
-    image: redis/redisinsight:latest
+    image: redis/redisinsight:3.8.0
     container_name: sage-redis-insight
     ports:
       - "5540:5540"

@@ -20,12 +20,15 @@ public class RateLimiterService {
     private final StringRedisTemplate redisTemplate;
     private final RedisScript<Long> rateLimitScript;
     private final RateLimitProperties rateLimitProperties;
+    private final ClientIpResolver clientIpResolver;
 
 
-    public RateLimiterService(StringRedisTemplate redisTemplate, RedisScript<Long> rateLimitScript, RateLimitProperties rateLimitProperties) {
+    public RateLimiterService(StringRedisTemplate redisTemplate, RedisScript<Long> rateLimitScript,
+                              RateLimitProperties rateLimitProperties, ClientIpResolver clientIpResolver) {
         this.redisTemplate = redisTemplate;
         this.rateLimitScript = rateLimitScript;
         this.rateLimitProperties = rateLimitProperties;
+        this.clientIpResolver = clientIpResolver;
     }
 
 
@@ -64,9 +67,7 @@ public class RateLimiterService {
     }
 
     public String extractClientIp(HttpServletRequest request) {
-        return normalizeClientIp(request.getHeader("X-Forwarded-For"),
-                request.getHeader("X-Real-IP"),
-                request.getRemoteAddr());
+        return clientIpResolver.resolve(request);
     }
 
     private String normalizeClientIp(String... candidates) {

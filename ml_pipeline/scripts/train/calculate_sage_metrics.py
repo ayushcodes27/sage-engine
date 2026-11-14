@@ -14,8 +14,10 @@ from sklearn.metrics import (
 )
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-DATA_PATH   = Path("c:/Users/deore/Desktop/Major-Project/sage-engine/ml_pipeline/data/training_data.csv")
-MODEL_PATH = Path("c:/Users/deore/Desktop/Major-Project/sage-engine/ml_pipeline/models/sage_model.pkl")
+# Resolved from this file's location, so the script runs from any working directory on any machine.
+REPO_ROOT   = Path(__file__).resolve().parents[3]
+DATA_PATH   = REPO_ROOT / "ml_pipeline" / "data" / "training_data.csv"
+MODEL_PATH = REPO_ROOT / "ml_pipeline" / "models" / "sage_model.pkl"  # legacy 4-class model; trained in-memory if absent
 
 FEATURES = [
     "SAGE_Session_Depth",

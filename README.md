@@ -151,8 +151,15 @@ curl http://localhost:8083/actuator/health
 curl http://localhost:8000/health
 ```
 
-Optional settings (Redis host port, probe secret, ML mode, extra shadow models) are listed in
-[`infra/.env.example`](infra/.env.example); copy it to `infra/.env` (gitignored) to change them.
+Optional settings (Redis host port, probe secret, admin token, trusted proxies, ML mode, extra shadow models,
+Grafana password) are listed in [`infra/.env.example`](infra/.env.example); copy it to `infra/.env` (gitignored) to
+change them.
+
+- The route admin API (`POST /admin/routes`) is **disabled** unless `SAGE_ADMIN_TOKEN` is set; callers send it in the
+  `X-SAGE-Admin-Token` header.
+- The gateway honours `X-Forwarded-For` / `X-Real-IP` only from trusted proxies (`SAGE_TRUSTED_PROXIES`, default
+  loopback + private ranges, which covers the local traffic generators). Set it to your load balancer's address
+  when the gateway faces the internet.
 
 ### Live Dashboard (optional)
 
@@ -189,10 +196,10 @@ the UI reads `VITE_BRIDGE_URL` (default `http://localhost:6006`).
 
 ```bash
 # 0. Cryptographically verify frozen models & contracts (tag v2-frozen-models-v6)
-#    On current main this exits non-zero, listing 4 scoring-path source files (inference_service/main.py,
-#    MLInferenceFilter.java, RedisTelemetryService.java, application.yaml) that were deliberately revised
-#    after the tag. Models, contracts and datasets must still match; the CI "Verify Frozen Model &
-#    Contract Integrity" step applies exactly this rule.
+#    Models, contracts and datasets must match the tag byte for byte. Scoring-path source files that were
+#    deliberately revised after the tag (inference_service/main.py, MLInferenceFilter.java,
+#    RedisTelemetryService.java, application.yaml) are listed for information only, the same rule as the CI
+#    integrity step. Add --strict to fail on those too; add --allow-dirty when you have uncommitted changes.
 python ml_pipeline/scripts/evaluate/verify_frozen_manifests.py
 
 # 1. Run automated test suites
